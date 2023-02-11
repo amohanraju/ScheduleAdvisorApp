@@ -1,6 +1,6 @@
-# Django Practice Assessment
+# Django Project Group B-13
 
-__Name:__
+__Names:__ Adarsh Mohanraju
 
-__Computing ID:__
+__Computing IDs:__ hmz4kf
 
