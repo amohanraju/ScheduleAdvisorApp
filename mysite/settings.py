@@ -95,6 +95,10 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 
+#MAY NEED TO REVIST:
+LOGIN_REDIRECT_URL = '/accounts/profile/'
+LOGIN_URL = '/accounts/login/'
+
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
