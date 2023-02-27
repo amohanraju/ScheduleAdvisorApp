@@ -6,7 +6,10 @@ def index(request):
     return HttpResponse("Welcome to our website!")
 
 def profile(request):
-    #template = loader.get_template('myapp/profile.html')
-    #return HttpResponse(template.render({}, request))
-    #return render(request, 'profile.html')
-    return HttpResponse("YOU just logged in!")
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            return HttpResponse("You just logged in! Welcome admin!")
+        else:
+            return HttpResponse("You just logged in! Welcome student!")
+    else:
+        return HttpResponse("You are not logged in!")
