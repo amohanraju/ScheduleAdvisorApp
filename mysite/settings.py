@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-ocydeh5ofpnwv4de&+1&3(d#&!8f6kz8(fdf&zjzbt^ditd=&7
 DEBUG = True
 
 # Added both the local host and herokuapp.com here to handled the DisallowedHost error.
-ALLOWED_HOSTS = ['localhost','127.0.0.1','django-project-b13.herokuapp.com']
+ALLOWED_HOSTS = ['localhost','127.0.0.1','django-project-b13.herokuapp.com','b-13-project.herokuapp.com']
 
 
 # Application definition
@@ -36,6 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    #I think this is needed
+    'myapp',
 
     #For authentication
     'django.contrib.sites',
@@ -63,7 +66,7 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -83,9 +86,17 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': "ddeftc5on5cvn3",
+        'USER': "dzeitcdyuutwum",
+        'PASSWORD': "385c0f114f1a3a46295c0bf7ec326b553135415db140747961fcce820e0daa51",
+        'HOST': "ec2-35-174-100-137.compute-1.amazonaws.com",
+        'PORT':  5432,
     }
 }
 

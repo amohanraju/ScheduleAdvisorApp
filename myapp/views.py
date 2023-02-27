@@ -1,10 +1,13 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
+from django.views import generic
 from django.shortcuts import redirect
 
-def index(request):
-    return HttpResponse("Welcome to our website!")
+class IndexView(generic.ListView):
+    template_name='myapp/index.html'
+    def get_queryset(self):
+        return
 
 def profile(request):
     if request.user.is_authenticated:
@@ -15,4 +18,3 @@ def profile(request):
     else:
         response = redirect('/accounts/login')
         return response
-        #return HttpResponse("You are not logged in! ")
