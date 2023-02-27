@@ -1,9 +1,13 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
+from django.views import generic
 
-def index(request):
-    return HttpResponse("Welcome to our website!")
+class IndexView(generic.ListView):
+    template_name='myapp/index.html'
+    def get_queryset(self):
+        return
+    #return HttpResponse("Welcome to our website!")
 
 def profile(request):
     #template = loader.get_template('myapp/profile.html')

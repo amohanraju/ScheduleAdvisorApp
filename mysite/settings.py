@@ -23,7 +23,7 @@ SECRET_KEY = 'django-insecure-ocydeh5ofpnwv4de&+1&3(d#&!8f6kz8(fdf&zjzbt^ditd=&7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# Added both the local host and herokuapp.com here to handled the DisallowedHost error. hi
+# Added both the local host and herokuapp.com here to handled the DisallowedHost error.
 ALLOWED_HOSTS = ['localhost','127.0.0.1','django-project-b13.herokuapp.com','b-13-project.herokuapp.com']
 
 
@@ -36,6 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    #I think this is needed
+    'myapp',
 
     #For authentication
     'django.contrib.sites',
@@ -63,7 +66,7 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
