@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-ocydeh5ofpnwv4de&+1&3(d#&!8f6kz8(fdf&zjzbt^ditd=&7
 DEBUG = True
 
 # Added both the local host and herokuapp.com here to handled the DisallowedHost error.
-ALLOWED_HOSTS = ['localhost','127.0.0.1','django-project-b13.herokuapp.com']
+ALLOWED_HOSTS = ['localhost','127.0.0.1','django-project-b13.herokuapp.com','b-13-project.herokuapp.com']
 
 
 # Application definition
