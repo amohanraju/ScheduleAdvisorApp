@@ -2,15 +2,19 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
 from django.views import generic
+from django.shortcuts import redirect
 
 class IndexView(generic.ListView):
     template_name='myapp/index.html'
     def get_queryset(self):
         return
-    #return HttpResponse("Welcome to our website!")
 
 def profile(request):
-    #template = loader.get_template('myapp/profile.html')
-    #return HttpResponse(template.render({}, request))
-    #return render(request, 'profile.html')
-    return HttpResponse("YOU just logged in!")
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            return HttpResponse("You just logged in! Welcome admin!")
+        else:
+            return HttpResponse("You just logged in! Welcome student!")
+    else:
+        response = redirect('/accounts/login')
+        return response

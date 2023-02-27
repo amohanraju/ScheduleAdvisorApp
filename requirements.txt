@@ -9,5 +9,4 @@ gunicorn
 # the outcome of using this bypass is that locally you will need to use either SQLite or connect to Heroku's Postgres DB
 django-heroku
 django-allauth
-
 psycopg2-binary
