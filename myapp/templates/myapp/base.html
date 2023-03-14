@@ -1,6 +1,6 @@
 {% load static %}
 
-<link rel="stylesheet" href="{% static 'polls/style.css' %}">
+<link rel="stylesheet" href="{% static 'myapp/style.css' %}">
 
 {# Load the tag library #}
 {% load bootstrap5 %}
@@ -13,8 +13,40 @@
 {% bootstrap_messages %}
 
 
-}
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+          <a id="navLogo" class="navbar-brand" href="#">Schedule Advisor</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="#">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Browse Courses</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Profile</a>
+              </li>
+              <li class="nav-item dropdown">
+                  <!--
+              <li class="nav-item">
+                <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+              </li>
+              -->
+            </ul>
+            <ul class = "navbar-nav ms-auto">
+                <button class ="btn" style="background-color: #35b0a2; color: whitesmoke;">Log In / Out</button>
+            </ul>
+          </div>
+        </div>
+      </nav>
+</header>
 
+<!--
 <div class = "containerCenter">
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">Schedule Advisor</a>
@@ -36,10 +68,11 @@
       </ul>
     </div>
   </nav>
+  -->
 
   {% block content %}
   #https://www.youtube.com/watch?v=rjxpL89BEX4
   {% endblock %}
 
   <hr>
-  <p class = "footer">Footer:</p>
+  <p class = "footer"></p>

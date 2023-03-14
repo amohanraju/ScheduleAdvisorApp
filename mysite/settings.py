@@ -30,6 +30,7 @@ ALLOWED_HOSTS = ['localhost','127.0.0.1','django-project-b13.herokuapp.com','b-1
 # Application definition
 
 INSTALLED_APPS = [
+     'bootstrap5',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
