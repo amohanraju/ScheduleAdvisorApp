@@ -1,14 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Welcome to Our Website!</title>
-    <!-- <link rel="stylesheet" href="style.css"> -->
-  </head>
-  <body>
+{% extends 'myapp/base.html'%}
+
+{% block content %}
+
+{% load static%}
+
+<body class="banner">
+ <div id="splashPageText">
+    <div id="innerSplashPageBox">
+      <h1 id ="splashHeaderText">Welcome!</h1>
+      <form action="/accounts/login/">
+        <button id = "splashPageButton" class ="btn btn-primary">Log In</button>
+      </form>
+    </div>
+ </div>
+</body>
+
+
+
+
+
+
+
+
+<!--
+
     <h1>Welcome to Our Website!</h1>
 	<h3><a href="/accounts/login/">Go to Login Page!</a></h3>
-  </body>
-</html>
+-->
+
+
+  {% endblock %}

@@ -4,9 +4,10 @@
     box-sizing:border-box;
 }
 
-body{
+html, body{
     font-family: 'Poppins', sans-serif;
     background: #f1f1f1;
+    line-height: 1.4;
 }
 
 main{
@@ -58,3 +59,9 @@ li{
     background-color: #ccc;
     margin:1rem 0;
 }
+
+a:hover {
+    background-color: #35b0a2;
+    color: whitesmoke;
+}
+
