@@ -2,10 +2,31 @@
 
 {% block content %}
 
+{% load static%}
+
+<body class="banner">
+ <div id="splashPageText">
+    <div id="innerSplashPageBox">
+      <h1 id ="splashHeaderText">Welcome!</h1>
+      <form action="/accounts/login/">
+        <button id = "splashPageButton" class ="btn btn-primary">Log In</button>
+      </form>
+    </div>
+ </div>
+</body>
+
+
+
+
+
+
+
+
+<!--
 
     <h1>Welcome to Our Website!</h1>
 	<h3><a href="/accounts/login/">Go to Login Page!</a></h3>
-
+-->
 
 
   {% endblock %}
