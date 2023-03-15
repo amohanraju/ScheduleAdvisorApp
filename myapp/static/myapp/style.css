@@ -108,3 +108,7 @@
     letter-spacing: 2.5px;
     border-bottom: 2px solid #1e6db3;
 }
+
+#wholeNavBar{
+    border-bottom: 5px solid #1e6db3;
+}
