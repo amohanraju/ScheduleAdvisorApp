@@ -1,14 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>HTML 5 Boilerplate</title>
-    <link rel="stylesheet" href="style.css">
-  </head>
-  <body>
-	<h1>You just logged in!!!</h1>
-  <h2> Welcome student</h2>
+{% extends 'myapp/base.html'%}
+
+{% block content %}
+
+{% load static%}
+
+
+  <body class = "banner">
+    <div id ="SignedInScreenInnerContainer" class = "container">
+      {% if user.is_superuser %}
+        <h1 id = "welcomeMessageHeader">Welcome Instructor: {{user.get_username}}</h1>
+      {% else %}
+        <h1 id = "welcomeMessageHeader">Welcome Student: {{user.get_username}}</h1>
+      {% endif %}
+    </div>
+      
   </body>
-</html>
+
+
+{% endblock %}

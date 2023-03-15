@@ -11,10 +11,8 @@ class IndexView(generic.ListView):
 
 def profile(request):
     if request.user.is_authenticated:
-        if request.user.is_superuser:
-            return HttpResponse("You just logged in! Welcome admin!")
-        else:
-            return HttpResponse("You just logged in! Welcome student!")
+        template = loader.get_template('myapp/profile.html')
+        return HttpResponse(template.render({}, request))
     else:
         response = redirect('/accounts/login')
         return response
