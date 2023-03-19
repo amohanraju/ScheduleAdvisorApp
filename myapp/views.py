@@ -31,10 +31,11 @@ class CourseView(generic.ListView):
 
 def api_data(request):
     if request.method == 'GET':
-        class_dept = request.GET.get('classes')
+        class_dept = request.GET.get("classes")
         url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
-                'IScript_ClassSearch?institution=UVA01&term=1228&subject={class_dept}&page=1'
-        response = requests.get(url).json()
-        return render(request, 'myapp/courses.html', {'class_data' : response})
+                'IScript_ClassSearch?institution=UVA01&term=1228&subject=%s&page=1' % class_dept
+        classes = requests.get(url).json()
+        #return HttpResponse(url)
+        return render(request, 'myapp/courses.html', {'classes' : classes})
     else:
         return HttpResponseRedirect('accounts/profile/browse_courses')
