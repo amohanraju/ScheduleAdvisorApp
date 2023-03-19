@@ -61,10 +61,12 @@ def api_data(request):
                         course_start_time = course.get("meetings")[0]['start_time'],
                         course_end_time = course.get("meetings")[0]['end_time'],
 
-                        course_added_to_cart = []
+                        
                     )
                     course_model_instance.save()
-                    #print('cat')
+                    course_model_instance.course_added_to_cart.set([])
+                    course_model_instance.save()
+                    print('cat')
 
                 #For updating info if users join / get off waitlist and as enrollment size changes
                 specific_course = Course.objects.get(course_id= course.get("crse_id"), course_section= course.get("class_section"), course_catalog_nbr=course.get("catalog_nbr"), course_instructor = course.get("instructors")[0]['name'])    
