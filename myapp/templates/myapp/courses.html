@@ -91,7 +91,7 @@
         <option value="AAS">African-American and African Studies</option>
         <option value="ACCT">Accounting</option>
         <option value="AIRS">Air Science</option>
-        <!--<option value="ALAR">Architecture and Landscape Architecture</option>
+        <option value="ALAR">Architecture and Landscape Architecture</option>
         <option value="AMST">American Studies</option>
         <option value="ANTH">Anthropology</option>
         <option value="APMA">Applied Mathematics</option>
@@ -127,13 +127,26 @@
         <option value="CREO">Creole</option>
         <option value="CS">Computer Science</option>
         <option value="DANC">Dance</option>
-        <option value="DEM">Democracy Initiative</option> -->
+        <option value="DEM">Democracy Initiative</option>
         </select>
     <button type="submit">Submit</button>
   </form>
+  <table style="width:100%">
+    <tr>
+      <th>Course Number</th>
+      <th>Description</th>
+      <th>Type and Amount of Credits</th>
+      <th>Professor</th>
+    </tr>
     {% for class in classes %}
-        <p>{{ class.descr }}</p>
+    <tr>
+      <td>{{class.subject}} {{class.catalog_nbr}}</td>
+      <td>{{class.descr}}</td>
+      <td>{{class.section_type}} ({{class.units}})</td>
+      <td>{{class.instructors.0.name}}</td>
+    </tr>
     {% endfor %}
+  </table>
 </body>
         <!-- <option value=""></option>
         <option value=""></option>
