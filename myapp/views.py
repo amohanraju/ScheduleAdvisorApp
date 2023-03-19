@@ -19,22 +19,22 @@ def profile(request):
         response = redirect('/accounts/login')
         return response
     
-# class CourseView(generic.ListView):
-#     template_name='myapp/courses.html'
+class CourseView(generic.ListView):
+    template_name='myapp/courses.html'
+    def get_queryset(self):
+        return
+    
+# class SingleCourseView(generic.ListView):
+#     template_name='myapp/single_course.html'
 #     def get_queryset(self):
 #         return
-    
-# # class SingleCourseView(generic.ListView):
-# #     template_name='myapp/single_course.html'
-# #     def get_queryset(self):
-# #         return
 
-# def api_data(request):
-#     if request.method == 'GET':
-#         class_dept = request.GET.get('classes')
-#         url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
-#                 'IScript_ClassSearch?institution=UVA01&term=1228&subject={class_dept}&page=1'
-#         response = requests.get(url).json()
-#         return render(request, 'myapp/courses.html', {'class_data' : response})
-#     else:
-#         return HttpResponseRedirect('accounts/profile/browse_courses')
+def api_data(request):
+    if request.method == 'GET':
+        class_dept = request.GET.get('classes')
+        url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
+                'IScript_ClassSearch?institution=UVA01&term=1228&subject={class_dept}&page=1'
+        response = requests.get(url).json()
+        return render(request, 'myapp/courses.html', {'class_data' : response})
+    else:
+        return HttpResponseRedirect('accounts/profile/browse_courses')
