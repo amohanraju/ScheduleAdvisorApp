@@ -42,5 +42,6 @@ def api_data(request):
     
 
 def shoppingCart(request):
+    #s
     template = loader.get_template('myapp/shoppingCart.html')
     return HttpResponse(template.render({}, request))
