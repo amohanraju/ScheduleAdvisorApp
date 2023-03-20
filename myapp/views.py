@@ -115,11 +115,15 @@ def shoppingCart(request):
 
 
 def addToCart(request, pk):
-    #https://www.youtube.com/watch?v=PXqRPqDjDgc
-    course = get_object_or_404(Course, pk = pk)
-    course.course_added_to_cart.add(request.user)
-    course.save()
-    return shoppingCart(request)
+    if(request.user.is_authenticated):  
+        #https://www.youtube.com/watch?v=PXqRPqDjDgc
+        course = get_object_or_404(Course, pk = pk)
+        course.course_added_to_cart.add(request.user)
+        course.save()
+        return shoppingCart(request)
+    else:
+        response = redirect('/accounts/login')
+        return response
     #template = loader.get_template('myapp/profile.html')
     #return HttpResponse(template.render({}, request))
 
