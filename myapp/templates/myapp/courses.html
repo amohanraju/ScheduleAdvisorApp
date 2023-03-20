@@ -56,11 +56,14 @@
       </nav>
 </header>
 
-<body>
-  <br>
-    <form action="{% url 'api_data' %}" method="get">
-        {% csrf_token %}
-        <select name="classes" id="classes">
+<body class = "bannerWhiteGradient">
+  <div id ="SignedInScreenInnerContainer" class = "container">
+    <br>
+    <h1 id="">Browse Classes</h1>
+    <hr>
+      <form action="{% url 'api_data' %}" method="get">
+          {% csrf_token %}
+      <select name="classes" id="classes">
           <option value=""> Department </option>
           <option value="AAS">African-American and African Studies</option>
           <option value="AIRS">Air Science</option>
