@@ -32,6 +32,9 @@
                 <a class="nav-link" href="/accounts/profile/browse_courses">Browse Courses</a>
               </li>
               <li class="nav-item">
+                <a class="nav-link" href="/accounts/profile/shopping_cart">Shopping Cart</a>
+              </li>
+              <li class="nav-item">
                 <a class="nav-link" href="#">Profile</a>
               </li>
               <li class="nav-item dropdown">
@@ -139,7 +142,7 @@
       <th>Professor</th>
     </tr>
     {% for class_object, class in content %}
-    <tr class = "userShoppingCartTable">
+    <tr>
       <td>{{class.subject}} {{class.catalog_nbr}}</td>
       <td>{{class.descr}}</td>
       <td>{{class.section_type}} ({{class.units}})</td>
