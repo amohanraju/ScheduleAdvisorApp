@@ -11,3 +11,4 @@ django-heroku
 django-allauth
 psycopg2-binary
 django-bootstrap-v5
+bootstrap5
