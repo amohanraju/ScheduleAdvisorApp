@@ -4,6 +4,27 @@
 
 {% load static%}
 
-<h1>Test</h1>
+<h1>Shopping Cart</h1>
 
+
+<table style="width:100%">
+    <tr>
+      <th>Course Number</th>
+      <th>Course Name</th>
+      <th>Time Offered</th>
+      <th>Professor</th>
+      <th>Availability</th>
+    </tr>
+    <hr>
+{% for course in courses_in_cart %}
+    <tr>
+        <td>{{course.course_mnemonic}} {{course.course_catalog_nbr}}</td>
+        <td>{{course.course_subject}}</td>
+        <td>{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}}</td>
+        <td>{{course.course_instructor}}</td>
+        <td>{{course.course_enrollment_availability}} seats open out of {{course.course_size}}</td>
+    </tr>
+{% endfor %}
+</table>
 {% endblock %}
+

@@ -1,10 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.template import loader
 from django.views import generic
 from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
 from myapp.models import Course
+from django.urls import reverse
 import requests
 
 class IndexView(generic.ListView):
@@ -37,6 +38,7 @@ def api_data(request):
                 'IScript_ClassSearch?institution=UVA01&term=1228&subject=%s&page=1' % class_dept
         classes = requests.get(url).json()
         #return HttpResponse(url)
+        class_objects = []
         if(len(classes) > 0):
             for course in classes:
                 if(not Course.objects.filter(course_id= course.get("crse_id"), course_section= course.get("class_section"), course_catalog_nbr=course.get("catalog_nbr"), course_instructor = course.get("instructors")[0]['name']).exists()):
@@ -79,13 +81,41 @@ def api_data(request):
                         specific_course.course_waitlist_total = course.get('wait_tot'),
                         specific_course.course_waitlist_cap = course.get('wait_cap'),
                         specific_course.save()
+                class_objects.append(specific_course)
+        #primary_keys = [instance.pk for instance in class_objects]
 
-        return render(request, 'myapp/courses.html', {'classes' : classes})
+        finalList = zip(class_objects, classes)
+        context = {'content': finalList}
+        return render(request, 'myapp/courses.html', context)
+        #return render(request, 'myapp/courses.html', {'classes' : classes, 'primary_keys' : primary_keys})
     else:
         return HttpResponseRedirect('accounts/profile/browse_courses')
     
 
 def shoppingCart(request):
-    #s
-    template = loader.get_template('myapp/shoppingCart.html')
+    current_user = request.user
+
+    all_courses = Course.objects.all()
+
+    courses_in_cart = []
+
+    for course in all_courses:
+        if(course.course_added_to_cart.contains(current_user)):
+            courses_in_cart.append(course)
+
+
+    return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart,})
+
+
+
+def addToCart(request, pk):
+    #https://www.youtube.com/watch?v=PXqRPqDjDgc
+    course = get_object_or_404(Course, pk = pk)
+    course.course_added_to_cart.add(request.user)
+    template = loader.get_template('myapp/profile.html')
     return HttpResponse(template.render({}, request))
+
+    #url = reverse('addToCart', kwargs={'pk': pk})
+
+    # redirect the user to the addToCart view
+    #return redirect(url)
