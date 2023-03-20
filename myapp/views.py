@@ -119,3 +119,10 @@ def addToCart(request, pk):
 
     # redirect the user to the addToCart view
     #return redirect(url)
+
+def removeFromCart(request, pk):
+    course = get_object_or_404(Course, pk = pk)
+    course.course_added_to_cart.remove(request.user)
+    return shoppingCart(request)
+    #return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart,})
+
