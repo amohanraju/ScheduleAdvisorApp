@@ -1,9 +1,0 @@
-﻿{
-  "agentId": 2,
-  "agentName": "django-app",
-  "poolId": 1,
-  "poolName": "Default",
-  "serverUrl": "https://pipelines.actions.githubusercontent.com/S23mpKNGe6XKsiHehsm4nf45uE2iw7EJ2OjRuFk3VDJa90hmAT",
-  "gitHubUrl": "https://github.com/uva-cs3240-s23/project-b-13",
-  "workFolder": "_work"
-}
