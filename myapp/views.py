@@ -39,3 +39,8 @@ def api_data(request):
         return render(request, 'myapp/courses.html', {'classes' : classes})
     else:
         return HttpResponseRedirect('accounts/profile/browse_courses')
+    
+
+def shoppingCart(request):
+    template = loader.get_template('myapp/shoppingCart.html')
+    return HttpResponse(template.render({}, request))
