@@ -112,8 +112,10 @@ def addToCart(request, pk):
     #https://www.youtube.com/watch?v=PXqRPqDjDgc
     course = get_object_or_404(Course, pk = pk)
     course.course_added_to_cart.add(request.user)
-    template = loader.get_template('myapp/profile.html')
-    return HttpResponse(template.render({}, request))
+    course.save()
+    return shoppingCart(request)
+    #template = loader.get_template('myapp/profile.html')
+    #return HttpResponse(template.render({}, request))
 
     #url = reverse('addToCart', kwargs={'pk': pk})
 
@@ -123,6 +125,7 @@ def addToCart(request, pk):
 def removeFromCart(request, pk):
     course = get_object_or_404(Course, pk = pk)
     course.course_added_to_cart.remove(request.user)
+    course.save()
     return shoppingCart(request)
     #return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart,})
 
