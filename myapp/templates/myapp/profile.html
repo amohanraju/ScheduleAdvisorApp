@@ -14,7 +14,7 @@
 {# Display django.contrib.messages as Bootstrap alerts #}
 {% bootstrap_messages %}
 
-  <body class = "banner">
+  <body class = "bannerWhiteGradient">
     <div id ="SignedInScreenInnerContainer" class = "container">
       {% if user.is_superuser %}
         <h1 id = "welcomeMessageHeader">Welcome Instructor: {{user.get_username}}</h1>
