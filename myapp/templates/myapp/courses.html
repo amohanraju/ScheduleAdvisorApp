@@ -2,7 +2,8 @@
 <!DOCTYPE html>
 <html>
 <link rel="stylesheet" href="{% static 'myapp/style.css' %}">
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src = "{% static 'myapp/courses.js' %}"> </script>
 {# Load the tag library #}
 {% load bootstrap5 %}
 
@@ -35,11 +36,6 @@
                 <a class="nav-link" href="#">Profile</a>
               </li>
               <li class="nav-item dropdown">
-              <!-- 
-                <li class="nav-item">
-                <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-              </li> 
-            -->
             </ul>
             <ul class = "navbar-nav ms-5">
               {% if user.is_authenticated %}
@@ -57,37 +53,12 @@
       </nav>
 </header>
 
-
-<!-- <div class = "containerCenter">
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Schedule Advisor</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-  
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="/polls">Polls <span class="sr-only"></span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/polls/comments/list">Comments</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/polls/comments/">Create Comment</a>
-          </li>
-      </ul>
-    </div>
-  </nav> -->
-  
-
-  <!-- {% block content %}
-  #https://www.youtube.com/watch?v=rjxpL89BEX4
-  {% endblock %} -->
 <body>
+  <br>
     <form action="{% url 'api_data' %}" method="get">
         {% csrf_token %}
     <select name="classes" id="classes">
+        <option value=""> Department </option>
         <option value="AAS">African-American and African Studies</option>
         <option value="ACCT">Accounting</option>
         <option value="AIRS">Air Science</option>
@@ -129,8 +100,12 @@
         <option value="DANC">Dance</option>
         <option value="DEM">Democracy Initiative</option>
         </select>
+        <select id ="mnemonic">
+          <option value=""> Subject </option>
+          </select>
     <button type="submit">Submit</button>
   </form>
+  <br>
   <table style="width:100%">
     <tr>
       <th>Course Number</th>
@@ -140,6 +115,7 @@
     </tr>
     {% for class in classes %}
     <tr>
+      
       <td>{{class.subject}} {{class.catalog_nbr}}</td>
       <td>{{class.descr}}</td>
       <td>{{class.section_type}} ({{class.units}})</td>
@@ -148,47 +124,6 @@
     {% endfor %}
   </table>
 </body>
-        <!-- <option value=""></option>
-        <option value=""></option>
-        <option value=""></option>
-        <option value=""></option>
-        <option value=""></option>
-        <option value=""></option>
-        <option value=""></option>
-        <option value=""></option>
-        <option value=""></option>
-        <option value=""></option>
-        <option value=""></option>
-        <option value=""></option>
-        <option value=""></option> -->
-    <!-- <table>
-        <tbody>
-            <tr>
-                <td><a href="page.php?Semester=1238&Type=GroupGroup=APMA">Applied Mathematics</a></td>
-                <td><a href="page.php?Semester=1238Type=GroupGroup=ECE">Electrical & Computer Engineering</a></td>
-            </tr>
-            <tr>
-                <td><a href="page.php?Semester=1238Type=GroupGroup=BME">Biomedical Engineering</a></td>
-                <td><a href="page.php?Semester=1238Type=GroupGroup=MSE">Materials Science  Engineering</a></td>
-            </tr>
-            <tr>
-                <td><a href="page.php?Semester=1238Type=GroupGroup=CHE">Chemical Engineering</a></td>
-                <td><a href="page.php?Semester=1238Type=GroupGroup=MAE">Mechanical & Aerospace Engineering</a></td>
-            </tr>
-            <tr>
-                <td><a href="page.php?Semester=1238Type=GroupGroup=CEE">Civil & Environmental Engineering</a></td>
-                <td><a href="page.php?Semester=1238Type=GroupGroup=STS">Science, Technology  Society</a></td>
-            </tr>
-            <tr>
-                <td><a href="page.php?Semester=1238Type=GroupGroup=CompSci">Computer Science</a></td>
-                <td><a href="page.php?Semester=1238Type=GroupGroup=SYS">Systems & Information Engineering</a></td>
-            </tr>
-            <tr>
-                <td><a href="page.php?Semester=1238Type=GroupGroup=ENGR">Cross-Disciplinary Courses</a></td>
-                <td>&nbsp;</td>
-            </tr>
-      </tbody>
-    </table> -->
 
  
   <p class = "footer"></p>
