@@ -92,21 +92,25 @@ def api_data(request):
     
 
 def shoppingCart(request):
-    current_user = request.user
+    if(request.user.is_authenticated):  
+        current_user = request.user
 
-    all_courses = Course.objects.all()
+        all_courses = Course.objects.all()
 
-    courses_in_cart = []
+        courses_in_cart = []
 
-    courses_in_cart = Course.objects.filter(course_added_to_cart = current_user)
-    
+        courses_in_cart = Course.objects.filter(course_added_to_cart = current_user)
+        
 
-    #for course in all_courses:
-    #    if(course.course_added_to_cart.contains(current_user)):
-     #       courses_in_cart.append(course)
+        #for course in all_courses:
+        #    if(course.course_added_to_cart.contains(current_user)):
+        #       courses_in_cart.append(course)
 
 
-    return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart,})
+        return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart,})
+    else:
+        response = redirect('/accounts/login')
+        return response
 
 
 
