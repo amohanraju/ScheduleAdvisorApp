@@ -98,6 +98,11 @@ DATABASES = {
         'PASSWORD': "385c0f114f1a3a46295c0bf7ec326b553135415db140747961fcce820e0daa51",
         'HOST': "ec2-35-174-100-137.compute-1.amazonaws.com",
         'PORT':  5432,
+        'TEST': {
+            'NAME': 'ddeftc5on5cvn3',
+            'USER': 'dzeitcdyuutwum',
+            'PASSWORD': '385c0f114f1a3a46295c0bf7ec326b553135415db140747961fcce820e0daa51',
+        }, 
     }
 }
 
