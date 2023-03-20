@@ -1,10 +1,34 @@
-from django.test import TestCase
+from django.test import TestCase, Client
+from django.urls import reverse
 
-# Create your tests here.
-class DummyTestCase(TestCase):
+
+
+        
+class TestViewRenders(TestCase):
     def setUp(self):
-        x = 2
-        y = 2
-    
-    def test_dummy_test_case(self):
-        self.assertEqual(x, y)
+        self.client = Client()
+
+    def test_profile_render(self):
+        response = self.client.get(reverse("api_data"))
+        self.assertTemplateUsed(response, 'myapp/courses.html')
+        
+    def test_shoppingCart_render(self):
+        response = self.client.get(reverse('shoppingCart'))
+        self.assertTemplateUsed(response, 'myapp/shoppingCart.html')
+        
+class Test404Error(TestCase):
+    def setUp(self):
+        self.client = Client()
+    def test404(self):
+        url = "129861yhuf.com"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+        
+class Test200Response(TestCase):
+    def setup(self):
+        self.client = Client()
+    def test200(self):
+        url = reverse('shoppingCart')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code,200)
+            
