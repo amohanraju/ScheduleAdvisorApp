@@ -23,11 +23,11 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install Dependencies
       run: |
-        python3 -m venv ~/.virtualenvs/djangodev
-        source ~/.virtualenvs/djangodev/bin/activate
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install django-bootstrap-v5
     - name: Run Tests
       run: |
+        python3 -m venv ~/.virtualenvs/djangodev
+        source ~/.virtualenvs/djangodev/bin/activate
         python manage.py test --keepdb
