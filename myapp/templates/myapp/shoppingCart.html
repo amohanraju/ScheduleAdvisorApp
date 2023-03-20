@@ -4,6 +4,40 @@
 
 {% load static%}
 
-<h1>Test</h1>
+<h1>Shopping Cart</h1>
 
+
+<table style="width:100%">
+    <tr>
+      <th>Course Number</th>
+      <th>Course Name</th>
+      <th>Time Offered</th>
+      <th>Professor</th>
+      <th>Availability</th>
+      <th>Modify Cart</th>
+    </tr>
+    <hr>
+{% for course in courses_in_cart %}
+    <tr>
+        <td>{{course.course_mnemonic}} {{course.course_catalog_nbr}}</td>
+        <td>{{course.course_subject}}</td>
+        <td>{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}}</td>
+        <td>{{course.course_instructor}}</td>
+        <td>{{course.course_enrollment_availability}} seats open out of {{course.course_size}}</td>
+        <td>
+            <form method="POST" action="{% url 'removeFromCart' course.pk%}">
+              {% csrf_token %}
+              <input type="hidden" name="pk" value="{{ course.pk }}">
+              <button type="submit" class = "btn btn-danger">Remove From Cart
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                  </svg>
+              </button>
+            </form>
+           
+          </td>
+    </tr>
+{% endfor %}
+</table>
 {% endblock %}
+
