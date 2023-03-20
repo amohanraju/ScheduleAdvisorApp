@@ -28,4 +28,4 @@ jobs:
         pip install django-bootstrap-v5
     - name: Run Tests
       run: |
-        python manage.py test
+        python manage.py test --keepdb
