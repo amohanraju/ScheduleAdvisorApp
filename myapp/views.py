@@ -98,9 +98,12 @@ def shoppingCart(request):
 
     courses_in_cart = []
 
-    for course in all_courses:
-        if(course.course_added_to_cart.contains(current_user)):
-            courses_in_cart.append(course)
+    courses_in_cart = Course.objects.filter(course_added_to_cart = current_user)
+    
+
+    #for course in all_courses:
+    #    if(course.course_added_to_cart.contains(current_user)):
+     #       courses_in_cart.append(course)
 
 
     return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart,})
