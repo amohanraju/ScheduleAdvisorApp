@@ -4,6 +4,15 @@
 
 {% load static%}
 
+{# Load the tag library #}
+{% load bootstrap5 %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
 
   <body class = "banner">
     <div id ="SignedInScreenInnerContainer" class = "container">
@@ -12,8 +21,23 @@
       {% else %}
         <h1 id = "welcomeMessageHeader">Welcome Student: {{user.get_username}}</h1>
       {% endif %}
+      <br>
+      <div class = "container">
+      <h3> What do you want to do today {{user.get_username}}?</h3>
+        <br>
+        <div class = "container"> 
+          <h6> Want to Browse Classes? Click Below</h6>
+          <br>
+          <a href="browse_courses"><button class = "btn btn-primary btn-lg"> Browse Classes </button></a>
+          <br>
+          <br>
+          <br>
+          <h6> Want to Check Shopping Cart? Click Below</h6>
+          <br>
+          <a href="shopping_cart"><button class = "btn btn-primary btn-lg"> Go to Shopping Cart </button></a>
+        </div>
+      </div>
     </div>
-      
   </body>
 
 

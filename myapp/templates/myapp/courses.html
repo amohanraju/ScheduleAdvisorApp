@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="{% static 'myapp/style.css' %}">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src = "{% static 'myapp/courses.js' %}"> </script>
+{# Load the tag library #}
+{% load bootstrap5 %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+
+
+<header>
+    <nav id = "wholeNavBar" class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+          <img id = "rontundaImage" class = "image" src ="https://upload.wikimedia.org/wikipedia/commons/d/dd/University_of_Virginia_Rotunda_logo.svg">
+
+          <a id="navLogo" class="navbar-brand" href="/accounts/profile">Schedule Advisor</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="/accounts/profile">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/accounts/profile/browse_courses">Browse Courses</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Profile</a>
+              </li>
+              <li class="nav-item dropdown">
+            </ul>
+            <ul class = "navbar-nav ms-5">
+              {% if user.is_authenticated %}
+                <form action="/accounts/logout">
+                  <button class ="btn" style="background-color: #1e6db3; color: whitesmoke;">Log Out</button>
+                </form>
+              {% else %}
+                <form action="/accounts/login">
+                  <button class ="btn" style="background-color: #1e6db3; color: whitesmoke;">Log In</button>
+                </form>
+                  {% endif %}
+            </ul>
+          </div>
+        </div>
+      </nav>
+</header>
+
+<body>
+  <br>
+    <form action="{% url 'api_data' %}" method="get">
+        {% csrf_token %}
+    <select name="classes" id="classes">
+        <option value=""> Department </option>
+        <option value="AAS">African-American and African Studies</option>
+        <option value="ACCT">Accounting</option>
+        <option value="AIRS">Air Science</option>
+        <option value="ALAR">Architecture and Landscape Architecture</option>
+        <option value="AMST">American Studies</option>
+        <option value="ANTH">Anthropology</option>
+        <option value="APMA">Applied Mathematics</option>
+        <option value="ARAB">Arabic</option>
+        <option value="ARAD">Arts Administration</option>
+        <option value="ARAH">History of Art and Architecture</option>
+        <option value="ARCH">Architecture</option>
+        <option value="ARCY">Archaeology</option>
+        <option value="ARH">Architectural History</option>
+        <option value="ARTH">History of Art</option>
+        <option value="ARTR">Arabic in Translation</option>
+        <option value="ARTS">Studio Art</option>
+        <option value="ASL">American Sign Language</option>
+        <option value="ASTR">Astronomy</option>
+        <option value="BIMS">Biomedical Sciences</option>
+        <option value="BIOC">Biochemistry</option>
+        <option value="BIOL">Biology</option>
+        <option value="BIOP">Biophysics</option>
+        <option value="BME">Biomedical Engineering</option>
+        <option value="BUS">Business</option>
+        <option value="CASS">College Art Scholars Seminar</option>
+        <option value="CE">Civil Engineering</option>
+        <option value="CELL">Cell Biology</option>
+        <option value="CHE">Chemical Engineering</option>
+        <option value="CHEM">Chemistry</option>
+        <option value="CHIN">Chinese</option>
+        <option value="CHTR">Chinese in Translation</option>
+        <option value="CLAS">Classics</option>
+        <option value="COGS">Cognitive Science</option>
+        <option value="COMM">Commerce</option>
+        <option value="CONC">Commerce Non-Credit</option>
+        <option value="CPE">Computer Engineering</option>
+        <option value="CREO">Creole</option>
+        <option value="CS">Computer Science</option>
+        <option value="DANC">Dance</option>
+        <option value="DEM">Democracy Initiative</option>
+        </select>
+        <select id ="mnemonic">
+          <option value=""> Subject </option>
+          </select>
+    <button type="submit">Submit</button>
+  </form>
+  <br>
+  <table style="width:100%">
+    <tr>
+      <th>Course Number</th>
+      <th>Description</th>
+      <th>Type and Amount of Credits</th>
+      <th>Professor</th>
+    </tr>
+    {% for class in classes %}
+    <tr>
+      
+      <td>{{class.subject}} {{class.catalog_nbr}}</td>
+      <td>{{class.descr}}</td>
+      <td>{{class.section_type}} ({{class.units}})</td>
+      <td>{{class.instructors.0.name}}</td>
+      <td>
+        <a role="button" class="btn btn-primary">Add to Cart
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
+            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+          </svg>
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+
+ 
+  <p class = "footer"></p>
+  </html>
