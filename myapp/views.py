@@ -61,8 +61,8 @@ def api_data(request):
                         course_waitlist_cap = course.get('wait_cap'),
 
                         course_days_of_week = course.get("meetings")[0]['days'],
-                        course_start_time = datetime.datetime.strptime(course.get("meetings")[0]['start_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p'),
-                        course_end_time = datetime.datetime.strptime(course.get("meetings")[0]['end_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p'),
+                        course_start_time = course.get("meetings")[0]['start_time'],#datetime.datetime.strptime(course.get("meetings")[0]['start_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p'),
+                        course_end_time = course.get("meetings")[0]['end_time'],#datetime.datetime.strptime(course.get("meetings")[0]['end_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p'),
 
                         
                     )
