@@ -94,19 +94,9 @@ def api_data(request):
 def shoppingCart(request):
     if(request.user.is_authenticated):  
         current_user = request.user
-
         all_courses = Course.objects.all()
-
         courses_in_cart = []
-
         courses_in_cart = Course.objects.filter(course_added_to_cart = current_user)
-        
-
-        #for course in all_courses:
-        #    if(course.course_added_to_cart.contains(current_user)):
-        #       courses_in_cart.append(course)
-
-
         return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart,})
     else:
         response = redirect('/accounts/login')
@@ -115,25 +105,22 @@ def shoppingCart(request):
 
 
 def addToCart(request, pk):
-    #https://www.youtube.com/watch?v=PXqRPqDjDgc
-    course = get_object_or_404(Course, pk = pk)
-    course.course_added_to_cart.add(request.user)
-    course.save()
-    return shoppingCart(request)
-    #template = loader.get_template('myapp/profile.html')
-    #return HttpResponse(template.render({}, request))
-
-    #url = reverse('addToCart', kwargs={'pk': pk})
-
-    # redirect the user to the addToCart view
-    #return redirect(url)
+    if(request.user.is_authenticated):  
+        #https://www.youtube.com/watch?v=PXqRPqDjDgc
+        course = get_object_or_404(Course, pk = pk)
+        course.course_added_to_cart.add(request.user)
+        course.save()
+        return shoppingCart(request)
+    else:
+        response = redirect('/accounts/login')
+        return response
 
 def removeFromCart(request, pk):
+    #Get user from route and then remove the associated course and save
     course = get_object_or_404(Course, pk = pk)
     course.course_added_to_cart.remove(request.user)
     course.save()
     return shoppingCart(request)
-    #return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart,})
 
 def calendar(request):
     # template = loader.get_template('myapp/calendar.html')
