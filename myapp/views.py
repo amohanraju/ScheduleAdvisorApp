@@ -7,6 +7,7 @@ from django.http import HttpResponseRedirect
 from myapp.models import Course
 from django.urls import reverse
 import requests
+import datetime
 
 class IndexView(generic.ListView):
     template_name='myapp/index.html'
@@ -35,7 +36,7 @@ def api_data(request):
     if request.method == 'GET':
         class_dept = request.GET.get("classes")
         url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
-                'IScript_ClassSearch?institution=UVA01&term=1228&subject=%s&page=1' % class_dept
+                'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % class_dept
         classes = requests.get(url).json()
         #return HttpResponse(url)
         class_objects = []
@@ -60,8 +61,8 @@ def api_data(request):
                         course_waitlist_cap = course.get('wait_cap'),
 
                         course_days_of_week = course.get("meetings")[0]['days'],
-                        course_start_time = course.get("meetings")[0]['start_time'],
-                        course_end_time = course.get("meetings")[0]['end_time'],
+                        course_start_time = datetime.datetime.strptime(course.get("meetings")[0]['start_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p'),
+                        course_end_time = datetime.datetime.strptime(course.get("meetings")[0]['end_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p'),
 
                         
                     )

@@ -10,6 +10,11 @@
   <link rel="stylesheet" href="{% static 'myapp/calendar_style.css' %}">
   {% endblock %}
   <body class = "bannerWhiteGradient">
+    {% for course in courses_in_cart %}
+        <tr>
+            <td>day: {{course.course_days_of_week}} start-end:{{course.course_start_time}} - {{course.course_end_time}}</td>
+        </tr>
+    {% endfor %}
     <div id ="SignedInScreenInnerContainer" class = "container">
     <h1>Calendar</h1>
     <div class="calendar">
