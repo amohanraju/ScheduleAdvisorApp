@@ -135,3 +135,14 @@ def removeFromCart(request, pk):
     return shoppingCart(request)
     #return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart,})
 
+def calendar(request):
+    # template = loader.get_template('myapp/calendar.html')
+    # return HttpResponse(template.render({}, request))
+
+    if(request.user.is_authenticated):  
+        current_user = request.user
+        courses_in_cart = Course.objects.filter(course_added_to_cart = current_user)
+        return render(request, 'myapp/calendar.html', {'courses_in_cart': courses_in_cart,})
+    else:
+        response = redirect('/accounts/login')
+        return response
