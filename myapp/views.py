@@ -43,6 +43,13 @@ def api_data(request):
         if(len(classes) > 0):
             for course in classes:
                 if(not Course.objects.filter(course_id= course.get("crse_id"), course_section= course.get("class_section"), course_catalog_nbr=course.get("catalog_nbr"), course_instructor = course.get("instructors")[0]['name']).exists()):
+                    start = course.get("meetings")[0]['start_time']
+                    if (start != ""):
+                        start = datetime.datetime.strptime(course.get("meetings")[0]['start_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p')
+                    end = course.get("meetings")[0]['end_time']
+                    if (end != ""):
+                        end = datetime.datetime.strptime(course.get("meetings")[0]['end_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p')
+                    
                     course_model_instance = Course(
                         course_id = course.get('crse_id'),
                         course_section = course.get('class_section'),
@@ -56,15 +63,14 @@ def api_data(request):
 
                         course_size = course.get('class_capacity'),
                         course_enrollment_total = course.get('enrollment_total'),
-                        course_enrollment_availability = course.get('enrollment_available') ,
+                        course_enrollment_availability = course.get('enrollment_available'),
                         course_waitlist_total = course.get('wait_tot'),
                         course_waitlist_cap = course.get('wait_cap'),
 
                         course_days_of_week = course.get("meetings")[0]['days'],
-                        course_start_time = course.get("meetings")[0]['start_time'],#datetime.datetime.strptime(course.get("meetings")[0]['start_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p'),
-                        course_end_time = course.get("meetings")[0]['end_time'],#datetime.datetime.strptime(course.get("meetings")[0]['end_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p'),
+                        course_start_time = start,
+                        course_end_time = end,
 
-                        
                     )
                     course_model_instance.save()
                     course_model_instance.course_added_to_cart.set([])
@@ -130,7 +136,22 @@ def calendar(request):
     if(request.user.is_authenticated):  
         current_user = request.user
         courses_in_cart = Course.objects.filter(course_added_to_cart = current_user)
-        return render(request, 'myapp/calendar.html', {'courses_in_cart': courses_in_cart,})
+        mon,tue,wed,thu,fri=[],[],[],[],[]
+        for course in courses_in_cart:
+            if "Mo" in course.course_days_of_week:
+                mon.append(course)
+            if "Tu" in course.course_days_of_week:
+                tue.append(course)
+            if "We" in course.course_days_of_week:
+                wed.append(course)
+            if "Th" in course.course_days_of_week:
+                thu.append(course)
+            if "Fr" in course.course_days_of_week:
+                fri.append(course)
+        week = [mon, tue, wed, thu, fri]
+        for day in week:
+            day = sorted(day, key=lambda obj: obj.course_days_of_week)
+        return render(request, 'myapp/calendar.html', {'courses_in_cart': courses_in_cart, 'week' : week,})
     else:
         response = redirect('/accounts/login')
         return response

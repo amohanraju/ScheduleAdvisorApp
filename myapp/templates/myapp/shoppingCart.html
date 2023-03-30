@@ -25,7 +25,7 @@
             <td>{{course.course_subject}}</td>
             <td>{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td>
             <td>{{course.course_instructor}}</td>
-            <td>{{course.course_enrollment_availability}} seats open out of {{course.course_size}}</td>
+            <td>{{course.course_enrollment_availability}}/{{course.course_size}}</td>
             <td>
                 <form method="POST" action="{% url 'removeFromCart' course.pk%}">
                   {% csrf_token %}
