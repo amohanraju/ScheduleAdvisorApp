@@ -10,7 +10,23 @@
     border-bottom: 2px solid #1e6db3;
     
 }
-
+table{
+    border: 1.5px solid black;
+    border-collapse: collapse;
+  }
+.title-row th{
+    border: 1.5px solid black;
+    border-collapse: collapse;
+    text-align: center;
+}
+.main-rows td{
+    border: 1.5px solid black;
+    border-collapse: collapse; 
+    text-align: center;
+}
+.buttonShoppingCartandBrowseCourses {
+    margin-bottom: 6px;
+}
 .banner{
     /*
     background-image: url("https://news.virginia.edu/sites/default/files/article_image/nau_gift_ss_header.jpg");

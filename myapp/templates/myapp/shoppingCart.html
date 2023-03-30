@@ -10,17 +10,31 @@
 
 
     <table style="width:100%">
-        <tr>
-          <th>Course Number</th>
-          <th>Course Name</th>
-          <th>Time Offered</th>
-          <th>Professor</th>
-          <th>Availability</th>
-          <th>Modify Cart</th>
+        <tr class = "title-row">
+          <div class = "row"> 
+            <div class = "col col-lg-2 col-md-2 col-sm-2"> 
+              <th>Course Number</th>
+            </div>
+            <div class = "col col-lg-2 col-md-2 col-sm-2"> 
+              <th>Course Name</th>
+            </div>
+            <div class = "col col-lg-2 col-md-2 col-sm-2"> 
+              <th>Time Offered</th>
+            </div>
+            <div class = "col col-lg-2 col-md-2 col-sm-2"> 
+              <th>Professor</th>
+            </div>
+            <div class = "col col-lg-2 col-md-2 col-sm-2"> 
+              <th>Availability</th>
+            </div>
+            <div class = "col col-lg-2 col-md-2 col-sm-2"> 
+              <th>Modify Cart</th>
+            </div>
+          </div>
         </tr>
         <hr>
     {% for course in courses_in_cart %}
-        <tr>
+        <tr class = "main-rows">
             <td>{{course.course_mnemonic}} {{course.course_catalog_nbr}}</td>
             <td>{{course.course_subject}}</td>
             <td>{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td>
