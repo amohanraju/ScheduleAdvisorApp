@@ -8,6 +8,7 @@ from myapp.models import Course
 from django.urls import reverse
 import requests
 import datetime
+import re
 
 class IndexView(generic.ListView):
     template_name='myapp/index.html'
@@ -94,6 +95,7 @@ def api_data(request):
                         course_end_time = end,
 
                     )
+
                     course_model_instance.save()
                     course_model_instance.course_added_to_cart.set([])
                     course_model_instance.save()
@@ -182,10 +184,6 @@ def calendar(request):
         week = [mon, tue, wed, thu, fri]
         for i in range(len(week)):
             week[i] = sorted(week[i], key=lambda obj: obj.start_tag)
-            # for classes in week[i]:
-            #     print(classes.course_catalog_nbr, " ", classes.course_start_time)
-            #     print(type(classes.course_start_time))
-            print()
         week_dict = {"MON" : week[0], "TUE" : week[1], "WED" : week[2], "THU" : week[3], "FRI" : week[4]} 
         return render(request, 'myapp/calendar.html', {'week' : week_dict, 'schedule' : week})
     else:
