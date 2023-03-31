@@ -32,6 +32,28 @@ class CourseView(generic.ListView):
 #     def get_queryset(self):
 #         return
 
+class CalendarObj():
+    def __init__(self, course):
+        self.course_mnemonic = course.course_mnemonic
+        self.course_catalog_nbr = course.course_catalog_nbr
+        self.course_id = self.course_mnemonic + " " + self.course_catalog_nbr
+        self.course_days_of_week = course.course_days_of_week
+        self.course_subject = course.course_subject
+        self.course_start_time = course.course_start_time
+        self.course_end_time = course.course_end_time
+        self.coursenum = ""
+        self.start_tag, self.end_tag = self.populate_tags() 
+    
+    def populate_tags(self):
+        start_tag = str(self.course_start_time)[0:2] + "_" + str(self.course_start_time)[3:5]
+        end_tag = str(self.course_end_time)[0:2] + "_" + str(self.course_end_time)[3:5]
+        if start_tag[0] == '0':
+            start_tag = start_tag[1:]
+        if end_tag[0] == '0':
+            end_tag = end_tag[1:]
+        
+        return start_tag, end_tag
+
 def api_data(request):
     if request.method == 'GET':
         class_dept = request.GET.get("classes")
@@ -136,8 +158,17 @@ def calendar(request):
     if(request.user.is_authenticated):  
         current_user = request.user
         courses_in_cart = Course.objects.filter(course_added_to_cart = current_user)
+        calendar_courses = []
+        seen_classes = set()
+        for i in range(len(courses_in_cart)):
+            course = courses_in_cart[i]
+            calendar_course = (CalendarObj(course))
+            if calendar_course.course_id not in seen_classes:
+                seen_classes.add(calendar_course.course_id)
+                calendar_course.coursenum = i
+            calendar_courses.append(calendar_course)
         mon,tue,wed,thu,fri=[],[],[],[],[]
-        for course in courses_in_cart:
+        for course in calendar_courses:
             if "Mo" in course.course_days_of_week:
                 mon.append(course)
             if "Tu" in course.course_days_of_week:
@@ -149,9 +180,14 @@ def calendar(request):
             if "Fr" in course.course_days_of_week:
                 fri.append(course)
         week = [mon, tue, wed, thu, fri]
-        for day in week:
-            day = sorted(day, key=lambda obj: obj.course_days_of_week)
-        return render(request, 'myapp/calendar.html', {'courses_in_cart': courses_in_cart, 'week' : week,})
+        for i in range(len(week)):
+            week[i] = sorted(week[i], key=lambda obj: obj.start_tag)
+            # for classes in week[i]:
+            #     print(classes.course_catalog_nbr, " ", classes.course_start_time)
+            #     print(type(classes.course_start_time))
+            print()
+        week_dict = {"MON" : week[0], "TUE" : week[1], "WED" : week[2], "THU" : week[3], "FRI" : week[4]} 
+        return render(request, 'myapp/calendar.html', {'week' : week_dict, 'schedule' : week})
     else:
         response = redirect('/accounts/login')
         return response
