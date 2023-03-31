@@ -11,16 +11,16 @@
   {% endblock %}
   <body class = "bannerWhiteGradient">
   <table style="width:100%">
-    {% for day in week %}
+    <!-- For debugging: {% for day in schedule %}
       {% for courses in day %}
       <tr>
         <td>{{courses.course_days_of_week}} </td>
       </tr>
         <tr>
-            <td>{{courses.course_subject}} </td>
+            <td>{{courses.course_subject}}, {{courses.start_tag}}, {{courses.end_tag}}, {{courses.course_start_time}}</td>
         </tr>
       {% endfor %}
-    {% endfor %}
+    {% endfor %} -->
   </table>
     <div id ="SignedInScreenInnerContainer" class = "container">
     <h1>Calendar</h1>
@@ -43,69 +43,98 @@
         <div>8 PM</div>
       </div>
       <div class="days">
-        <div class="day mon">
+        {% for DAY, courses in week.items %}
+        <div class="day {{DAY}}">
+          <div class="date">
+            <p class="date-day">{{DAY}}</p>
+          </div>
+          <div class="events">
+            {% for class in courses %}
+            <div class="event start-{{ class.start_tag }} end-{{ class.end_tag }} class-{{ class.coursenum }}">
+              <p class="title">{{class.course_mnemonic}} {{class.course_catalog_nbr}}</p>
+              <p class="time">{{class.course_start_time}} - {{class.course_end_time}}</p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+
+        
+        <!-- <div class="day mon">
           <div class="date">
             <p class="date-day">MON</p>
           </div>
-          <div class="events">
-            <div class="event start-2_00 end-5_00 class1">
-              <p class="title">Class 1</p>
-              <p class="time">2 PM - 5 PM</p>
+            <div class="events">
+              {% for class in schedule.0 %}
+              <div class="event start-{{class.start_tag }} end-{{class.end_tag }} class1">
+                <p class="title">{{class.course_mnemonic}} {{class.course_catalog_nbr}}</p>
+                <p class="time">{{class.course_start_time}} - {{class.course_end_time}}</p>
+              </div>
+              {% endfor %}
             </div>
-          </div>
         </div>
-        <div class="day tues">
+
+        
+        <div class="day tue">
           <div class="date">
             <p class="date-day">TUE</p>
           </div>
-          <div class="events">
-            <div class="event start-10_00 end-12_00 class2">
-              <p class="title">Class 2</p>
-              <p class="time">10 AM - 12 PM</p>
+            <div class="events">
+              {% for class in schedule.1 %}
+              <div class="event start-{{class.start_tag }} end-{{class.end_tag }} class1">
+                <p class="title">{{class.course_mnemonic}} {{class.course_catalog_nbr}}</p>
+                <p class="time">{{class.course_start_time}} - {{class.course_end_time}}</p>
+              </div>
+              {% endfor %}
             </div>
-            <div class="event start-1_00 end-4_00 class3">
-              <p class="title">Class 3</p>
-              <p class="time">1PM - 4PM</p>
-            </div>
-          </div>
+          
         </div>
+
+        
         <div class="day wed">
           <div class="date">
             <p class="date-day">WED</p>
           </div>
-          <div class="events">
-            <div class="event start-11_00 end-12_00 class4">
-              <p class="title">Class 4</p>
-              <p class="time">11 AM - 12 PM</p>
+            <div class="events">
+              {% for class in schedule.2 %}
+              <div class="event start-{{class.start_tag }} end-{{class.end_tag }} class1">
+                <p class="title">{{class.course_mnemonic}} {{class.course_catalog_nbr}}</p>
+                <p class="time">{{class.course_start_time}} - {{class.course_end_time}}</p>
+              </div>
+              {% endfor %}
             </div>
-            <div class="event start-2_00 end-5_00 class1">
-              <p class="title">Class 1</p>
-              <p class="time">2 PM - 5 PM</p>
-            </div>
-          </div>
         </div>
-        <div class="day thurs">
+
+        
+        <div class="day thu">
           <div class="date">
             <p class="date-day">THU</p>
           </div>
-          <div class="events">
-            <div class="event start-10_00 end-12_00 class2">
-              <p class="title">Class 2</p>
-              <p class="time">10 AM - 12 PM</p>
+            <div class="events">
+              {% for class in schedule.3 %}
+              <div class="event start-{{class.start_tag }} end-{{class.end_tag }} class1">
+                <p class="title">{{class.course_mnemonic}} {{class.course_catalog_nbr}}</p>
+                <p class="time">{{class.course_start_time}} - {{class.course_end_time}}</p>
+              </div>
+              {% endfor %}
             </div>
-            <div class="event start-1_00 end-4_00 class3">
-              <p class="title">Class 3</p>
-              <p class="time">1PM - 4PM</p>
-            </div>
-          </div>
         </div>
+
+        
         <div class="day fri">
           <div class="date">
             <p class="date-day">FRI</p>
           </div>
-          <div class="events">
-          </div>
-        </div>
+            <div class="events">
+              {% for class in schedule.4 %}
+              <div class="event start-{{class.start_tag }} end-{{class.end_tag }} class1">
+                <p class="title">{{class.course_mnemonic}} {{class.course_catalog_nbr}}</p>
+                <p class="time">{{class.course_start_time}} - {{class.course_end_time}}</p>
+              </div>
+              {% endfor %}
+            </div>
+        </div> -->
+
       </div>
     </div>
   </body>
