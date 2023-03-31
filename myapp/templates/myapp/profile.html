@@ -19,7 +19,7 @@
       {% if user.is_superuser %}
         <h1 id = "welcomeMessageHeader">Welcome Instructor: {{user.get_username}}</h1>
       {% else %}
-        <h1 id = "welcomeMessageHeader">Welcome Student: {{user.get_username}}</h1>
+        <h1 id = "welcomeMessageHeader">Welcome Student: {{user.first_name}} {{user.last_name}} ({{user.get_username}})</h1>
       {% endif %}
       <br>
       <div class = "container">
