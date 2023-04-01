@@ -128,7 +128,8 @@ def shoppingCart(request):
         all_courses = Course.objects.all()
         courses_in_cart = []
         courses_in_cart = Course.objects.filter(course_added_to_cart = current_user)
-        return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart,})
+        courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
+        return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart, 'courses_in_calendar': courses_in_calendar})
     else:
         response = redirect('/accounts/login')
         return response
@@ -153,6 +154,62 @@ def removeFromCart(request, pk):
     course.save()
     return shoppingCart(request)
 
+def addToSchedule(request, pk):
+    if(request.user.is_authenticated):
+        course = get_object_or_404(Course, pk = pk)
+        course.course_added_to_schedule.add(request.user)
+        course.save()
+        return calendar(request)
+    else:
+        response = redirect('/accounts/login')
+        return response
+
+def removeFromSchedule(request, pk):
+    if(request.user.is_authenticated):
+        course = get_object_or_404(Course, pk = pk)
+        course.course_added_to_schedule.remove(request.user)
+        course.save()
+        return calendar(request)
+    else:
+        response = redirect('/accounts/login')
+        return response
+
+def calendar(request):
+    if(request.user.is_authenticated):  
+        current_user = request.user
+        courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
+        calendar_courses = []
+        seen_classes = set()
+        for i in range(len(courses_in_calendar)):
+            course = courses_in_calendar[i]
+            calendar_course = (CalendarObj(course))
+            if calendar_course.course_id not in seen_classes:
+                seen_classes.add(calendar_course.course_id)
+                calendar_course.coursenum = i
+            calendar_courses.append(calendar_course)
+        mon,tue,wed,thu,fri=[],[],[],[],[]
+        for course in calendar_courses:
+            if "Mo" in course.course_days_of_week:
+                mon.append(course)
+            if "Tu" in course.course_days_of_week:
+                tue.append(course)
+            if "We" in course.course_days_of_week:
+                wed.append(course)
+            if "Th" in course.course_days_of_week:
+                thu.append(course)
+            if "Fr" in course.course_days_of_week:
+                fri.append(course)
+        week = [mon, tue, wed, thu, fri]
+        for i in range(len(week)):
+            week[i] = sorted(week[i], key=lambda obj: obj.start_tag)
+        week_dict = {"MON" : week[0], "TUE" : week[1], "WED" : week[2], "THU" : week[3], "FRI" : week[4]} 
+        return render(request, 'myapp/calendar.html', {'week' : week_dict, 'schedule' : week, 'courses_in_calendar': courses_in_calendar})
+    else:
+        response = redirect('/accounts/login')
+        return response
+
+
+"""
 def calendar(request):
     # template = loader.get_template('myapp/calendar.html')
     # return HttpResponse(template.render({}, request))
@@ -189,3 +246,5 @@ def calendar(request):
     else:
         response = redirect('/accounts/login')
         return response
+
+"""

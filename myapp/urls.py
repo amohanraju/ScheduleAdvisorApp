@@ -10,4 +10,8 @@ urlpatterns = [
     path('accounts/addToCart/<int:pk>/', views.addToCart, name = 'addToCart'),
     path('accounts/removeFromCart/<int:pk>/', views.removeFromCart, name = 'removeFromCart'),
     path('accounts/profile/calendar', views.calendar, name='calendar'),
+    path('accounts/addToSchedule/<int:pk>/', views.addToSchedule, name = 'addToSchedule'),
+    path('accounts/removeFromSchedule/<int:pk>/', views.removeFromSchedule, name = 'removeFromSchedule'),
+
 ]
+

@@ -137,6 +137,54 @@
 
       </div>
     </div>
+    <br>
+    <h1>Courses in Calendar:</h1>
+
+    <table style="width:100%">
+      <tr class = "title-row">
+        <div class = "row"> 
+          <div class = "col col-lg-2 col-md-2 col-sm-2"> 
+            <th>Course Number</th>
+          </div>
+          <div class = "col col-lg-2 col-md-2 col-sm-2"> 
+            <th>Course Name</th>
+          </div>
+          <div class = "col col-lg-2 col-md-2 col-sm-2"> 
+            <th>Time Offered</th>
+          </div>
+          <div class = "col col-lg-2 col-md-2 col-sm-2"> 
+            <th>Professor</th>
+          </div>
+          <div class = "col col-lg-2 col-md-2 col-sm-2"> 
+            <th>Availability</th>
+          </div>
+          <div class = "col col-lg-2 col-md-2 col-sm-2"> 
+            <th>Modify Schedule</th>
+          </div>
+        </div>
+      </tr>
+      <hr>
+  {% for course in courses_in_calendar %}
+      <tr class = "main-rows">
+          <td>{{course.course_mnemonic}} {{course.course_catalog_nbr}}</td>
+          <td>{{course.course_subject}}</td>
+          <td>{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td>
+          <td>{{course.course_instructor}}</td>
+          <td>{{course.course_enrollment_availability}}/{{course.course_size}}</td>
+          <td>
+              <form method="POST" action="{% url 'removeFromSchedule' course.pk%}">
+                {% csrf_token %}
+                <input type="hidden" name="pk" value="{{ course.pk }}">
+                <button type="submit" class = "btn btn-danger buttonShoppingCartandBrowseCourses"> <strong>Drop Course</strong>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                      <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </button>
+              </form>
+            </td>
+      </tr>
+  {% endfor %}
+  </table>
   </body>
 
   {% endblock %}

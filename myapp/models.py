@@ -24,6 +24,7 @@ class Course(models.Model):
     course_end_time = models.CharField(max_length=255)
 
     course_added_to_cart = models.ManyToManyField(User, related_name="courses")
+    course_added_to_schedule = models.ManyToManyField(User, related_name="courses_in_schedule")
 
 
 
