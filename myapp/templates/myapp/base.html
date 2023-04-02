@@ -22,7 +22,7 @@
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
-          <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
               <li class="nav-item">
                 <a class="nav-link" aria-current="page" href="/accounts/profile">Home</a>
@@ -36,23 +36,23 @@
               <li class="nav-item">
                 <a class="nav-link" href="/accounts/profile/calendar">Calendar</a>
               </li>
+              <li class = "nav-item"> 
+                {% if user.is_authenticated %}
+                <form action="/accounts/logout">
+                  <button class ="btn" style="background-color: #1e6db3; color: whitesmoke;">Log Out</button>
+                </form>
+                {% else %}
+                <form action="/accounts/login">
+                  <button class ="btn" style="background-color: #1e6db3; color: whitesmoke;">Log In</button>
+                </form>
+                  {% endif %}
+              </li>
               <li class="nav-item dropdown">
                   <!--
               <li class="nav-item">
                 <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
               </li>
               -->
-            </ul>
-            <ul class = "navbar-nav ms-5">
-              {% if user.is_authenticated %}
-                <form action="/accounts/logout">
-                  <button class ="btn" style="background-color: #1e6db3; color: whitesmoke;">Log Out</button>
-                </form>
-              {% else %}
-                <form action="/accounts/login">
-                  <button class ="btn" style="background-color: #1e6db3; color: whitesmoke;">Log In</button>
-                </form>
-                  {% endif %}
             </ul>
           </div>
         </div>

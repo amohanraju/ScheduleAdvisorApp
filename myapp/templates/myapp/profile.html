@@ -14,7 +14,7 @@
 {# Display django.contrib.messages as Bootstrap alerts #}
 {% bootstrap_messages %}
 
-  <body class = "bannerWhiteGradient">
+  <body class = "bannerWhiteGradient" style = "text-align: center;">
     <div id ="SignedInScreenInnerContainer" class = "container">
       {% if user.is_superuser %}
         <h1 id = "welcomeMessageHeader">Welcome Instructor: {{user.get_username}}</h1>
@@ -26,21 +26,27 @@
       <h3> What do you want to do today {{user.first_name}}?</h3>
         <br>
         <div class = "container"> 
-          <h6> Want to Browse Classes? Click Below</h6>
-          <br>
-          <a href="browse_courses"><button class = "btn btn-primary btn-lg"> Browse Classes </button></a>
-          <br>
-          <br>
-          <br>
-          <h6> Want to Check Shopping Cart? Click Below</h6>
-          <br>
-          <a href="shopping_cart"><button class = "btn btn-primary btn-lg"> Go to Shopping Cart </button></a>
+          <div style = "border: 2px solid black;">
+            <h6 style = "margin-top: 15px;"> Want to Browse Classes? Click Below</h6>
+            <br>
+            <a href="browse_courses"><button class = "btn btn-primary btn-lg" style = "margin-bottom: 15px;"> Browse Classes </button></a>
+          </div>
           <br>
           <br>
           <br>
-          <h6> Want to Check Your Calendar? Click Below</h6>
+          <div style = "border: 2px solid black;">
+            <h6 style = "margin-top: 15px"> Want to Check Shopping Cart? Click Below</h6>
+            <br>
+            <a href="shopping_cart"><button class = "btn btn-primary btn-lg" style = "margin-bottom: 15px;"> Go to Shopping Cart </button></a>
+          </div>
           <br>
-          <a href="calendar"><button class = "btn btn-primary btn-lg"> Go to Calendar </button></a>
+          <br>
+          <br>
+          <div style = "border: 2px solid black;">
+            <h6 style = "margin-top: 15px;"> Want to Check Your Calendar? Click Below</h6>
+            <br>
+            <a href="calendar"><button class = "btn btn-primary btn-lg" style = "margin-bottom: 15px;"> Go to Calendar </button></a>
+          </div>
         </div>
       </div>
     </div>
