@@ -9,6 +9,7 @@ from django.urls import reverse
 import requests
 import datetime
 import re
+import json
 
 class IndexView(generic.ListView):
     template_name='myapp/index.html'
@@ -40,8 +41,12 @@ class CalendarObj():
         self.course_id = self.course_mnemonic + " " + self.course_catalog_nbr
         self.course_days_of_week = course.course_days_of_week
         self.course_subject = course.course_subject
+        self.course_instructor = course.course_instructor
+        self.course_location = course.course_location
         self.course_start_time = course.course_start_time
         self.course_end_time = course.course_end_time
+        self.course_added_to_schedule = course.course_added_to_schedule
+        self.course_added_to_cart = course.course_added_to_cart
         self.coursenum = ""
         self.start_tag, self.end_tag = self.populate_tags() 
     
@@ -72,7 +77,11 @@ def api_data(request):
                     end = course.get("meetings")[0]['end_time']
                     if (end != ""):
                         end = datetime.datetime.strptime(course.get("meetings")[0]['end_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p')
-                    
+                    num = ""
+                    availability = json.dumps(course.get('enrollment_available'))
+                    for element in availability:
+                        if(element != '(' and element != ')' and element != ','):
+                            num+=element
                     course_model_instance = Course(
                         course_id = course.get('crse_id'),
                         course_section = course.get('class_section'),
@@ -86,7 +95,7 @@ def api_data(request):
 
                         course_size = course.get('class_capacity'),
                         course_enrollment_total = course.get('enrollment_total'),
-                        course_enrollment_availability = course.get('enrollment_available'),
+                        course_enrollment_availability = num,
                         course_waitlist_total = course.get('wait_tot'),
                         course_waitlist_cap = course.get('wait_cap'),
 
@@ -107,7 +116,7 @@ def api_data(request):
                    specific_course.course_waitlist_total != course.get('wait_tot') or 
                    specific_course.course_waitlist_cap != course.get('wait_cap')):
                         specific_course.course_enrollment_total = course.get('enrollment_total'),
-                        specific_course.course_enrollment_availability = course.get('enrollment_available') ,
+                        specific_course.course_enrollment_availability = num ,
                         specific_course.course_waitlist_total = course.get('wait_tot'),
                         specific_course.course_waitlist_cap = course.get('wait_cap'),
                         specific_course.save()
@@ -190,15 +199,85 @@ def calendar(request):
         mon,tue,wed,thu,fri=[],[],[],[],[]
         for course in calendar_courses:
             if "Mo" in course.course_days_of_week:
-                mon.append(course)
+                if len(mon) != 0:
+                    count = 0
+                    for otherCourse in mon:
+                        if (course.course_start_time != otherCourse.course_start_time and course.course_end_time != otherCourse.course_end_time 
+                        and not(course.course_start_time > otherCourse.course_start_time and course.course_start_time < otherCourse.course_end_time) and  
+                        not(course.course_end_time > otherCourse.course_start_time and course.course_end_time < otherCourse.course_end_time)):
+                            count+= 1
+                    if(count == len(mon)):
+                        mon.append(course)
+                    else:
+                        course.course_added_to_schedule.remove(request.user)
+                        course.course_added_to_cart.remove(request.user)
+                        courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
+                else:
+                    mon.append(course)
             if "Tu" in course.course_days_of_week:
-                tue.append(course)
+                if len(tue) != 0:
+                    count = 0
+                    for otherCourse in tue:
+                        if (course.course_start_time != otherCourse.course_start_time and course.course_end_time != otherCourse.course_end_time 
+                        and not(course.course_start_time > otherCourse.course_start_time and course.course_start_time < otherCourse.course_end_time) and  
+                        not(course.course_end_time > otherCourse.course_start_time and course.course_end_time < otherCourse.course_end_time)):
+                            count+= 1
+                    if(count == len(tue)):
+                        tue.append(course)
+                    else:
+                        course.course_added_to_schedule.remove(request.user)
+                        course.course_added_to_cart.remove(request.user)
+                        courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
+                else:
+                    tue.append(course)
             if "We" in course.course_days_of_week:
-                wed.append(course)
+                if len(wed) != 0:
+                    count = 0
+                    for otherCourse in wed:
+                        if (course.course_start_time != otherCourse.course_start_time and course.course_end_time != otherCourse.course_end_time 
+                        and not(course.course_start_time > otherCourse.course_start_time and course.course_start_time < otherCourse.course_end_time) and  
+                        not(course.course_end_time > otherCourse.course_start_time and course.course_end_time < otherCourse.course_end_time)):
+                            count+= 1
+                    if(count == len(wed)):
+                        wed.append(course)
+                    else:
+                        course.course_added_to_schedule.remove(request.user)
+                        course.course_added_to_cart.remove(request.user)
+                        courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
+                else:
+                    wed.append(course)
             if "Th" in course.course_days_of_week:
-                thu.append(course)
+                if len(thu) != 0:
+                    count = 0
+                    for otherCourse in thu:
+                        if (course.course_start_time != otherCourse.course_start_time and course.course_end_time != otherCourse.course_end_time 
+                        and not(course.course_start_time > otherCourse.course_start_time and course.course_start_time < otherCourse.course_end_time) and  
+                        not(course.course_end_time > otherCourse.course_start_time and course.course_end_time < otherCourse.course_end_time)):
+                            count+= 1
+                    if(count == len(thu)):
+                        thu.append(course)
+                    else:
+                        course.course_added_to_schedule.remove(request.user)
+                        course.course_added_to_cart.remove(request.user)
+                        courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
+                else:
+                    thu.append(course)
             if "Fr" in course.course_days_of_week:
-                fri.append(course)
+                if len(fri) != 0:
+                    count = 0
+                    for otherCourse in fri:
+                        if (course.course_start_time != otherCourse.course_start_time and course.course_end_time != otherCourse.course_end_time 
+                        and not(course.course_start_time > otherCourse.course_start_time and course.course_start_time < otherCourse.course_end_time) and  
+                        not(course.course_end_time > otherCourse.course_start_time and course.course_end_time < otherCourse.course_end_time)):
+                            count+= 1
+                    if(count == len(fri)):
+                        fri.append(course)
+                    else:
+                        course.course_added_to_schedule.remove(request.user)
+                        course.course_added_to_cart.remove(request.user)
+                        courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
+                else:
+                    fri.append(course)
         week = [mon, tue, wed, thu, fri]
         for i in range(len(week)):
             week[i] = sorted(week[i], key=lambda obj: obj.start_tag)

@@ -51,8 +51,8 @@
           <div class="events">
             {% for class in courses %}
             <div class="event start-{{ class.start_tag }} end-{{ class.end_tag }} class-{{ class.coursenum }}">
-              <p class="title">{{class.course_mnemonic}} {{class.course_catalog_nbr}}</p>
-              <p class="time">{{class.course_start_time}} - {{class.course_end_time}}</p>
+              <p class="title" style = "padding-bottom:2px;">{{class.course_mnemonic}} {{class.course_catalog_nbr}}</p>
+              <p class="time" style = "margin-bottom:1px;">{{class.course_start_time}} - {{class.course_end_time}}</p>
             </div>
             {% endfor %}
           </div>
@@ -156,7 +156,7 @@
             <th>Professor</th>
           </div>
           <div class = "col col-lg-2 col-md-2 col-sm-2"> 
-            <th>Availability</th>
+            <th>Location</th>
           </div>
           <div class = "col col-lg-2 col-md-2 col-sm-2"> 
             <th>Modify Schedule</th>
@@ -170,7 +170,7 @@
           <td>{{course.course_subject}}</td>
           <td>{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td>
           <td>{{course.course_instructor}}</td>
-          <td>{{course.course_enrollment_availability}}/{{course.course_size}}</td>
+          <td>{{course.course_location}}</td>
           <td>
               <form method="POST" action="{% url 'removeFromSchedule' course.pk%}">
                 {% csrf_token %}
