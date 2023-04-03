@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-
+from myapp.models import Course
+from django.contrib.auth.models import User
 
 
         
@@ -32,3 +33,80 @@ class Test200Response(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code,200)
             
+
+class testShoppingCart(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='user', password='pass')
+        self.course1 = Course.objects.create()
+        self.course1.course_added_to_cart.add(self.user)
+        self.course2 = Course.objects.create()
+        self.course2.course_added_to_schedule.add(self.user)
+        self.url = reverse('shoppingCart')
+        
+    def testusercourses(self):
+        self.client.login(username='user', password='pass')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'myapp/shoppingCart.html')
+        self.assertContains(response, 'Cart')
+#        self.assertQuerysetEqual(response.context['courses_in_cart'], [repr(self.course1)])
+        #self.assertQuerysetEqual(response.context['courses_in_calendar'], [repr(self.course2)])
+        
+#class AddToCartViewTest(TestCase):
+#   def setUp(self):
+#        self.user = User.objects.create_user(username='testuser', password='testpass')
+#        self.course = Course.objects.create()
+#        self.url = reverse('addToCart', args=[self.course.pk])
+        
+#        self.client.login(username='testuser', password='testpass')
+#        response = self.client.get(self.url)
+#        self.assertEqual(response.status_code, 302)
+#        self.assertIn(self.user, self.course.course_added_to_cart.all())
+
+class ProfileViewTest(TestCase):
+    
+    def setUp(self):
+        self.client = Client()
+        self.username = 'user'
+        self.password = 'pass'
+        self.user = User.objects.create_user(self.username, password=self.password)
+        
+    def profileviewtest(self):
+        self.client.login(username=self.username, password=self.password)
+        response = self.client.get(reverse('profile'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Go to Calendar')
+
+
+class calendarTest(TestCase):
+    def seecalendar(self):
+        client = Client()
+        user = User.objects.create_user(username='user', password='pass')
+        client.login(username='user', password='pass')
+        course = Course.objects.create(course_days_of_week='MoWeFr', course_start_time='08:00:00', course_end_time='09:00:00')
+        course.course_added_to_schedule.add(user)
+        response = client.get(reverse('calendar'))
+        self.assertContains(response, 'course')
+        
+    def testcorrecttime(self):
+        client = Client()
+        user = User.objects.create_user(username='user', password='pass')
+        client.login(username='user', password='pass')
+        course = Course.objects.create( course_days_of_week='MoWeFr', course_start_time='08:00:00', course_end_time='09:00:00')
+        course.course_added_to_schedule.add(user)
+        response = client.get(reverse('calendar'))
+        self.assertContains(response, 'course')
+        self.assertContains(response, 'Mo')
+        self.assertContains(response, '08:00:00')
+        
+    def overlappingcourses(self):
+        client = Client()
+        user = User.objects.create_user(username='user', password='password')
+        client.login(username='user', password='password')
+        course1 = Course.objects.create(course_days_of_week='Mo', course_start_time='08:00:00', course_end_time='09:00:00')
+        course2 = Course.objects.create(course_days_of_week='Mo', course_start_time='08:30:00', course_end_time='09:30:00')
+        course1.course_added_to_schedule.add(user)
+        course2.course_added_to_schedule.add(user)
+        response = client.get(reverse('calendar'))
+        self.assertNotContains(response, 'course2')
+        self.assertNotContains(response, 'course1')

@@ -27,5 +27,4 @@ class Course(models.Model):
     course_added_to_schedule = models.ManyToManyField(User, related_name="courses_in_schedule")
 
 
-
     
