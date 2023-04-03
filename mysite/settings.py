@@ -64,7 +64,7 @@ MIDDLEWARE = [
 ]
 
 #For serving static files in Heroku
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 ROOT_URLCONF = 'mysite.urls'
 
