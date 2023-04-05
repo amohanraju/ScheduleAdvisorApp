@@ -168,6 +168,9 @@
           <th>Type and Amount of Credits</th>
         </div>
         <div class = "col col-lg-3 col-md-3 col-sm-3"> 
+          <th>Time</th>
+        </div>
+        <div class = "col col-lg-3 col-md-3 col-sm-3"> 
           <th>Professor</th>
         </div>
         <div class = "col col-lg-3 col-md-3 col-sm-3"> 
@@ -186,6 +189,13 @@
             </div>
             <div class = "col col-lg-3 col-md-3 col-sm-3"> 
               <td>{{class.section_type}} ({{class.units}})</td>
+            </div>
+            <div class = "col col-lg-3 col-md-3 col-sm-3">
+              {% if class_object.course_start_time != "" %}
+                <td>{{class_object.course_start_time}} - {{class_object.course_end_time}}</td>
+              {% else %}
+              <td>TBA</td>
+              {% endif %}
             </div>
             <div class = "col col-lg-3 col-md-3 col-sm-3"> 
               <td>{{class.instructors.0.name}}</td>
