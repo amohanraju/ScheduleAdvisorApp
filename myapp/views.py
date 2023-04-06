@@ -77,11 +77,6 @@ def api_data(request):
                     end = course.get("meetings")[0]['end_time']
                     if (end != ""):
                         end = datetime.datetime.strptime(course.get("meetings")[0]['end_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p')
-                    num = ""
-                    availability = json.dumps(course.get('enrollment_available'))
-                    for element in availability:
-                        if(element != '(' and element != ')' and element != ','):
-                            num+=element
                     course_model_instance = Course(
                         course_id = course.get('crse_id'),
                         course_section = course.get('class_section'),
@@ -95,7 +90,7 @@ def api_data(request):
 
                         course_size = course.get('class_capacity'),
                         course_enrollment_total = course.get('enrollment_total'),
-                        course_enrollment_availability = num,
+                        course_enrollment_availability = course.get('enrollment_available'),
                         course_waitlist_total = course.get('wait_tot'),
                         course_waitlist_cap = course.get('wait_cap'),
 
@@ -108,7 +103,6 @@ def api_data(request):
                     course_model_instance.save()
                     course_model_instance.course_added_to_cart.set([])
                     course_model_instance.save()
-
                 #For updating info if users join / get off waitlist and as enrollment size changes
                 specific_course = Course.objects.get(course_id= course.get("crse_id"), course_section= course.get("class_section"), course_catalog_nbr=course.get("catalog_nbr"), course_instructor = course.get("instructors")[0]['name'])    
                 if(specific_course.course_enrollment_total != course.get('enrollment_total') or 
@@ -116,7 +110,7 @@ def api_data(request):
                    specific_course.course_waitlist_total != course.get('wait_tot') or 
                    specific_course.course_waitlist_cap != course.get('wait_cap')):
                         specific_course.course_enrollment_total = course.get('enrollment_total'),
-                        specific_course.course_enrollment_availability = num ,
+                        specific_course.course_enrollment_availability = course.get('enrollment_available') ,
                         specific_course.course_waitlist_total = course.get('wait_tot'),
                         specific_course.course_waitlist_cap = course.get('wait_cap'),
                         specific_course.save()

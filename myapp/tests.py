@@ -49,7 +49,7 @@ class testShoppingCart(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'myapp/shoppingCart.html')
         self.assertContains(response, 'Cart')
-#        self.assertQuerysetEqual(response.context['courses_in_cart'], [repr(self.course1)])
+#       self.assertQuerysetEqual(response.context['courses_in_cart'], [repr(self.course1)])
         #self.assertQuerysetEqual(response.context['courses_in_calendar'], [repr(self.course2)])
         
 #class AddToCartViewTest(TestCase):

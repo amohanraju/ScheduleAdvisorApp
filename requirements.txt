@@ -11,3 +11,6 @@ django-heroku
 django-allauth
 psycopg2-binary
 django-bootstrap-v5
+
+#To access static files if deployed to Heroku:
+whitenoise 
