@@ -30,6 +30,7 @@ class Course(models.Model):
 
 class Schedule(models.Model):
     #https://stackoverflow.com/questions/34305805/foreignkey-user-in-models
+    #https://www.geeksforgeeks.org/datefield-django-models/
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,)
     submitted_time = models.DateTimeField(auto_now_add=True)
     courses = models.ManyToManyField(Course)

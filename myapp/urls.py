@@ -13,5 +13,8 @@ urlpatterns = [
     path('accounts/addToSchedule/<int:pk>/', views.addToSchedule, name = 'addToSchedule'),
     path('accounts/removeFromSchedule/<int:pk>/', views.removeFromSchedule, name = 'removeFromSchedule'),
 
+    path('accounts/createSchedule/<int:pk>/', views.createSchedule, name = 'createSchedule'),
+
+
 ]
 

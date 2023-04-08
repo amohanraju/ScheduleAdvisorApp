@@ -4,7 +4,7 @@ from django.template import loader
 from django.views import generic
 from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
-from myapp.models import Course
+from myapp.models import Course, Schedule
 from django.urls import reverse
 import requests
 import datetime
@@ -18,6 +18,11 @@ class IndexView(generic.ListView):
 
 def profile(request):
     if request.user.is_authenticated:
+        if request.user.is_superuser:
+            schedules = Schedule.objects.all()
+            template = loader.get_template('myapp/adminHome.html')
+            return HttpResponse(template.render({'schedules':schedules}, request))
+        
         template = loader.get_template('myapp/profile.html')
         return HttpResponse(template.render({}, request))
     else:
@@ -176,6 +181,48 @@ def removeFromSchedule(request, pk):
     else:
         response = redirect('/accounts/login')
         return response
+    
+def createSchedule(request, pk):
+    if(request.method == 'POST'):
+
+        #https://docs.djangoproject.com/en/4.2/topics/db/queries/
+        #https://stackoverflow.com/questions/24963761/django-filtering-a-model-that-contains-a-field-that-stores-regex 
+
+        if(Schedule.objects.filter(author = request.user).exists()):
+            Schedule.objects.filter(author = request.user).delete() 
+
+        current_schedule = Schedule.objects.create(author = request.user)
+
+        #https://stackoverflow.com/questions/5481890/django-does-the-orm-support-the-sql-in-operator 
+        courses_in_schedule_to_add = Course.objects.filter(course_added_to_schedule__in= [request.user.id])
+        for curr_course in courses_in_schedule_to_add:
+            current_schedule.courses.add(curr_course)
+        current_schedule.save()    
+        
+        return calendar(request)
+
+
+    else: 
+        #Not trying to submit a course, should not go to this url
+        response = redirect('/accounts/login')
+        return response
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def calendar(request):
     if(request.user.is_authenticated):  
