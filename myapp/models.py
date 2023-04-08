@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class Course(models.Model):
@@ -26,6 +28,10 @@ class Course(models.Model):
     course_added_to_cart = models.ManyToManyField(User, related_name="courses")
     course_added_to_schedule = models.ManyToManyField(User, related_name="courses_in_schedule")
 
+class Schedule(models.Model):
+    #https://stackoverflow.com/questions/34305805/foreignkey-user-in-models
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,)
+    submitted_time = models.DateTimeField(auto_now_add=True)
+    courses = models.ManyToManyField(Course)
+    status = models.BooleanField(default=False)
 
-
-    
