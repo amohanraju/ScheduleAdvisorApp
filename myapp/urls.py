@@ -14,6 +14,7 @@ urlpatterns = [
     path('accounts/removeFromSchedule/<int:pk>/', views.removeFromSchedule, name = 'removeFromSchedule'),
 
     path('accounts/createSchedule/<int:pk>/', views.createSchedule, name = 'createSchedule'),
+     path('accounts/approveSchedule/', views.approveSchedule, name = 'approveSchedule'),
 
 
 ]

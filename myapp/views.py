@@ -19,7 +19,7 @@ class IndexView(generic.ListView):
 def profile(request):
     if request.user.is_authenticated:
         if request.user.is_superuser:
-            schedules = Schedule.objects.all()
+            schedules = Schedule.objects.all().filter(isRejected=False, status = False)
             template = loader.get_template('myapp/adminHome.html')
             return HttpResponse(template.render({'schedules':schedules}, request))
         
@@ -209,6 +209,31 @@ def createSchedule(request, pk):
 
 
 
+def approveSchedule(request):
+    #https://stackoverflow.com/questions/1746377/checking-for-content-in-django-request-post
+    #https://docs.djangoproject.com/en/4.2/ref/request-response/
+    if(request.user.is_authenticated and request.method == 'POST'): 
+        if('approved' in request.POST):
+            print("cat")
+            theSchedule = request.POST.get('scheduleID')
+            mySchedule = get_object_or_404(Schedule, id=theSchedule)
+            mySchedule.status = True 
+            mySchedule.save()
+        else:
+            print("cat")
+            #The approve button was not pressed so therefor it must have been rejected
+            theSchedule = request.POST.get('scheduleID')
+            mySchedule = get_object_or_404(Schedule, id=theSchedule)
+            mySchedule.isRejected = True
+            mySchedule.save()
+
+        schedules = Schedule.objects.all().filter(isRejected=False, status = False)
+        template = loader.get_template('myapp/adminHome.html')
+        return HttpResponse(template.render({'schedules':schedules}, request))
+
+    else:
+        response = redirect('/accounts/login')
+        return response
 
 
 
@@ -323,7 +348,13 @@ def calendar(request):
         for i in range(len(week)):
             week[i] = sorted(week[i], key=lambda obj: obj.start_tag)
         week_dict = {"MON" : week[0], "TUE" : week[1], "WED" : week[2], "THU" : week[3], "FRI" : week[4]} 
-        return render(request, 'myapp/calendar.html', {'week' : week_dict, 'schedule' : week, 'courses_in_calendar': courses_in_calendar})
+
+        #Logic for passing the schedule object thorugh
+        usersSchedule = None
+        if(Schedule.objects.filter(author = request.user).exists()):
+            usersSchedule = Schedule.objects.get(author = request.user)
+
+        return render(request, 'myapp/calendar.html', {'week' : week_dict, 'schedule' : week, 'courses_in_calendar': courses_in_calendar, 'usersSchedule' : usersSchedule})
     else:
         response = redirect('/accounts/login')
         return response

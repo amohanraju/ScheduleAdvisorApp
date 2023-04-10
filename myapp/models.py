@@ -35,4 +35,5 @@ class Schedule(models.Model):
     submitted_time = models.DateTimeField(auto_now_add=True)
     courses = models.ManyToManyField(Course)
     status = models.BooleanField(default=False)
+    isRejected = models.BooleanField(default=False)
 
