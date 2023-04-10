@@ -214,13 +214,11 @@ def approveSchedule(request):
     #https://docs.djangoproject.com/en/4.2/ref/request-response/
     if(request.user.is_authenticated and request.method == 'POST'): 
         if('approved' in request.POST):
-            print("cat")
             theSchedule = request.POST.get('scheduleID')
             mySchedule = get_object_or_404(Schedule, id=theSchedule)
             mySchedule.status = True 
             mySchedule.save()
         else:
-            print("cat")
             #The approve button was not pressed so therefor it must have been rejected
             theSchedule = request.POST.get('scheduleID')
             mySchedule = get_object_or_404(Schedule, id=theSchedule)
