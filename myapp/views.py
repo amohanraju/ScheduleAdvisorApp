@@ -4,8 +4,9 @@ from django.template import loader
 from django.views import generic
 from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
-from myapp.models import Course
 from django.urls import reverse
+from django.contrib import messages
+from myapp.models import Course
 import requests
 import datetime
 import re
@@ -67,6 +68,7 @@ def api_data(request):
                 'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % class_dept
         classes = requests.get(url).json()
         #return HttpResponse(url)
+        #courses_in_calendar = Course.objects.filter(course_added_to_schedule = request.user)
         class_objects = []
         if(len(classes) > 0):
             for course in classes:
@@ -99,7 +101,6 @@ def api_data(request):
                         course_end_time = end,
 
                     )
-
                     course_model_instance.save()
                     course_model_instance.course_added_to_cart.set([])
                     course_model_instance.save()
@@ -191,20 +192,22 @@ def calendar(request):
                 calendar_course.coursenum = i
             calendar_courses.append(calendar_course)
         mon,tue,wed,thu,fri=[],[],[],[],[]
+        error_messages = set()
         for course in calendar_courses:
             if "Mo" in course.course_days_of_week:
                 if len(mon) != 0:
                     count = 0
                     for otherCourse in mon:
-                        if (course.course_start_time != otherCourse.course_start_time and course.course_end_time != otherCourse.course_end_time 
-                        and not(course.course_start_time > otherCourse.course_start_time and course.course_start_time < otherCourse.course_end_time) and  
-                        not(course.course_end_time > otherCourse.course_start_time and course.course_end_time < otherCourse.course_end_time)):
+                        if (not time_conflict(course, otherCourse)):
                             count+= 1
                     if(count == len(mon)):
                         mon.append(course)
                     else:
+                        message = "Could not add "+course.course_mnemonic+" "+course.course_catalog_nbr+" due to time conflict with "+otherCourse.course_mnemonic+" "+otherCourse.course_catalog_nbr+"."
+                        if message not in error_messages:
+                            error_messages.add(message)
                         course.course_added_to_schedule.remove(request.user)
-                        course.course_added_to_cart.remove(request.user)
+                        #course.course_added_to_cart.remove(request.user)
                         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
                 else:
                     mon.append(course)
@@ -212,15 +215,16 @@ def calendar(request):
                 if len(tue) != 0:
                     count = 0
                     for otherCourse in tue:
-                        if (course.course_start_time != otherCourse.course_start_time and course.course_end_time != otherCourse.course_end_time 
-                        and not(course.course_start_time > otherCourse.course_start_time and course.course_start_time < otherCourse.course_end_time) and  
-                        not(course.course_end_time > otherCourse.course_start_time and course.course_end_time < otherCourse.course_end_time)):
+                        if (not time_conflict(course, otherCourse)):
                             count+= 1
                     if(count == len(tue)):
                         tue.append(course)
                     else:
+                        message = "Could not add "+course.course_mnemonic+" "+course.course_catalog_nbr+" due to time conflict with "+otherCourse.course_mnemonic+" "+otherCourse.course_catalog_nbr+"."
+                        if message not in error_messages:
+                            error_messages.add(message)
                         course.course_added_to_schedule.remove(request.user)
-                        course.course_added_to_cart.remove(request.user)
+                        #course.course_added_to_cart.remove(request.user)
                         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
                 else:
                     tue.append(course)
@@ -228,15 +232,16 @@ def calendar(request):
                 if len(wed) != 0:
                     count = 0
                     for otherCourse in wed:
-                        if (course.course_start_time != otherCourse.course_start_time and course.course_end_time != otherCourse.course_end_time 
-                        and not(course.course_start_time > otherCourse.course_start_time and course.course_start_time < otherCourse.course_end_time) and  
-                        not(course.course_end_time > otherCourse.course_start_time and course.course_end_time < otherCourse.course_end_time)):
+                        if (not time_conflict(course, otherCourse)):
                             count+= 1
                     if(count == len(wed)):
                         wed.append(course)
                     else:
+                        message = "Could not add "+course.course_mnemonic+" "+course.course_catalog_nbr+" due to time conflict with "+otherCourse.course_mnemonic+" "+otherCourse.course_catalog_nbr+"."
+                        if message not in error_messages:
+                            error_messages.add(message)
                         course.course_added_to_schedule.remove(request.user)
-                        course.course_added_to_cart.remove(request.user)
+                        #course.course_added_to_cart.remove(request.user)
                         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
                 else:
                     wed.append(course)
@@ -244,15 +249,16 @@ def calendar(request):
                 if len(thu) != 0:
                     count = 0
                     for otherCourse in thu:
-                        if (course.course_start_time != otherCourse.course_start_time and course.course_end_time != otherCourse.course_end_time 
-                        and not(course.course_start_time > otherCourse.course_start_time and course.course_start_time < otherCourse.course_end_time) and  
-                        not(course.course_end_time > otherCourse.course_start_time and course.course_end_time < otherCourse.course_end_time)):
+                        if (not time_conflict(course, otherCourse)):
                             count+= 1
                     if(count == len(thu)):
                         thu.append(course)
                     else:
+                        message = "Could not add "+course.course_mnemonic+" "+course.course_catalog_nbr+" due to time conflict with "+otherCourse.course_mnemonic+" "+otherCourse.course_catalog_nbr+"."
+                        if message not in error_messages:
+                            error_messages.add(message)
                         course.course_added_to_schedule.remove(request.user)
-                        course.course_added_to_cart.remove(request.user)
+                        #course.course_added_to_cart.remove(request.user)
                         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
                 else:
                     thu.append(course)
@@ -260,19 +266,23 @@ def calendar(request):
                 if len(fri) != 0:
                     count = 0
                     for otherCourse in fri:
-                        if (course.course_start_time != otherCourse.course_start_time and course.course_end_time != otherCourse.course_end_time 
-                        and not(course.course_start_time > otherCourse.course_start_time and course.course_start_time < otherCourse.course_end_time) and  
-                        not(course.course_end_time > otherCourse.course_start_time and course.course_end_time < otherCourse.course_end_time)):
+                        if (not time_conflict(course, otherCourse)):
                             count+= 1
                     if(count == len(fri)):
                         fri.append(course)
                     else:
+                        message = "Could not add "+course.course_mnemonic+" "+course.course_catalog_nbr+" due to time conflict with "+otherCourse.course_mnemonic+" "+otherCourse.course_catalog_nbr+"."
+                        if message not in error_messages:
+                            error_messages.add(message)
                         course.course_added_to_schedule.remove(request.user)
-                        course.course_added_to_cart.remove(request.user)
+                        #course.course_added_to_cart.remove(request.user)
                         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
                 else:
                     fri.append(course)
         week = [mon, tue, wed, thu, fri]
+        for msg in error_messages:
+            messages.error(request, msg)
+            print(msg)
         for i in range(len(week)):
             week[i] = sorted(week[i], key=lambda obj: obj.start_tag)
         week_dict = {"MON" : week[0], "TUE" : week[1], "WED" : week[2], "THU" : week[3], "FRI" : week[4]} 
@@ -281,7 +291,13 @@ def calendar(request):
         response = redirect('/accounts/login')
         return response
 
-
+def time_conflict(course1, course2):
+        if (course1.course_start_time != course2.course_start_time and course1.course_end_time != course2.course_end_time 
+            and not(course1.course_start_time > course2.course_start_time and course1.course_start_time < course2.course_end_time) and  
+            not(course1.course_end_time > course2.course_start_time and course1.course_end_time < course2.course_end_time)):
+            return False
+        else:
+            return True
 """
 def calendar(request):
     # template = loader.get_template('myapp/calendar.html')
