@@ -146,6 +146,7 @@ def addToCart(request, pk):
         course = get_object_or_404(Course, pk = pk)
         course.course_added_to_cart.add(request.user)
         course.save()
+        messages.success(request,"Successfully added "+course.course_mnemonic+" "+course.course_catalog_nbr+" to your cart!")
         return shoppingCart(request)
     else:
         response = redirect('/accounts/login')
@@ -156,6 +157,7 @@ def removeFromCart(request, pk):
     course = get_object_or_404(Course, pk = pk)
     course.course_added_to_cart.remove(request.user)
     course.save()
+    messages.success(request,"Successfully removed "+course.course_mnemonic+" "+course.course_catalog_nbr+" from your cart!")
     return shoppingCart(request)
 
 def addToSchedule(request, pk):
@@ -163,6 +165,7 @@ def addToSchedule(request, pk):
         course = get_object_or_404(Course, pk = pk)
         course.course_added_to_schedule.add(request.user)
         course.save()
+        messages.success(request,"Successfully added "+course.course_mnemonic+" "+course.course_catalog_nbr+" to your schedule!")
         return calendar(request)
     else:
         response = redirect('/accounts/login')
@@ -173,6 +176,7 @@ def removeFromSchedule(request, pk):
         course = get_object_or_404(Course, pk = pk)
         course.course_added_to_schedule.remove(request.user)
         course.save()
+        messages.success(request,"Successfully removed "+course.course_mnemonic+" "+course.course_catalog_nbr+" from your schedule!")
         return calendar(request)
     else:
         response = redirect('/accounts/login')
@@ -207,7 +211,6 @@ def calendar(request):
                         if message not in error_messages:
                             error_messages.add(message)
                         course.course_added_to_schedule.remove(request.user)
-                        #course.course_added_to_cart.remove(request.user)
                         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
                 else:
                     mon.append(course)
@@ -224,7 +227,6 @@ def calendar(request):
                         if message not in error_messages:
                             error_messages.add(message)
                         course.course_added_to_schedule.remove(request.user)
-                        #course.course_added_to_cart.remove(request.user)
                         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
                 else:
                     tue.append(course)
@@ -241,7 +243,6 @@ def calendar(request):
                         if message not in error_messages:
                             error_messages.add(message)
                         course.course_added_to_schedule.remove(request.user)
-                        #course.course_added_to_cart.remove(request.user)
                         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
                 else:
                     wed.append(course)
@@ -258,7 +259,6 @@ def calendar(request):
                         if message not in error_messages:
                             error_messages.add(message)
                         course.course_added_to_schedule.remove(request.user)
-                        #course.course_added_to_cart.remove(request.user)
                         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
                 else:
                     thu.append(course)
