@@ -49,6 +49,7 @@ class CalendarObj():
         self.course_added_to_schedule = course.course_added_to_schedule
         self.course_added_to_cart = course.course_added_to_cart
         self.coursenum = ""
+        self.color = ""
         self.start_tag, self.end_tag = self.populate_tags() 
     
     def populate_tags(self):
@@ -133,6 +134,13 @@ def shoppingCart(request):
         courses_in_cart = []
         courses_in_cart = Course.objects.filter(course_added_to_cart = current_user)
         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
+        for cart_course in courses_in_cart:
+            for cal_course in courses_in_calendar:
+                if (cart_course not in courses_in_calendar):
+                    if time_conflict(cart_course, cal_course) and (cart_course != cal_course):
+                        cart_course.color = "#ff7770"
+                    else:
+                        cart_course.color = "#42d67b"
         return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart, 'courses_in_calendar': courses_in_calendar})
     else:
         response = redirect('/accounts/login')
@@ -163,9 +171,16 @@ def removeFromCart(request, pk):
 def addToSchedule(request, pk):
     if(request.user.is_authenticated):
         course = get_object_or_404(Course, pk = pk)
-        course.course_added_to_schedule.add(request.user)
-        course.save()
-        messages.success(request,"Successfully added "+course.course_mnemonic+" "+course.course_catalog_nbr+" to your schedule!")
+        courses_in_calendar = Course.objects.filter(course_added_to_schedule = request.user)
+        conflict = False
+        for cal_course in courses_in_calendar:
+            if time_conflict(course, cal_course):
+                conflict = True
+                break
+        if not conflict:
+            messages.success(request,"Successfully added "+course.course_mnemonic+" "+course.course_catalog_nbr+" to your schedule!")
+            course.course_added_to_schedule.add(request.user)
+            course.save()
         return calendar(request)
     else:
         response = redirect('/accounts/login')

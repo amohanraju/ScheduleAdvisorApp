@@ -41,7 +41,7 @@
             <td>{{course.course_mnemonic}} {{course.course_catalog_nbr}}</td>
             <td>{{course.course_subject}}</td>
             {% if course.course_start_time != "" %}
-              <td>{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td>
+              <td bgcolor="{{course.color}}">{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td>
             {% else %}
               <td>TBA</td>
             {% endif %}
