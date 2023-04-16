@@ -158,8 +158,6 @@ def shoppingCart(request):
         response = redirect('/accounts/login')
         return response
 
-
-
 def addToCart(request, pk):
     if(request.user.is_authenticated):  
         #https://www.youtube.com/watch?v=PXqRPqDjDgc
@@ -394,43 +392,3 @@ def time_conflict(course1, course2):
             return False
         else:
             return True
-
-"""
-def calendar(request):
-    # template = loader.get_template('myapp/calendar.html')
-    # return HttpResponse(template.render({}, request))
-
-    if(request.user.is_authenticated):  
-        current_user = request.user
-        courses_in_cart = Course.objects.filter(course_added_to_cart = current_user)
-        calendar_courses = []
-        seen_classes = set()
-        for i in range(len(courses_in_cart)):
-            course = courses_in_cart[i]
-            calendar_course = (CalendarObj(course))
-            if calendar_course.course_id not in seen_classes:
-                seen_classes.add(calendar_course.course_id)
-                calendar_course.coursenum = i
-            calendar_courses.append(calendar_course)
-        mon,tue,wed,thu,fri=[],[],[],[],[]
-        for course in calendar_courses:
-            if "Mo" in course.course_days_of_week:
-                mon.append(course)
-            if "Tu" in course.course_days_of_week:
-                tue.append(course)
-            if "We" in course.course_days_of_week:
-                wed.append(course)
-            if "Th" in course.course_days_of_week:
-                thu.append(course)
-            if "Fr" in course.course_days_of_week:
-                fri.append(course)
-        week = [mon, tue, wed, thu, fri]
-        for i in range(len(week)):
-            week[i] = sorted(week[i], key=lambda obj: obj.start_tag)
-        week_dict = {"MON" : week[0], "TUE" : week[1], "WED" : week[2], "THU" : week[3], "FRI" : week[4]} 
-        return render(request, 'myapp/calendar.html', {'week' : week_dict, 'schedule' : week})
-    else:
-        response = redirect('/accounts/login')
-        return response
-
-"""
