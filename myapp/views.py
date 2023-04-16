@@ -4,6 +4,7 @@ from django.template import loader
 from django.views import generic
 from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
+from myapp.models import Course, Schedule
 from django.urls import reverse
 from django.contrib import messages
 from myapp.models import Course
@@ -22,6 +23,11 @@ def courseforum_view(request):
 
 def profile(request):
     if request.user.is_authenticated:
+        if request.user.is_superuser:
+            schedules = Schedule.objects.all().filter(isRejected=False, status = False)
+            template = loader.get_template('myapp/adminHome.html')
+            return HttpResponse(template.render({'schedules':schedules}, request))
+        
         template = loader.get_template('myapp/profile.html')
         return HttpResponse(template.render({}, request))
     else:
@@ -212,6 +218,71 @@ def removeFromSchedule(request, pk):
     else:
         response = redirect('/accounts/login')
         return response
+    
+def createSchedule(request, pk):
+    if(request.method == 'POST'):
+
+        #https://docs.djangoproject.com/en/4.2/topics/db/queries/
+        #https://stackoverflow.com/questions/24963761/django-filtering-a-model-that-contains-a-field-that-stores-regex 
+
+        if(Schedule.objects.filter(author = request.user).exists()):
+            Schedule.objects.filter(author = request.user).delete() 
+
+        current_schedule = Schedule.objects.create(author = request.user)
+
+        #https://stackoverflow.com/questions/5481890/django-does-the-orm-support-the-sql-in-operator 
+        courses_in_schedule_to_add = Course.objects.filter(course_added_to_schedule__in= [request.user.id])
+        for curr_course in courses_in_schedule_to_add:
+            current_schedule.courses.add(curr_course)
+        current_schedule.save()    
+        
+        return calendar(request)
+
+
+    else: 
+        #Not trying to submit a course, should not go to this url
+        response = redirect('/accounts/login')
+        return response
+
+
+
+def approveSchedule(request):
+    #https://stackoverflow.com/questions/1746377/checking-for-content-in-django-request-post
+    #https://docs.djangoproject.com/en/4.2/ref/request-response/
+    if(request.user.is_authenticated and request.method == 'POST'): 
+        if('approved' in request.POST):
+            theSchedule = request.POST.get('scheduleID')
+            mySchedule = get_object_or_404(Schedule, id=theSchedule)
+            mySchedule.status = True 
+            mySchedule.save()
+        else:
+            #The approve button was not pressed so therefor it must have been rejected
+            theSchedule = request.POST.get('scheduleID')
+            mySchedule = get_object_or_404(Schedule, id=theSchedule)
+            mySchedule.isRejected = True
+            mySchedule.save()
+
+        schedules = Schedule.objects.all().filter(isRejected=False, status = False)
+        template = loader.get_template('myapp/adminHome.html')
+        return HttpResponse(template.render({'schedules':schedules}, request))
+
+    else:
+        response = redirect('/accounts/login')
+        return response
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def calendar(request):
     if(request.user.is_authenticated):  
@@ -305,8 +376,13 @@ def calendar(request):
         for i in range(len(week)):
             week[i] = sorted(week[i], key=lambda obj: obj.start_tag)
         week_dict = {"MON" : week[0], "TUE" : week[1], "WED" : week[2], "THU" : week[3], "FRI" : week[4]} 
+        #Logic for passing the schedule object thorugh
+        usersSchedule = None
+        if(Schedule.objects.filter(author = request.user).exists()):
+            usersSchedule = Schedule.objects.get(author = request.user)
         courseVar = 'course'
-        return render(request, 'myapp/calendar.html', {'week' : week_dict, 'schedule' : week, 'courses_in_calendar': courses_in_calendar, 'courseVar': courseVar})
+        return render(request, 'myapp/calendar.html', {'week' : week_dict, 'schedule' : week, 'courses_in_calendar': courses_in_calendar, 'usersSchedule' : usersSchedule, 'courseVar': courseVar})
+
     else:
         response = redirect('/accounts/login')
         return response
