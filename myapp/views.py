@@ -148,8 +148,6 @@ def shoppingCart(request):
         response = redirect('/accounts/login')
         return response
 
-
-
 def addToCart(request, pk):
     if(request.user.is_authenticated):  
         #https://www.youtube.com/watch?v=PXqRPqDjDgc
