@@ -6,6 +6,8 @@ from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
 from myapp.models import Course, Schedule
 from django.urls import reverse
+from django.contrib import messages
+from myapp.models import Course
 import requests
 import datetime
 import re
@@ -15,6 +17,9 @@ class IndexView(generic.ListView):
     template_name='myapp/index.html'
     def get_queryset(self):
         return
+
+def courseforum_view(request):
+    return redirect('https://thecourseforum.com/')
 
 def profile(request):
     if request.user.is_authenticated:
@@ -53,6 +58,7 @@ class CalendarObj():
         self.course_added_to_schedule = course.course_added_to_schedule
         self.course_added_to_cart = course.course_added_to_cart
         self.coursenum = ""
+        self.conflict = True
         self.start_tag, self.end_tag = self.populate_tags() 
     
     def populate_tags(self):
@@ -72,6 +78,7 @@ def api_data(request):
                 'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % class_dept
         classes = requests.get(url).json()
         #return HttpResponse(url)
+        #courses_in_calendar = Course.objects.filter(course_added_to_schedule = request.user)
         class_objects = []
         if(len(classes) > 0):
             for course in classes:
@@ -104,7 +111,6 @@ def api_data(request):
                         course_end_time = end,
 
                     )
-
                     course_model_instance.save()
                     course_model_instance.course_added_to_cart.set([])
                     course_model_instance.save()
@@ -137,7 +143,17 @@ def shoppingCart(request):
         courses_in_cart = []
         courses_in_cart = Course.objects.filter(course_added_to_cart = current_user)
         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
-        return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart, 'courses_in_calendar': courses_in_calendar})
+        courseVar = 'course'
+        for cart_course in courses_in_cart:
+            for cal_course in courses_in_calendar:
+                if (cart_course not in courses_in_calendar):
+                    if time_conflict(cart_course, cal_course) and (cart_course != cal_course):
+                        #cart_course.color = "#ff7770"
+                        cart_course.conflict = True
+                    #else:
+                        #cart_course.conflict = False
+                        #cart_course.color = "#42d67b"
+        return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart, 'courses_in_calendar': courses_in_calendar, 'courseVar': courseVar})
     else:
         response = redirect('/accounts/login')
         return response
@@ -150,6 +166,7 @@ def addToCart(request, pk):
         course = get_object_or_404(Course, pk = pk)
         course.course_added_to_cart.add(request.user)
         course.save()
+        messages.success(request,"Successfully added "+course.course_mnemonic+" "+course.course_catalog_nbr+" to your cart!")
         return shoppingCart(request)
     else:
         response = redirect('/accounts/login')
@@ -160,14 +177,33 @@ def removeFromCart(request, pk):
     course = get_object_or_404(Course, pk = pk)
     course.course_added_to_cart.remove(request.user)
     course.save()
+    messages.success(request,"Successfully removed "+course.course_mnemonic+" "+course.course_catalog_nbr+" from your cart!")
     return shoppingCart(request)
 
 def addToSchedule(request, pk):
     if(request.user.is_authenticated):
         course = get_object_or_404(Course, pk = pk)
-        course.course_added_to_schedule.add(request.user)
-        course.save()
-        return calendar(request)
+        courses_in_calendar = Course.objects.filter(course_added_to_schedule = request.user)
+        conflict = False
+        conflict_course = course
+        for cal_course in courses_in_calendar:
+            if time_conflict(course, cal_course):
+                conflict = True
+                conflict_course = cal_course
+                break
+        if not conflict:
+            messages.success(request,"Successfully added "+course.course_mnemonic+" "+course.course_catalog_nbr+" to your schedule!")
+            course.course_added_to_schedule.add(request.user)
+            course.save()
+            return calendar(request)
+        else:
+            messages.error(request, "Could not add "+course.course_mnemonic+" "+course.course_catalog_nbr+" due to time conflict with "+
+                           conflict_course.course_mnemonic+" "+conflict_course.course_catalog_nbr+".")
+            #return HttpResponseRedirect('accounts/profile/shopping_cart')
+            #return render(request, 'myapp/shoppingCart.html')
+            #return redirect('.')
+            #return HttpResponseRedirect(request.path_info)
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         response = redirect('/accounts/login')
         return response
@@ -177,6 +213,7 @@ def removeFromSchedule(request, pk):
         course = get_object_or_404(Course, pk = pk)
         course.course_added_to_schedule.remove(request.user)
         course.save()
+        messages.success(request,"Successfully removed "+course.course_mnemonic+" "+course.course_catalog_nbr+" from your schedule!")
         return calendar(request)
     else:
         response = redirect('/accounts/login')
@@ -261,20 +298,18 @@ def calendar(request):
                 calendar_course.coursenum = i
             calendar_courses.append(calendar_course)
         mon,tue,wed,thu,fri=[],[],[],[],[]
+        error_messages = set()
         for course in calendar_courses:
             if "Mo" in course.course_days_of_week:
                 if len(mon) != 0:
                     count = 0
                     for otherCourse in mon:
-                        if (course.course_start_time != otherCourse.course_start_time and course.course_end_time != otherCourse.course_end_time 
-                        and not(course.course_start_time > otherCourse.course_start_time and course.course_start_time < otherCourse.course_end_time) and  
-                        not(course.course_end_time > otherCourse.course_start_time and course.course_end_time < otherCourse.course_end_time)):
+                        if (not time_conflict(course, otherCourse)):
                             count+= 1
                     if(count == len(mon)):
                         mon.append(course)
                     else:
                         course.course_added_to_schedule.remove(request.user)
-                        course.course_added_to_cart.remove(request.user)
                         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
                 else:
                     mon.append(course)
@@ -282,15 +317,12 @@ def calendar(request):
                 if len(tue) != 0:
                     count = 0
                     for otherCourse in tue:
-                        if (course.course_start_time != otherCourse.course_start_time and course.course_end_time != otherCourse.course_end_time 
-                        and not(course.course_start_time > otherCourse.course_start_time and course.course_start_time < otherCourse.course_end_time) and  
-                        not(course.course_end_time > otherCourse.course_start_time and course.course_end_time < otherCourse.course_end_time)):
+                        if (not time_conflict(course, otherCourse)):
                             count+= 1
                     if(count == len(tue)):
                         tue.append(course)
                     else:
                         course.course_added_to_schedule.remove(request.user)
-                        course.course_added_to_cart.remove(request.user)
                         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
                 else:
                     tue.append(course)
@@ -298,15 +330,12 @@ def calendar(request):
                 if len(wed) != 0:
                     count = 0
                     for otherCourse in wed:
-                        if (course.course_start_time != otherCourse.course_start_time and course.course_end_time != otherCourse.course_end_time 
-                        and not(course.course_start_time > otherCourse.course_start_time and course.course_start_time < otherCourse.course_end_time) and  
-                        not(course.course_end_time > otherCourse.course_start_time and course.course_end_time < otherCourse.course_end_time)):
+                        if (not time_conflict(course, otherCourse)):
                             count+= 1
                     if(count == len(wed)):
                         wed.append(course)
                     else:
                         course.course_added_to_schedule.remove(request.user)
-                        course.course_added_to_cart.remove(request.user)
                         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
                 else:
                     wed.append(course)
@@ -314,15 +343,12 @@ def calendar(request):
                 if len(thu) != 0:
                     count = 0
                     for otherCourse in thu:
-                        if (course.course_start_time != otherCourse.course_start_time and course.course_end_time != otherCourse.course_end_time 
-                        and not(course.course_start_time > otherCourse.course_start_time and course.course_start_time < otherCourse.course_end_time) and  
-                        not(course.course_end_time > otherCourse.course_start_time and course.course_end_time < otherCourse.course_end_time)):
+                        if (not time_conflict(course, otherCourse)):
                             count+= 1
                     if(count == len(thu)):
                         thu.append(course)
                     else:
                         course.course_added_to_schedule.remove(request.user)
-                        course.course_added_to_cart.remove(request.user)
                         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
                 else:
                     thu.append(course)
@@ -330,33 +356,44 @@ def calendar(request):
                 if len(fri) != 0:
                     count = 0
                     for otherCourse in fri:
-                        if (course.course_start_time != otherCourse.course_start_time and course.course_end_time != otherCourse.course_end_time 
-                        and not(course.course_start_time > otherCourse.course_start_time and course.course_start_time < otherCourse.course_end_time) and  
-                        not(course.course_end_time > otherCourse.course_start_time and course.course_end_time < otherCourse.course_end_time)):
+                        if (not time_conflict(course, otherCourse)):
                             count+= 1
                     if(count == len(fri)):
                         fri.append(course)
                     else:
+                        # message = "Could not add "+course.course_mnemonic+" "+course.course_catalog_nbr+" due to time conflict with "+otherCourse.course_mnemonic+" "+otherCourse.course_catalog_nbr+"."
+                        # if message not in error_messages:
+                        #     error_messages.add(message)
                         course.course_added_to_schedule.remove(request.user)
-                        course.course_added_to_cart.remove(request.user)
+                        #course.course_added_to_cart.remove(request.user)
                         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
                 else:
                     fri.append(course)
         week = [mon, tue, wed, thu, fri]
+        # for msg in error_messages:
+        #     messages.error(request, msg)
+        #     print(msg)
         for i in range(len(week)):
             week[i] = sorted(week[i], key=lambda obj: obj.start_tag)
         week_dict = {"MON" : week[0], "TUE" : week[1], "WED" : week[2], "THU" : week[3], "FRI" : week[4]} 
-
         #Logic for passing the schedule object thorugh
         usersSchedule = None
         if(Schedule.objects.filter(author = request.user).exists()):
             usersSchedule = Schedule.objects.get(author = request.user)
+        courseVar = 'course'
+        return render(request, 'myapp/calendar.html', {'week' : week_dict, 'schedule' : week, 'courses_in_calendar': courses_in_calendar, 'usersSchedule' : usersSchedule, 'courseVar': courseVar})
 
-        return render(request, 'myapp/calendar.html', {'week' : week_dict, 'schedule' : week, 'courses_in_calendar': courses_in_calendar, 'usersSchedule' : usersSchedule})
     else:
         response = redirect('/accounts/login')
         return response
 
+def time_conflict(course1, course2):
+        if (course1.course_start_time != course2.course_start_time and course1.course_end_time != course2.course_end_time 
+            and not(course1.course_start_time > course2.course_start_time and course1.course_start_time < course2.course_end_time) and  
+            not(course1.course_end_time > course2.course_start_time and course1.course_end_time < course2.course_end_time)):
+            return False
+        else:
+            return True
 
 """
 def calendar(request):

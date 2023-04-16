@@ -3,13 +3,15 @@
 <html>
   {% extends 'myapp/base.html'%}
   {% load static %}
-  
+  <head>
 
   {% block content %}
   {% block cal_css %}
   <link rel="stylesheet" href="{% static 'myapp/calendar_style.css' %}">
   {% endblock %}
+  </head>
   <body class = "bannerWhiteGradient">
+    
   <table style="width:100%">
     <!-- For debugging: {% for day in schedule %}
       {% for courses in day %}
@@ -23,7 +25,9 @@
     {% endfor %} -->
   </table>
     <div id ="SignedInScreenInnerContainer" class = "container">
+    <center>
     <h1>Calendar</h1>
+  </center>
     <div class="calendar">
       <div class="timeline">
         <div class="spacer"></div>
@@ -138,9 +142,15 @@
       </div>
     </div>
     <br>
+  <center>
     <h1>Courses in Calendar:</h1>
-
-    <table style="width:100%">
+  </center>
+    <table style="border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);">
       <tr class = "title-row">
         <div class = "row"> 
           <div class = "col col-lg-2 col-md-2 col-sm-2"> 
@@ -166,7 +176,15 @@
       <hr>
   {% for course in courses_in_calendar %}
       <tr class = "main-rows">
-          <td>{{course.course_mnemonic}} {{course.course_catalog_nbr}}</td>
+          <td>{{course.course_mnemonic}} {{course.course_catalog_nbr}}
+            <button id="course{{ forloop.counter }}" class = "btn btn-primary" onclick = "redirectToExternal('{{courseVar}}', '{{ course.course_mnemonic }}', '{{ course.course_catalog_nbr}}')"> Course Forum Link</button>
+              <script>
+                function redirectToExternal(var1, var2, var3) {
+                    var url = "https://thecourseforum.com/" + var1 + "/" + var2 + "/" + var3;
+                    window.location.href = url;
+                }
+            </script>
+          </td>
           <td>{{course.course_subject}}</td>
           <td>{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td>
           <td>{{course.course_instructor}}</td>

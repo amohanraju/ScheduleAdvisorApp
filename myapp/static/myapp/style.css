@@ -7,22 +7,22 @@
 #navLogo{
     font-weight: 750;
     letter-spacing: 2.5px;
-    border-bottom: 2px solid #1e6db3;
     
 }
 table{
     border: 1.5px solid black;
     border-collapse: collapse;
   }
-.title-row th{
-    border: 1.5px solid black;
-    border-collapse: collapse;
+.title-row{
+    background-color: #009879;
+    color: #ffffff;
     text-align: center;
 }
 .main-rows td{
     border: 1.5px solid black;
     border-collapse: collapse; 
     text-align: center;
+    padding: 12px 15px;
 }
 .buttonShoppingCartandBrowseCourses {
     margin-bottom: 6px;
@@ -47,7 +47,6 @@ table{
     background-repeat: no-repeat;
     background-attachment: fixed;
 }
-
 
 
 #splashPageText{
@@ -84,7 +83,6 @@ table{
 #splashPageButton{
     width: 100%;
 }
-
 #rontundaImage{
     height: 5vh;
     padding-right: 7.5px ;
@@ -147,4 +145,8 @@ table{
 .buttonShoppingCartandBrowseCourses{
     margin-top: 10px;
 }
-
+.login{
+    font-family: Montserrat; 
+    text-align: center;
+    font-size: 20px;
+}
