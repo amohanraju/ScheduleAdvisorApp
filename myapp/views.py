@@ -49,7 +49,7 @@ class CalendarObj():
         self.course_added_to_schedule = course.course_added_to_schedule
         self.course_added_to_cart = course.course_added_to_cart
         self.coursenum = ""
-        self.color = ""
+        self.conflict = True
         self.start_tag, self.end_tag = self.populate_tags() 
     
     def populate_tags(self):
@@ -138,9 +138,11 @@ def shoppingCart(request):
             for cal_course in courses_in_calendar:
                 if (cart_course not in courses_in_calendar):
                     if time_conflict(cart_course, cal_course) and (cart_course != cal_course):
-                        cart_course.color = "#ff7770"
-                    else:
-                        cart_course.color = "#42d67b"
+                        #cart_course.color = "#ff7770"
+                        cart_course.conflict = True
+                    #else:
+                        #cart_course.conflict = False
+                        #cart_course.color = "#42d67b"
         return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart, 'courses_in_calendar': courses_in_calendar})
     else:
         response = redirect('/accounts/login')
@@ -173,15 +175,25 @@ def addToSchedule(request, pk):
         course = get_object_or_404(Course, pk = pk)
         courses_in_calendar = Course.objects.filter(course_added_to_schedule = request.user)
         conflict = False
+        conflict_course = course
         for cal_course in courses_in_calendar:
             if time_conflict(course, cal_course):
                 conflict = True
+                conflict_course = cal_course
                 break
         if not conflict:
             messages.success(request,"Successfully added "+course.course_mnemonic+" "+course.course_catalog_nbr+" to your schedule!")
             course.course_added_to_schedule.add(request.user)
             course.save()
-        return calendar(request)
+            return calendar(request)
+        else:
+            messages.error(request, "Could not add "+course.course_mnemonic+" "+course.course_catalog_nbr+" due to time conflict with "+
+                           conflict_course.course_mnemonic+" "+conflict_course.course_catalog_nbr+".")
+            #return HttpResponseRedirect('accounts/profile/shopping_cart')
+            #return render(request, 'myapp/shoppingCart.html')
+            #return redirect('.')
+            #return HttpResponseRedirect(request.path_info)
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         response = redirect('/accounts/login')
         return response
@@ -222,9 +234,6 @@ def calendar(request):
                     if(count == len(mon)):
                         mon.append(course)
                     else:
-                        message = "Could not add "+course.course_mnemonic+" "+course.course_catalog_nbr+" due to time conflict with "+otherCourse.course_mnemonic+" "+otherCourse.course_catalog_nbr+"."
-                        if message not in error_messages:
-                            error_messages.add(message)
                         course.course_added_to_schedule.remove(request.user)
                         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
                 else:
@@ -238,9 +247,6 @@ def calendar(request):
                     if(count == len(tue)):
                         tue.append(course)
                     else:
-                        message = "Could not add "+course.course_mnemonic+" "+course.course_catalog_nbr+" due to time conflict with "+otherCourse.course_mnemonic+" "+otherCourse.course_catalog_nbr+"."
-                        if message not in error_messages:
-                            error_messages.add(message)
                         course.course_added_to_schedule.remove(request.user)
                         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
                 else:
@@ -254,9 +260,6 @@ def calendar(request):
                     if(count == len(wed)):
                         wed.append(course)
                     else:
-                        message = "Could not add "+course.course_mnemonic+" "+course.course_catalog_nbr+" due to time conflict with "+otherCourse.course_mnemonic+" "+otherCourse.course_catalog_nbr+"."
-                        if message not in error_messages:
-                            error_messages.add(message)
                         course.course_added_to_schedule.remove(request.user)
                         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
                 else:
@@ -270,9 +273,6 @@ def calendar(request):
                     if(count == len(thu)):
                         thu.append(course)
                     else:
-                        message = "Could not add "+course.course_mnemonic+" "+course.course_catalog_nbr+" due to time conflict with "+otherCourse.course_mnemonic+" "+otherCourse.course_catalog_nbr+"."
-                        if message not in error_messages:
-                            error_messages.add(message)
                         course.course_added_to_schedule.remove(request.user)
                         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
                 else:
@@ -286,18 +286,18 @@ def calendar(request):
                     if(count == len(fri)):
                         fri.append(course)
                     else:
-                        message = "Could not add "+course.course_mnemonic+" "+course.course_catalog_nbr+" due to time conflict with "+otherCourse.course_mnemonic+" "+otherCourse.course_catalog_nbr+"."
-                        if message not in error_messages:
-                            error_messages.add(message)
+                        # message = "Could not add "+course.course_mnemonic+" "+course.course_catalog_nbr+" due to time conflict with "+otherCourse.course_mnemonic+" "+otherCourse.course_catalog_nbr+"."
+                        # if message not in error_messages:
+                        #     error_messages.add(message)
                         course.course_added_to_schedule.remove(request.user)
                         #course.course_added_to_cart.remove(request.user)
                         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
                 else:
                     fri.append(course)
         week = [mon, tue, wed, thu, fri]
-        for msg in error_messages:
-            messages.error(request, msg)
-            print(msg)
+        # for msg in error_messages:
+        #     messages.error(request, msg)
+        #     print(msg)
         for i in range(len(week)):
             week[i] = sorted(week[i], key=lambda obj: obj.start_tag)
         week_dict = {"MON" : week[0], "TUE" : week[1], "WED" : week[2], "THU" : week[3], "FRI" : week[4]} 

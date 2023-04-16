@@ -1,14 +1,20 @@
+<!DOCTYPE html>
+<html>
 {% extends 'myapp/base.html'%}
+{% load static%}
 
 {% block content %}
-
-{% load static%}
 
 <body class = "bannerWhiteGradient">
   <div id ="SignedInScreenInnerContainer" class = "container">
     <h1>Shopping Cart</h1>
-
-
+    <form method="POST" action="{% url 'shoppingCart' %}">
+      {% csrf_token %}
+    <div class="form-check form-switch">
+      <input class="form-check-input" type="checkbox" id="time_switch" name="time_btn" value="On" onchange="updateColor()">
+      <label class="form-check-label" for="time_switch">Show Time Agreements/Disagreements</label>
+    </div>
+    </form>
     <table style="width:100%">
         <tr class = "title-row">
           <div class = "row"> 
@@ -41,7 +47,8 @@
             <td>{{course.course_mnemonic}} {{course.course_catalog_nbr}}</td>
             <td>{{course.course_subject}}</td>
             {% if course.course_start_time != "" %}
-              <td bgcolor="{{course.color}}">{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td>
+              <!-- <td bgcolor="{{course.color}}">{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td> -->
+              <td id="time_box" class="times" title = "{{course.conflict}}">{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td>
             {% else %}
               <td>TBA</td>
             {% endif %}
@@ -85,8 +92,34 @@
             {% endif %}
         </tr>
     {% endfor %}
+    <script>
+      function updateColor() {
+        var isChecked = document.getElementById("time_switch").checked;
+        var box = document.getElementById("time_box");
+        var boxes = document.getElementsByClassName("times");
+        console.log(boxes);
+        for (var i = 0; i < boxes.length; i++){
+          if (isChecked == true) {
+              conflict = boxes[i].getAttribute("title");
+              if(conflict == "True"){
+                boxes[i].style.backgroundColor = "#ff7770";//red
+              }
+              if(conflict == "False") {
+                boxes[i].style.backgroundColor = "#42d67b";//green
+              }
+              // if(conflict == "") {
+              //   boxes[i].style.backgroundColor = "#3250a8";//blue
+              // }
+          }
+          else{
+            boxes[i].style.backgroundColor = "";
+            //boxes[i].style.backgroundColor = "#f5ef42";//yellow
+          }
+        }
+      }
+    </script>
     </table>
   </div>
 </body>
 {% endblock %}
-
+</html>
