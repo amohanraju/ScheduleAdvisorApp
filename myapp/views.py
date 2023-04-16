@@ -17,6 +17,9 @@ class IndexView(generic.ListView):
     def get_queryset(self):
         return
 
+def courseforum_view(request):
+    return redirect('https://thecourseforum.com/')
+
 def profile(request):
     if request.user.is_authenticated:
         template = loader.get_template('myapp/profile.html')
@@ -134,6 +137,7 @@ def shoppingCart(request):
         courses_in_cart = []
         courses_in_cart = Course.objects.filter(course_added_to_cart = current_user)
         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
+        courseVar = 'course'
         for cart_course in courses_in_cart:
             for cal_course in courses_in_calendar:
                 if (cart_course not in courses_in_calendar):
@@ -143,7 +147,7 @@ def shoppingCart(request):
                     #else:
                         #cart_course.conflict = False
                         #cart_course.color = "#42d67b"
-        return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart, 'courses_in_calendar': courses_in_calendar})
+        return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart, 'courses_in_calendar': courses_in_calendar, 'courseVar': courseVar})
     else:
         response = redirect('/accounts/login')
         return response
@@ -301,7 +305,8 @@ def calendar(request):
         for i in range(len(week)):
             week[i] = sorted(week[i], key=lambda obj: obj.start_tag)
         week_dict = {"MON" : week[0], "TUE" : week[1], "WED" : week[2], "THU" : week[3], "FRI" : week[4]} 
-        return render(request, 'myapp/calendar.html', {'week' : week_dict, 'schedule' : week, 'courses_in_calendar': courses_in_calendar})
+        courseVar = 'course'
+        return render(request, 'myapp/calendar.html', {'week' : week_dict, 'schedule' : week, 'courses_in_calendar': courses_in_calendar, 'courseVar': courseVar})
     else:
         response = redirect('/accounts/login')
         return response
@@ -313,6 +318,7 @@ def time_conflict(course1, course2):
             return False
         else:
             return True
+
 """
 def calendar(request):
     # template = loader.get_template('myapp/calendar.html')

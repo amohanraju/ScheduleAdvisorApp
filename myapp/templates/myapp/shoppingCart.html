@@ -7,16 +7,28 @@
 
 <body class = "bannerWhiteGradient">
   <div id ="SignedInScreenInnerContainer" class = "container">
+     <center>
     <h1>Shopping Cart</h1>
     <form method="POST" action="{% url 'shoppingCart' %}">
       {% csrf_token %}
-    <div class="form-check form-switch">
+    <div class="form-check form-switch" style = "left: 50%; position: absolute;-ms-transform: translateX(-50%);
+    transform: translateX(-50%);">
       <input class="form-check-input" type="checkbox" id="time_switch" name="time_btn" value="On" onchange="updateColor()">
       <label class="form-check-label" for="time_switch">Show Time Agreements/Disagreements</label>
     </div>
     </form>
-    <table style="width:100%">
-        <tr class = "title-row">
+  </center>
+  <br>
+    <table style="border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);">
+        <thead>
+        <tr class = "title-row" style = "background-color: black;
+        color: #ffffff;
+        text-align: center;">
           <div class = "row"> 
             <div class = "col col-lg-2 col-md-2 col-sm-2"> 
               <th>Course Number</th>
@@ -41,10 +53,20 @@
             </div>
           </div>
         </tr>
+      </thead>
         <hr>
     {% for course in courses_in_cart %}
-        <tr class = "main-rows">
-            <td>{{course.course_mnemonic}} {{course.course_catalog_nbr}}</td>
+        <tbody>
+        <tr class = "main-rows" style = "border-bottom: 1px solid #dddddd;background-color: light gray;">
+            <td>{{course.course_mnemonic}} {{course.course_catalog_nbr}}
+              <button id="course{{ forloop.counter }}" class = "btn btn-primary" onclick = "redirectToExternal('{{courseVar}}', '{{ course.course_mnemonic }}', '{{ course.course_catalog_nbr}}')"> Course Forum Link</button>
+              <script>
+                function redirectToExternal(var1, var2, var3) {
+                    var url = "https://thecourseforum.com/" + var1 + "/" + var2 + "/" + var3;
+                    window.location.href = url;
+                }
+            </script>
+            </td>
             <td>{{course.course_subject}}</td>
             {% if course.course_start_time != "" %}
               <!-- <td bgcolor="{{course.color}}">{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td> -->
@@ -91,6 +113,7 @@
             </td>
             {% endif %}
         </tr>
+      </tbody>
     {% endfor %}
     <script>
       function updateColor() {
