@@ -4,6 +4,7 @@ from django.template import loader
 from django.views import generic
 from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
+from myapp.models import Course, Schedule
 from django.urls import reverse
 from django.contrib import messages
 from myapp.models import Course
@@ -17,8 +18,16 @@ class IndexView(generic.ListView):
     def get_queryset(self):
         return
 
+def courseforum_view(request):
+    return redirect('https://thecourseforum.com/')
+
 def profile(request):
     if request.user.is_authenticated:
+        if request.user.is_superuser:
+            schedules = Schedule.objects.all().filter(isRejected=False, status = False)
+            template = loader.get_template('myapp/adminHome.html')
+            return HttpResponse(template.render({'schedules':schedules}, request))
+        
         template = loader.get_template('myapp/profile.html')
         return HttpResponse(template.render({}, request))
     else:
@@ -134,6 +143,7 @@ def shoppingCart(request):
         courses_in_cart = []
         courses_in_cart = Course.objects.filter(course_added_to_cart = current_user)
         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
+        courseVar = 'course'
         for cart_course in courses_in_cart:
             for cal_course in courses_in_calendar:
                 if (cart_course not in courses_in_calendar):
@@ -143,7 +153,7 @@ def shoppingCart(request):
                     #else:
                         #cart_course.conflict = False
                         #cart_course.color = "#42d67b"
-        return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart, 'courses_in_calendar': courses_in_calendar})
+        return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart, 'courses_in_calendar': courses_in_calendar, 'courseVar': courseVar})
     else:
         response = redirect('/accounts/login')
         return response
@@ -206,6 +216,71 @@ def removeFromSchedule(request, pk):
     else:
         response = redirect('/accounts/login')
         return response
+    
+def createSchedule(request, pk):
+    if(request.method == 'POST'):
+
+        #https://docs.djangoproject.com/en/4.2/topics/db/queries/
+        #https://stackoverflow.com/questions/24963761/django-filtering-a-model-that-contains-a-field-that-stores-regex 
+
+        if(Schedule.objects.filter(author = request.user).exists()):
+            Schedule.objects.filter(author = request.user).delete() 
+
+        current_schedule = Schedule.objects.create(author = request.user)
+
+        #https://stackoverflow.com/questions/5481890/django-does-the-orm-support-the-sql-in-operator 
+        courses_in_schedule_to_add = Course.objects.filter(course_added_to_schedule__in= [request.user.id])
+        for curr_course in courses_in_schedule_to_add:
+            current_schedule.courses.add(curr_course)
+        current_schedule.save()    
+        
+        return calendar(request)
+
+
+    else: 
+        #Not trying to submit a course, should not go to this url
+        response = redirect('/accounts/login')
+        return response
+
+
+
+def approveSchedule(request):
+    #https://stackoverflow.com/questions/1746377/checking-for-content-in-django-request-post
+    #https://docs.djangoproject.com/en/4.2/ref/request-response/
+    if(request.user.is_authenticated and request.method == 'POST'): 
+        if('approved' in request.POST):
+            theSchedule = request.POST.get('scheduleID')
+            mySchedule = get_object_or_404(Schedule, id=theSchedule)
+            mySchedule.status = True 
+            mySchedule.save()
+        else:
+            #The approve button was not pressed so therefor it must have been rejected
+            theSchedule = request.POST.get('scheduleID')
+            mySchedule = get_object_or_404(Schedule, id=theSchedule)
+            mySchedule.isRejected = True
+            mySchedule.save()
+
+        schedules = Schedule.objects.all().filter(isRejected=False, status = False)
+        template = loader.get_template('myapp/adminHome.html')
+        return HttpResponse(template.render({'schedules':schedules}, request))
+
+    else:
+        response = redirect('/accounts/login')
+        return response
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def calendar(request):
     if(request.user.is_authenticated):  
@@ -299,7 +374,13 @@ def calendar(request):
         for i in range(len(week)):
             week[i] = sorted(week[i], key=lambda obj: obj.start_tag)
         week_dict = {"MON" : week[0], "TUE" : week[1], "WED" : week[2], "THU" : week[3], "FRI" : week[4]} 
-        return render(request, 'myapp/calendar.html', {'week' : week_dict, 'schedule' : week, 'courses_in_calendar': courses_in_calendar})
+        #Logic for passing the schedule object thorugh
+        usersSchedule = None
+        if(Schedule.objects.filter(author = request.user).exists()):
+            usersSchedule = Schedule.objects.get(author = request.user)
+        courseVar = 'course'
+        return render(request, 'myapp/calendar.html', {'week' : week_dict, 'schedule' : week, 'courses_in_calendar': courses_in_calendar, 'usersSchedule' : usersSchedule, 'courseVar': courseVar})
+
     else:
         response = redirect('/accounts/login')
         return response
@@ -311,6 +392,7 @@ def time_conflict(course1, course2):
             return False
         else:
             return True
+
 """
 def calendar(request):
     # template = loader.get_template('myapp/calendar.html')
