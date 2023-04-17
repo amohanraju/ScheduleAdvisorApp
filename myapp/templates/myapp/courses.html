@@ -115,6 +115,46 @@
         <select id ="mnemonic">
           <option value=""> Subject </option>
         </select>
+        {% with classes=classes_json|safe %}
+        <select id="number">
+        </select>
+
+        <script>
+          const classes = JSON.parse('{{ classes_json|safe }}');
+
+          // Get references to the select tags
+          const subjectSelect = document.getElementById('classes');
+          const numberSelect = document.getElementById('number');
+
+          // Define a function to generate options for the number select tag
+          function generateNumberOptions() {
+            // Get the selected subject
+            const selectedSubject = subjectSelect.value;
+            
+            // Clear the number select tag
+            numberSelect.innerHTML = '<option value="">Catalog Number</option>';
+            
+            // Filter the classes array based on the selected subject
+            const filteredClasses = classes.filter(c => c.subject === selectedSubject);
+            
+            // Generate option tags for the number select tag
+            filteredClasses.forEach(c => {
+              const option = document.createElement('option');
+              option.value = c.catalog_nbr;
+              option.textContent = c.catalog_nbr;
+              numberSelect.appendChild(option);
+            });
+          }
+          
+          // Call the generateNumberOptions function initially
+          generateNumberOptions();
+
+          // Add an event listener to the subject select tag
+          subjectSelect.addEventListener('change', () => {
+            generateNumberOptions();
+          });
+        </script>
+    {% endwith %}
     <button type="submit">Submit</button>
   </form>
 </center>
