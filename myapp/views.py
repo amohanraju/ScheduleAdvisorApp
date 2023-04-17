@@ -388,12 +388,12 @@ def time_conflict(course1, course2):
         #     return False
         # else:
         #     return True
+        if (course1.course_start_time == '' or course1.course_end_time == '' or course2.course_start_time == '' or course2.course_end_time == ''):
+            return False
         c1_start = datetime.strptime(course1.course_start_time, "%I:%M %p")
         c1_end = datetime.strptime(course1.course_end_time, "%I:%M %p")
         c2_start = datetime.strptime(course2.course_start_time, "%I:%M %p")
         c2_end = datetime.strptime(course2.course_end_time, "%I:%M %p")
-        if (c1_start == '' or c1_end == '' or c2_start == '' or c2_end == ''):
-            return False
         if (c1_start == c2_start):
             return True
         if (c1_end == c2_end):
