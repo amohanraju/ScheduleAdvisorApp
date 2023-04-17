@@ -29,3 +29,4 @@ jobs:
     - name: Run Tests
       run: |
         python manage.py test --keepdb
+        python manage.py makemigrations --merge
