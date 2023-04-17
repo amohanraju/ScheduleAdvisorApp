@@ -188,13 +188,13 @@ def addToSchedule(request, pk):
         courses_in_calendar = Course.objects.filter(course_added_to_schedule = request.user)
         conflict = False
         conflict_course = course
-        dummy = courses_in_calendar[2]
-        print(course.course_days_of_week+' '+course.course_start_time+' - '+course.course_end_time)
-        print(dummy.course_start_time+' - '+dummy.course_end_time)
-        print(course.course_start_time <= dummy.course_end_time)
-        print(dummy.course_start_time <= course.course_end_time)
-        print(type(course.course_start_time))
-        print(dtime_conflict(course,dummy))
+        # dummy = courses_in_calendar[2]
+        # print(course.course_days_of_week+' '+course.course_start_time+' - '+course.course_end_time)
+        # print(dummy.course_start_time+' - '+dummy.course_end_time)
+        # print(course.course_start_time <= dummy.course_end_time)
+        # print(dummy.course_start_time <= course.course_end_time)
+        # print(type(course.course_start_time))
+        # print(dtime_conflict(course,dummy))
         for cal_course in courses_in_calendar:
             print(cal_course.course_subject)
             if dtime_conflict(course, cal_course):
@@ -225,7 +225,7 @@ def removeFromSchedule(request, pk):
         course.course_added_to_schedule.remove(request.user)
         course.save()
         messages.success(request,"Successfully removed "+course.course_mnemonic+" "+course.course_catalog_nbr+" from your schedule!")
-        return calendar(request)
+        return shoppingCart(request)
     else:
         response = redirect('/accounts/login')
         return response
@@ -407,7 +407,7 @@ def time_conflict(course1, course2):
 def dtime_conflict(course1, course2):
     days = ["Mo", "Tu", "We", "Th", "Fr"]
     for day in days:
-        if day in course1.course_days_of_week and day in course2.course_days_of_the_week and time_conflict(course1, course2):
+        if day in course1.course_days_of_week and day in course2.course_days_of_week and time_conflict(course1, course2):
             return True
     return False
 
