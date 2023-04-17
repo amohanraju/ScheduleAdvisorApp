@@ -127,13 +127,15 @@ def api_data(request):
                         specific_course.save()
                 class_objects.append(specific_course)
         #primary_keys = [instance.pk for instance in class_objects]
-
+        classes_json = json.dumps(classes)
         finalList = zip(class_objects, classes)
-        context = {'content': finalList}
+        context = {'content': finalList, 'classes_json': classes_json}
         return render(request, 'myapp/courses.html', context)
         #return render(request, 'myapp/courses.html', {'classes' : classes, 'primary_keys' : primary_keys})
     else:
-        return HttpResponseRedirect('accounts/profile/browse_courses')
+        classes_json = json.dumps(classes)
+        context = {'classes_json': classes_json}
+        return render(request, 'myapp/courses.html', context)
     
 
 def shoppingCart(request):
