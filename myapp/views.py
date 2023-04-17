@@ -85,10 +85,10 @@ def api_data(request):
                 if(not Course.objects.filter(course_id= course.get("crse_id"), course_section= course.get("class_section"), course_catalog_nbr=course.get("catalog_nbr"), course_instructor = course.get("instructors")[0]['name']).exists()):
                     start = course.get("meetings")[0]['start_time']
                     if (start != ""):
-                        start = datetime.datetime.strptime(course.get("meetings")[0]['start_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p')
+                        start = datetime.strptime(course.get("meetings")[0]['start_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p')
                     end = course.get("meetings")[0]['end_time']
                     if (end != ""):
-                        end = datetime.datetime.strptime(course.get("meetings")[0]['end_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p')
+                        end = datetime.strptime(course.get("meetings")[0]['end_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p')
                     course_model_instance = Course(
                         course_id = course.get('crse_id'),
                         course_section = course.get('class_section'),
