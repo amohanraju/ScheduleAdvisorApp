@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.contrib import messages
 from myapp.models import Course
 import requests
-import datetime
+from datetime import datetime
 import re
 import json
 
@@ -58,7 +58,7 @@ class CalendarObj():
         self.course_added_to_schedule = course.course_added_to_schedule
         self.course_added_to_cart = course.course_added_to_cart
         self.coursenum = ""
-        self.conflict = True
+        self.conflict = False
         self.start_tag, self.end_tag = self.populate_tags() 
     
     def populate_tags(self):
@@ -184,9 +184,18 @@ def addToSchedule(request, pk):
         courses_in_calendar = Course.objects.filter(course_added_to_schedule = request.user)
         conflict = False
         conflict_course = course
+        dummy = courses_in_calendar[2]
+        print(course.course_days_of_week+' '+course.course_start_time+' - '+course.course_end_time)
+        print(dummy.course_start_time+' - '+dummy.course_end_time)
+        print(course.course_start_time <= dummy.course_end_time)
+        print(dummy.course_start_time <= course.course_end_time)
+        print(type(course.course_start_time))
+        print(dtime_conflict(course,dummy))
         for cal_course in courses_in_calendar:
-            if time_conflict(course, cal_course):
+            print(cal_course.course_subject)
+            if dtime_conflict(course, cal_course):
                 conflict = True
+                print(cal_course.course_subject)
                 conflict_course = cal_course
                 break
         if not conflict:
@@ -267,18 +276,6 @@ def approveSchedule(request):
     else:
         response = redirect('/accounts/login')
         return response
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -368,9 +365,6 @@ def calendar(request):
                 else:
                     fri.append(course)
         week = [mon, tue, wed, thu, fri]
-        # for msg in error_messages:
-        #     messages.error(request, msg)
-        #     print(msg)
         for i in range(len(week)):
             week[i] = sorted(week[i], key=lambda obj: obj.start_tag)
         week_dict = {"MON" : week[0], "TUE" : week[1], "WED" : week[2], "THU" : week[3], "FRI" : week[4]} 
@@ -386,9 +380,44 @@ def calendar(request):
         return response
 
 def time_conflict(course1, course2):
-        if (course1.course_start_time != course2.course_start_time and course1.course_end_time != course2.course_end_time 
-            and not(course1.course_start_time > course2.course_start_time and course1.course_start_time < course2.course_end_time) and  
-            not(course1.course_end_time > course2.course_start_time and course1.course_end_time < course2.course_end_time)):
-            return False
-        else:
+        # if (course1.course_start_time != course2.course_start_time and course1.course_end_time != course2.course_end_time 
+        #     and not(course1.course_start_time > course2.course_start_time and course1.course_start_time < course2.course_end_time) and  
+        #     not(course1.course_end_time > course2.course_start_time and course1.course_end_time < course2.course_end_time)):
+        #     return False
+        # else:
+        #     return True
+        c1_start = datetime.strptime(course1.course_start_time, "%I:%M %p")
+        c1_end = datetime.strptime(course1.course_end_time, "%I:%M %p")
+        c2_start = datetime.strptime(course2.course_start_time, "%I:%M %p")
+        c2_end = datetime.strptime(course2.course_end_time, "%I:%M %p")
+        if (c1_start == c2_start):
             return True
+        if (c1_end == c2_end):
+            return True
+        if (c1_start <= c2_end and c2_start <= c1_end):
+            return True
+        return False
+
+def dtime_conflict(course1, course2):
+    days = ["Mo", "Tu", "We", "Th", "Fr"]
+    for day in days:
+        if day in course1.course_days_of_week and day in course2.course_days_of_the_week and time_conflict(course1, course2):
+            return True
+    return False
+
+    # if "Mo" in course1.course_days_of_week and "Mo" in course2.course_days_of_week:
+    #     if time_conflict(course1, course2):
+    #         return True
+    # if "Tu" in course1.course_days_of_week and "Tu" in course2.course_days_of_week:
+    #     if time_conflict(course1, course2):
+    #         return True
+    # if "We" in course1.course_days_of_week and "We" in course2.course_days_of_week:
+    #     if time_conflict(course1, course2):
+    #         return True
+    # if "Th" in course1.course_days_of_week and "Th" in course2.course_days_of_week:
+    #     if time_conflict(course1, course2):
+    #         return True
+    # if "Fr" in course1.course_days_of_week and "Fr" in course2.course_days_of_week:
+    #     if time_conflict(course1, course2):
+    #         return True
+    # return False
