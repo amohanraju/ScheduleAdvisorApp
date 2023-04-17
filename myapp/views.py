@@ -72,11 +72,11 @@ class CalendarObj():
         return start_tag, end_tag
 
 def api_data(request):
+    class_dept = request.GET.get("classes")
+    url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
+            'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % class_dept
+    classes = requests.get(url).json()
     if request.method == 'GET':
-        class_dept = request.GET.get("classes")
-        url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
-                'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % class_dept
-        classes = requests.get(url).json()
         #return HttpResponse(url)
         #courses_in_calendar = Course.objects.filter(course_added_to_schedule = request.user)
         class_objects = []
@@ -128,6 +128,7 @@ def api_data(request):
                 class_objects.append(specific_course)
         #primary_keys = [instance.pk for instance in class_objects]
         classes_json = json.dumps(classes)
+        print(classes)
         finalList = zip(class_objects, classes)
         context = {'content': finalList, 'classes_json': classes_json}
         return render(request, 'myapp/courses.html', context)
@@ -135,6 +136,7 @@ def api_data(request):
     else:
         classes_json = json.dumps(classes)
         context = {'classes_json': classes_json}
+        print(classes_json)
         return render(request, 'myapp/courses.html', context)
     
 
