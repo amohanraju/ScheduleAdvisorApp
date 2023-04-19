@@ -120,12 +120,12 @@
     <script>
       function updateColor() {
         var isChecked = document.getElementById("time_switch").checked;
-        var box = document.getElementById("time_box");
         var boxes = document.getElementsByClassName("times");
         console.log(boxes);
         for (var i = 0; i < boxes.length; i++){
           if (isChecked == true) {
               conflict = boxes[i].getAttribute("title");
+              console.log(boxes[i], conflict);
               if(conflict == "True"){
                 boxes[i].style.backgroundColor = "#ff7770";//red
               }

@@ -117,22 +117,45 @@
         </select>
         {% with classes=classes_json|safe %}
         <select id="number">
+          <option value="">Catalog Number</option>
         </select>
-
+        <select id="professor">
+          <option value="">Professor</option>;
+        </select>
+        <select id="day">
+          <option value="">Days</option>
+        </select>
+        <select id = "time-range">
+          <option value="">Time</option>
+        </select>
+        
         <script>
           const classes = JSON.parse('{{ classes_json|safe }}');
-
+          const startTimes = new Set();
+          const endTimes = new Set();
+          const professors = new Set();
+          const days = new Set();
           // Get references to the select tags
           const subjectSelect = document.getElementById('classes');
           const numberSelect = document.getElementById('number');
+          const professorSelect = document.getElementById('professor');
+          const daySelect = document.getElementById('day');
+          const timeSelect = document.getElementById('time');
+          classes.forEach((item) => startTimes.add(item.meetings[1].start_time));
+          classes.forEach((item) => endTimes.add(item.meetings[2].end_time));
+          classes.forEach((item) => professors.add(item.instructors[0].name));
+          classes.forEach((item) => days.add(item.meetings[0].days));
 
           // Define a function to generate options for the number select tag
-          function generateNumberOptions() {
+          function generateOptions() {
             // Get the selected subject
             const selectedSubject = subjectSelect.value;
             
             // Clear the number select tag
             numberSelect.innerHTML = '<option value="">Catalog Number</option>';
+            professorSelect.innerHTML = '<option value="">Professor</option>';
+            daySelect.innerHTML = '<option value="">Days</option>';
+            timeSelect.innerHTML = '<option value="">Time</option>';
             
             // Filter the classes array based on the selected subject
             const filteredClasses = classes.filter(c => c.subject === selectedSubject);
@@ -172,7 +195,7 @@
           <th>Type and Amount of Credits</th>
         </div>
         <div class = "col col-lg-3 col-md-3 col-sm-3"> 
-          <th>Time</th>
+          <th>Days & Time</th>
         </div>
         <div class = "col col-lg-3 col-md-3 col-sm-3"> 
           <th>Professor</th>
@@ -196,7 +219,7 @@
             </div>
             <div class = "col col-lg-3 col-md-3 col-sm-3">
               {% if class_object.course_start_time != "" %}
-                <td>{{class_object.course_start_time}} - {{class_object.course_end_time}}</td>
+                <td>{{class_object.course_days_of_week}} {{class_object.course_start_time}} - {{class_object.course_end_time}}</td>
               {% else %}
               <td>TBA</td>
               {% endif %}

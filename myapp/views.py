@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.contrib import messages
 from myapp.models import Course
 import requests
-import datetime
+from datetime import datetime
 import re
 import json
 
@@ -58,7 +58,7 @@ class CalendarObj():
         self.course_added_to_schedule = course.course_added_to_schedule
         self.course_added_to_cart = course.course_added_to_cart
         self.coursenum = ""
-        self.conflict = True
+        self.conflict = False
         self.start_tag, self.end_tag = self.populate_tags() 
     
     def populate_tags(self):
@@ -72,11 +72,11 @@ class CalendarObj():
         return start_tag, end_tag
 
 def api_data(request):
+    class_dept = request.GET.get("classes")
+    url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
+            'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % class_dept
+    classes = requests.get(url).json()
     if request.method == 'GET':
-        class_dept = request.GET.get("classes")
-        url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
-                'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % class_dept
-        classes = requests.get(url).json()
         #return HttpResponse(url)
         #courses_in_calendar = Course.objects.filter(course_added_to_schedule = request.user)
         class_objects = []
@@ -85,10 +85,10 @@ def api_data(request):
                 if(not Course.objects.filter(course_id= course.get("crse_id"), course_section= course.get("class_section"), course_catalog_nbr=course.get("catalog_nbr"), course_instructor = course.get("instructors")[0]['name']).exists()):
                     start = course.get("meetings")[0]['start_time']
                     if (start != ""):
-                        start = datetime.datetime.strptime(course.get("meetings")[0]['start_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p')
+                        start = datetime.strptime(course.get("meetings")[0]['start_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p')
                     end = course.get("meetings")[0]['end_time']
                     if (end != ""):
-                        end = datetime.datetime.strptime(course.get("meetings")[0]['end_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p')
+                        end = datetime.strptime(course.get("meetings")[0]['end_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p')
                     course_model_instance = Course(
                         course_id = course.get('crse_id'),
                         course_section = course.get('class_section'),
@@ -128,6 +128,7 @@ def api_data(request):
                 class_objects.append(specific_course)
         #primary_keys = [instance.pk for instance in class_objects]
         classes_json = json.dumps(classes)
+        print(classes)
         finalList = zip(class_objects, classes)
         context = {'content': finalList, 'classes_json': classes_json}
         return render(request, 'myapp/courses.html', context)
@@ -135,6 +136,7 @@ def api_data(request):
     else:
         classes_json = json.dumps(classes)
         context = {'classes_json': classes_json}
+        print(classes_json)
         return render(request, 'myapp/courses.html', context)
     
 
@@ -186,9 +188,18 @@ def addToSchedule(request, pk):
         courses_in_calendar = Course.objects.filter(course_added_to_schedule = request.user)
         conflict = False
         conflict_course = course
+        # dummy = courses_in_calendar[2]
+        # print(course.course_days_of_week+' '+course.course_start_time+' - '+course.course_end_time)
+        # print(dummy.course_start_time+' - '+dummy.course_end_time)
+        # print(course.course_start_time <= dummy.course_end_time)
+        # print(dummy.course_start_time <= course.course_end_time)
+        # print(type(course.course_start_time))
+        # print(dtime_conflict(course,dummy))
         for cal_course in courses_in_calendar:
-            if time_conflict(course, cal_course):
+            print(cal_course.course_subject)
+            if dtime_conflict(course, cal_course):
                 conflict = True
+                print(cal_course.course_subject)
                 conflict_course = cal_course
                 break
         if not conflict:
@@ -214,7 +225,7 @@ def removeFromSchedule(request, pk):
         course.course_added_to_schedule.remove(request.user)
         course.save()
         messages.success(request,"Successfully removed "+course.course_mnemonic+" "+course.course_catalog_nbr+" from your schedule!")
-        return calendar(request)
+        return shoppingCart(request)
     else:
         response = redirect('/accounts/login')
         return response
@@ -269,18 +280,6 @@ def approveSchedule(request):
     else:
         response = redirect('/accounts/login')
         return response
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -370,9 +369,6 @@ def calendar(request):
                 else:
                     fri.append(course)
         week = [mon, tue, wed, thu, fri]
-        # for msg in error_messages:
-        #     messages.error(request, msg)
-        #     print(msg)
         for i in range(len(week)):
             week[i] = sorted(week[i], key=lambda obj: obj.start_tag)
         week_dict = {"MON" : week[0], "TUE" : week[1], "WED" : week[2], "THU" : week[3], "FRI" : week[4]} 
@@ -388,9 +384,46 @@ def calendar(request):
         return response
 
 def time_conflict(course1, course2):
-        if (course1.course_start_time != course2.course_start_time and course1.course_end_time != course2.course_end_time 
-            and not(course1.course_start_time > course2.course_start_time and course1.course_start_time < course2.course_end_time) and  
-            not(course1.course_end_time > course2.course_start_time and course1.course_end_time < course2.course_end_time)):
+        # if (course1.course_start_time != course2.course_start_time and course1.course_end_time != course2.course_end_time 
+        #     and not(course1.course_start_time > course2.course_start_time and course1.course_start_time < course2.course_end_time) and  
+        #     not(course1.course_end_time > course2.course_start_time and course1.course_end_time < course2.course_end_time)):
+        #     return False
+        # else:
+        #     return True
+        if (course1.course_start_time == '' or course1.course_end_time == '' or course2.course_start_time == '' or course2.course_end_time == ''):
             return False
-        else:
+        c1_start = datetime.strptime(course1.course_start_time, "%I:%M %p")
+        c1_end = datetime.strptime(course1.course_end_time, "%I:%M %p")
+        c2_start = datetime.strptime(course2.course_start_time, "%I:%M %p")
+        c2_end = datetime.strptime(course2.course_end_time, "%I:%M %p")
+        if (c1_start == c2_start):
             return True
+        if (c1_end == c2_end):
+            return True
+        if (c1_start <= c2_end and c2_start <= c1_end):
+            return True
+        return False
+
+def dtime_conflict(course1, course2):
+    days = ["Mo", "Tu", "We", "Th", "Fr"]
+    for day in days:
+        if day in course1.course_days_of_week and day in course2.course_days_of_week and time_conflict(course1, course2):
+            return True
+    return False
+
+    # if "Mo" in course1.course_days_of_week and "Mo" in course2.course_days_of_week:
+    #     if time_conflict(course1, course2):
+    #         return True
+    # if "Tu" in course1.course_days_of_week and "Tu" in course2.course_days_of_week:
+    #     if time_conflict(course1, course2):
+    #         return True
+    # if "We" in course1.course_days_of_week and "We" in course2.course_days_of_week:
+    #     if time_conflict(course1, course2):
+    #         return True
+    # if "Th" in course1.course_days_of_week and "Th" in course2.course_days_of_week:
+    #     if time_conflict(course1, course2):
+    #         return True
+    # if "Fr" in course1.course_days_of_week and "Fr" in course2.course_days_of_week:
+    #     if time_conflict(course1, course2):
+    #         return True
+    # return False
