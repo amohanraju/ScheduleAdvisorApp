@@ -5,21 +5,49 @@
 {% load static%}
 
 {% block content %}
-
+<script>
+  function updateColor() {
+    var isChecked = document.getElementById("time_switch").checked;
+    var boxes = document.getElementsByClassName("times");
+    //console.log(boxes);
+    for (var i = 0; i < boxes.length; i++){
+      if (isChecked == true) {
+          conflict = boxes[i].getAttribute("title");
+          in_cal = boxes[i].getAttribute("name");
+          console.log(boxes[i], conflict);
+          if(conflict == "True"){
+            boxes[i].style.backgroundColor = "#ff7770";//red
+          }
+          if((conflict == "False" || conflict == "") && in_cal == "False") {
+            boxes[i].style.backgroundColor = "#42d67b";//green
+          }
+          // if(conflict == "") {
+          //   boxes[i].style.backgroundColor = "#3250a8";//blue
+          // }
+      }
+      else{
+        boxes[i].style.backgroundColor = "";
+        //boxes[i].style.backgroundColor = "#f5ef42";//yellow
+      }
+    }
+  }
+</script>
 <body class = "bannerWhiteGradient">
   <div id ="SignedInScreenInnerContainer" class = "container">
-     <center>
+    <center>
     <h1>Shopping Cart</h1>
+    {% if courses_in_calendar|length >= 1 and courses_in_cart|length != courses_in_calendar|length %}
     <form method="POST" action="{% url 'shoppingCart' %}">
       {% csrf_token %}
     <div class="form-check form-switch" style = "left: 50%; position: absolute;-ms-transform: translateX(-50%);
     transform: translateX(-50%);">
       <input class="form-check-input" type="checkbox" id="time_switch" name="time_btn" value="On" onchange="updateColor()">
-      <label class="form-check-label" for="time_switch">Show Time Agreements/Disagreements</label>
+      <label class="form-check-label" for="time_switch">Show Time Agreements/Disagreements with Calendar</label>
     </div>
     </form>
+    <br>
+    {% endif %}
   </center>
-  <br>
   {% if courses_in_cart|length == 0 %}
     <br>
     <center><h4>You have no courses in your Cart</h4></center>
@@ -77,7 +105,7 @@
             <td>{{course.course_subject}}</td>
             {% if course.course_start_time != "" %}
               <!-- <td bgcolor="{{course.color}}">{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td> -->
-              <td id="time_box" class="times" title = "{{course.conflict}}">{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td>
+              <td id="time_box" class="times" title = "{{course.conflict}}" name = "{{course.in_calendar}}">{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td>
             {% else %}
               <td>TBA</td>
             {% endif %}
@@ -122,32 +150,6 @@
         </tr>
       </tbody>
     {% endfor %}
-    <script>
-      function updateColor() {
-        var isChecked = document.getElementById("time_switch").checked;
-        var boxes = document.getElementsByClassName("times");
-        console.log(boxes);
-        for (var i = 0; i < boxes.length; i++){
-          if (isChecked == true) {
-              conflict = boxes[i].getAttribute("title");
-              console.log(boxes[i], conflict);
-              if(conflict == "True"){
-                boxes[i].style.backgroundColor = "#ff7770";//red
-              }
-              if(conflict == "False") {
-                boxes[i].style.backgroundColor = "#42d67b";//green
-              }
-              // if(conflict == "") {
-              //   boxes[i].style.backgroundColor = "#3250a8";//blue
-              // }
-          }
-          else{
-            boxes[i].style.backgroundColor = "";
-            //boxes[i].style.backgroundColor = "#f5ef42";//yellow
-          }
-        }
-      }
-    </script>
     </table>
     {% endif %}
   </div>

@@ -60,7 +60,8 @@ class CalendarObj():
         self.coursenum = ""
         self.conflict = False
         self.start_tag, self.end_tag = self.populate_tags()
-        self.short_class = self.populate_time() 
+        self.short_class = self.populate_time()
+        self.in_calendar = False
     
     def populate_tags(self):
         start_tag = str(self.course_start_time)[0:2] + "_" + str(self.course_start_time)[3:5]
@@ -169,8 +170,12 @@ def shoppingCart(request):
             cart_course.course_enrollment_availability = re.sub("[^0-9]", "", cart_course.course_enrollment_availability)
             for cal_course in courses_in_calendar:
                 if (cart_course not in courses_in_calendar):
-                    if time_conflict(cart_course, cal_course) and (cart_course != cal_course):
+                    cart_course.in_calendar = False
+                    if dtime_conflict(cart_course, cal_course) and (cart_course != cal_course):
                         cart_course.conflict = True
+                        print(cart_course.course_subject+" conflicts with "+cal_course.course_subject)
+                else:
+                    cart_course.in_calendar = True
         return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart, 'courses_in_calendar': courses_in_calendar, 'courseVar': courseVar})
     else:
         response = redirect('/accounts/login')
@@ -409,8 +414,8 @@ def time_conflict(course1, course2):
         return False
 
 def dtime_conflict(course1, course2):
-    days = ["Mo", "Tu", "We", "Th", "Fr"]
-    for day in days:
+    week = ["Mo", "Tu", "We", "Th", "Fr"]
+    for day in week:
         if day in course1.course_days_of_week and day in course2.course_days_of_week and time_conflict(course1, course2):
             return True
     return False
