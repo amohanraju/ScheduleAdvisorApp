@@ -201,11 +201,15 @@
           <th>Professor</th>
         </div>
         <div class = "col col-lg-3 col-md-3 col-sm-3"> 
+          <th>Availability</th>
+        </div>
+        <div class = "col col-lg-3 col-md-3 col-sm-3"> 
           <th>Add Class</th>
         </div>
       </div>
     </tr>
-    {% for class_object, class in content %}
+    
+    {% for class_object, class in classes %}
     <tr class = "main-rows">
         <div class = "row"> 
             <div class = "col col-lg-3 col-md-3 col-sm-3"> 
@@ -221,11 +225,14 @@
               {% if class_object.course_start_time != "" %}
                 <td>{{class_object.course_days_of_week}} {{class_object.course_start_time}} - {{class_object.course_end_time}}</td>
               {% else %}
-              <td>TBA</td>
+                <td>TBA</td>
               {% endif %}
             </div>
             <div class = "col col-lg-3 col-md-3 col-sm-3"> 
               <td>{{class.instructors.0.name}}</td>
+            </div>
+            <div class = "col col-lg-3 col-md-3 col-sm-3"> 
+              <td>{{class_object.course_enrollment_availability}}/{{class_object.course_size}}</td>
             </div>
         </div>
       <td>
@@ -238,7 +245,6 @@
             </svg>
           </button>
         </form>
-       
       </td>
     </tr>
     {% endfor %}
