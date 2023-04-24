@@ -58,8 +58,13 @@
           <div class="events">
             {% for class in courses %}
             <div class="event start-{{ class.start_tag }} end-{{ class.end_tag }} class-{{ class.coursenum }}">
-              <p class="title" style = "padding-bottom:2px;">{{class.course_mnemonic}} {{class.course_catalog_nbr}}</p>
-              <p class="time" style = "margin-bottom:1px;">{{class.course_start_time}} - {{class.course_end_time}}</p>
+              {% if class.short_class == False %}
+              <div class="title" style = "padding-bottom:2px;">{{class.course_mnemonic}} {{class.course_catalog_nbr}}</div>
+              <div class="time" style = "margin-bottom:1px; font-size:16px;">{{class.course_start_time}} - {{class.course_end_time}}</div>
+              {% else %}
+              <div class="title" style = "display:inline;">{{class.course_mnemonic}} {{class.course_catalog_nbr}}</div>
+              <div class="time" style = "margin-bottom:1px; font-size:10.5px; display:inline;">{{class.course_start_time}} - {{class.course_end_time}}</div>
+              {% endif %}
             </div>
             {% endfor %}
           </div>

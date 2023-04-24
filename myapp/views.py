@@ -59,7 +59,8 @@ class CalendarObj():
         self.course_added_to_cart = course.course_added_to_cart
         self.coursenum = ""
         self.conflict = False
-        self.start_tag, self.end_tag = self.populate_tags() 
+        self.start_tag, self.end_tag = self.populate_tags()
+        self.short_class = self.populate_time() 
     
     def populate_tags(self):
         start_tag = str(self.course_start_time)[0:2] + "_" + str(self.course_start_time)[3:5]
@@ -70,6 +71,18 @@ class CalendarObj():
             end_tag = end_tag[1:]
         
         return start_tag, end_tag
+    
+    def populate_time(self):
+        start = datetime.strptime(self.course_start_time, "%I:%M %p")
+        end = datetime.strptime(self.course_end_time, "%I:%M %p")
+        diff = end-start
+        mins = int(diff.total_seconds()/ 60)
+        # print(self.course_subject)
+        # print(mins)
+        if mins <= 50:
+            return True
+        else:
+            return False
 
 def api_data(request):
     class_dept = request.GET.get("classes")
@@ -189,18 +202,9 @@ def addToSchedule(request, pk):
         courses_in_calendar = Course.objects.filter(course_added_to_schedule = request.user)
         conflict = False
         conflict_course = course
-        # dummy = courses_in_calendar[2]
-        # print(course.course_days_of_week+' '+course.course_start_time+' - '+course.course_end_time)
-        # print(dummy.course_start_time+' - '+dummy.course_end_time)
-        # print(course.course_start_time <= dummy.course_end_time)
-        # print(dummy.course_start_time <= course.course_end_time)
-        # print(type(course.course_start_time))
-        # print(dtime_conflict(course,dummy))
         for cal_course in courses_in_calendar:
-            print(cal_course.course_subject)
             if dtime_conflict(course, cal_course):
                 conflict = True
-                print(cal_course.course_subject)
                 conflict_course = cal_course
                 break
         if not conflict:
@@ -298,7 +302,6 @@ def calendar(request):
                 calendar_course.coursenum = i
             calendar_courses.append(calendar_course)
         mon,tue,wed,thu,fri=[],[],[],[],[]
-        error_messages = set()
         for course in calendar_courses:
             if "Mo" in course.course_days_of_week:
                 if len(mon) != 0:
@@ -372,7 +375,7 @@ def calendar(request):
         week = [mon, tue, wed, thu, fri]
         for i in range(len(week)):
             week[i] = sorted(week[i], key=lambda obj: obj.start_tag)
-        week_dict = {"MON" : week[0], "TUE" : week[1], "WED" : week[2], "THU" : week[3], "FRI" : week[4]} 
+        week_dict = {"Monday" : week[0], "Tuesday" : week[1], "Wednesday" : week[2], "Thursday" : week[3], "Friday" : week[4]} 
         #Logic for passing the schedule object thorugh
         usersSchedule = None
         if(Schedule.objects.filter(author = request.user).exists()):
