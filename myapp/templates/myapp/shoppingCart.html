@@ -36,6 +36,7 @@
   <div id ="SignedInScreenInnerContainer" class = "container">
     <center>
     <h1>Shopping Cart</h1>
+    <hr>
     {% if courses_in_calendar|length >= 1 and courses_in_cart|length != courses_in_calendar|length %}
     <form method="POST" action="{% url 'shoppingCart' %}">
       {% csrf_token %}
@@ -50,7 +51,10 @@
   </center>
   {% if courses_in_cart|length == 0 %}
     <br>
-    <center><h4>You have no courses in your Cart</h4></center>
+    <center>
+      <h4>You have no courses in your Cart</h4>
+      <a href="/accounts/profile/browse_courses"><button class = "btn btn-lg btn-primary"> Add Courses To Cart</button></a>
+    </center>
     <br>
   {% else %}
     <table style="border-collapse: collapse;
