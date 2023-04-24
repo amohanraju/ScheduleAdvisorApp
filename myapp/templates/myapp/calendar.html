@@ -153,6 +153,11 @@
   <center>
     <h1>Courses in Calendar:</h1>
   </center>
+  {% if courses_in_calendar|length == 0 %}
+    <br>
+    <center><h4>You have no courses in your Calendar</h4></center>
+    <br>
+  {% else %}
     <table style="border-collapse: collapse;
     margin: 25px 0;
     font-size: 0.9em;
@@ -182,7 +187,7 @@
         </div>
       </tr>
       <hr>
-  {% for course in courses_in_calendar %}
+    {% for course in courses_in_calendar %}
       <tr class = "main-rows">
           <td>{{course.course_mnemonic}} {{course.course_catalog_nbr}}
             <button id="course{{ forloop.counter }}" class = "btn btn-primary" onclick = "redirectToExternal('{{courseVar}}', '{{ course.course_mnemonic }}', '{{ course.course_catalog_nbr}}')"> Course Forum Link</button>
@@ -210,8 +215,9 @@
               </form>
             </td>
       </tr>
-  {% endfor %}
+    {% endfor %}
   </table>
+  {% endif %}
   <center>
   <a href="/accounts/profile/shopping_cart"><button class = "btn btn-lg btn-primary"> Add More Courses To Calendar</button></a>
 </center>

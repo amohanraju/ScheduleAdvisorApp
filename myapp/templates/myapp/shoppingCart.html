@@ -20,6 +20,11 @@
     </form>
   </center>
   <br>
+  {% if courses_in_cart|length == 0 %}
+    <br>
+    <center><h4>You have no courses in your Cart</h4></center>
+    <br>
+  {% else %}
     <table style="border-collapse: collapse;
     margin: 25px 0;
     font-size: 0.9em;
@@ -144,6 +149,7 @@
       }
     </script>
     </table>
+    {% endif %}
   </div>
 </body>
 {% endblock %}
