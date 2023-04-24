@@ -1,7 +1,10 @@
 *{
     margin: 0;
     padding: 0;
-    font-family: sans-serif;
+    font-family: 'Montserrat';
+}
+h1,h2,h3,h4,h5,h6,button{
+    font-weight: bolder !important;
 }
 
 #navLogo{
@@ -134,7 +137,7 @@ table{
 .bannerWhiteGradient{
     width: 100%;
     height: 100vh;
-
+    
     display:table;
     background: linear-gradient( rgba(247, 247, 247, 0.700), rgba(247, 247, 247, 0.700) ), url('https://news.virginia.edu/sites/default/files/article_image/nau_gift_ss_header.jpg');
     background-position:center top;

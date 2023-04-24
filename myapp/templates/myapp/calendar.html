@@ -11,6 +11,16 @@
   <link rel="stylesheet" href="{% static 'myapp/calendar_style.css' %}">
   <script src="https://use.fontawesome.com/releases/v6.1.1/js/all.js"></script>
   {% endblock %}
+  <style>
+    h1,h2,h3,h4,h5,h6,button,table,div,p,td{
+      font-family: 'Montserrat';
+      font-display: swap;
+      src: url(https://fonts.gstatic.com/s/montserrat/v25/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCvr6Hw3aXpsog.woff2) format('woff2');
+    }
+    div,p,td{
+      font-weight: bolder !important;
+    }
+  </style>
   </head>
   
   <body class = "bannerWhiteGradient">
@@ -29,7 +39,7 @@
   </table>
     <div id ="SignedInScreenInnerContainer" class = "container">
     <center>
-    <h1>Calendar</h1>
+    <h1 style="font-weight: bolder;">Calendar</h1>
     <hr>
   </center>
     <div class="calendar">
@@ -60,11 +70,14 @@
             {% for class in courses %}
             <div class="event start-{{ class.start_tag }} end-{{ class.end_tag }} class-{{ class.coursenum }}">
               {% if class.short_class == False %}
-              <div class="title" style = "padding-bottom:2px;">{{class.course_mnemonic}} {{class.course_catalog_nbr}}</div>
-              <div class="time" style = "margin-bottom:1px; font-size:16px;">{{class.course_start_time}} - {{class.course_end_time}}</div>
+              <div class="title" style = "padding-bottom:2px;"><b>{{class.course_mnemonic}} {{class.course_catalog_nbr}}</b></div>
+              <div class="time" style = "margin-bottom:1px; font-size:16px;font-weight: 80px;">{{class.course_start_time}} - {{class.course_end_time}}</div>
               {% else %}
-              <div class="title" style = "display:inline;">{{class.course_mnemonic}} {{class.course_catalog_nbr}}</div>
-              <div class="time" style = "margin-bottom:1px; font-size:10.5px; display:inline;">{{class.course_start_time}} - {{class.course_end_time}}</div>
+              <div class="title" style = "display:inline;"><b>{{class.course_mnemonic}} {{class.course_catalog_nbr}}</b></div>
+              <div style="margin-left: 10px; margin-top:-5px; display:inline; position: absolute;">
+                <div class="time" style = "font-size:12px;">{{class.course_start_time}} - </div>
+                <div class="time" style = "font-size:12px;">{{class.course_end_time}}</div>
+              </div>
               {% endif %}
             </div>
             {% endfor %}
@@ -152,7 +165,7 @@
     </div>
     <br>
   <center>
-    <h1>Courses in Calendar:</h1>
+    <h1 style="font-weight: bolder;">Courses in Calendar:</h1>
   </center>
   {% if courses_in_calendar|length == 0 %}
     <br>
@@ -208,7 +221,7 @@
               <form method="POST" action="{% url 'removeFromSchedule' course.pk%}">
                 {% csrf_token %}
                 <input type="hidden" name="pk" value="{{ course.pk }}">
-                <button type="submit" class = "btn btn-danger buttonShoppingCartandBrowseCourses"> <strong>Drop Course</strong>
+                <button type="submit" class = "btn btn-danger buttonShoppingCartandBrowseCourses">Drop Course
                   <svg xmlns="https://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
                       <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
                     </svg>
@@ -226,24 +239,24 @@
   <br>
   <br>
   <center>
-  <h1>Submit Course Calender for Approval:</h1>
+  <h1 style="font-weight: bolder;">Submit Course Calender for Approval:</h1>
   <hr>
   <br>
   {% if usersSchedule is None %}
-    <h4>Status: Schedule Not Submitted <i class="fa-light fa-memo-circle-check" style="color: #07cf1f;"></i></h1>
+    <h4 style="font-weight: bold;">Status: Schedule Not Submitted <i class="fa-light fa-memo-circle-check" style="color: #07cf1f;"></i></h4>
   {% elif usersSchedule.isRejected%}
-    <h4>Status: Rejected By Advisor <i class="fa-regular fa-circle-xmark" style="color: #ec1349;"></i></h3>
+    <h4 style="font-weight: bold;">Status: Rejected By Advisor <i class="fa-regular fa-circle-xmark" style="color: #ec1349;"></i></h4>
   {% elif usersSchedule.status %}
-    <h4>Status: Approved By Advisor <i class="fa-solid fa-square-check" style="color: #46b458;"></i></h1>
+    <h4 style="font-weight: bold;">Status: Approved By Advisor <i class="fa-solid fa-square-check" style="color: #46b458;"></i></h4>
   {% else %}
-    <h4>Status: Pending(Waiting On Advisor)<i class="fa-regular fa-hourglass" style="color: #e0d900;"></i></h1>
+    <h4 style="font-weight: bold;">Status: Pending(Waiting On Advisor)<i class="fa-regular fa-hourglass" style="color: #e0d900;"></i></h4>
   {% endif %}
   <br>
   <hr>
   <form method="POST" action="{% url 'createSchedule' user.pk %}">
     {% csrf_token %}
     <input type="hidden" name="pk" value="{{user.pk}}">
-    <button type="submit" class = "btn btn-success buttonShoppingCartandBrowseCourses"> <strong>Submit Schedule to Advisor</strong>
+    <button type="submit" class = "btn btn-success buttonShoppingCartandBrowseCourses" style="font-weight: bold;">Submit Schedule to Advisor
       <svg xmlns="https://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
           <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
         </svg>

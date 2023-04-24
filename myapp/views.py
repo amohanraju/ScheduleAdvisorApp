@@ -23,10 +23,13 @@ def courseforum_view(request):
 
 def profile(request):
     if request.user.is_authenticated:
+        usersSchedule = None
+        if(Schedule.objects.filter(author = request.user).exists()):
+            usersSchedule = Schedule.objects.get(author = request.user)
         if request.user.is_superuser:
             schedules = Schedule.objects.all().filter(isRejected=False, status = False)
             template = loader.get_template('myapp/adminHome.html')
-            return HttpResponse(template.render({'schedules':schedules}, request))
+            return HttpResponse(template.render({'schedules':schedules, 'usersSchedule':usersSchedule}, request))
         
         template = loader.get_template('myapp/profile.html')
         return HttpResponse(template.render({}, request))

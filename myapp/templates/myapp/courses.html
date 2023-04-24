@@ -17,12 +17,26 @@
 
 {# Display django.contrib.messages as Bootstrap alerts #}
 {% bootstrap_messages %}
-
+<head>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@900&family=Montserrat:wght@200&family=Roboto:ital,wght@1,300&family=Sacramento&display=swap">
+  <link rel="stylesheet" href="{% static 'myapp/style.css' %}">
+  <style>
+    h1,h2,h3,h4,h5,h6,button,select,option,table,th,td{
+      font-weight: bolder !important;
+      font-family: 'Montserrat';
+      font-display: swap;
+      src: url(https://fonts.gstatic.com/s/montserrat/v25/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCvr6Hw3aXpsog.woff2) format('woff2');
+    }
+    .alert-messages {
+      font-weight: bolder !important;
+    }
+  </style>
+</head>
 <body class = "bannerWhiteGradient">
   <div id ="SignedInScreenInnerContainer" class = "container">
     <br>
     <center>
-    <h1>Browse Courses</h1>
+    <h1 id="">Browse Courses</h1>
     <hr>
       <form action="{% url 'api_data' %}" method="get">
           {% csrf_token %}

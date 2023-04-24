@@ -11,6 +11,20 @@
 {% bootstrap_css %}
 {% bootstrap_javascript %}
 
+<head>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@900&family=Montserrat:wght@200&family=Roboto:ital,wght@1,300&family=Sacramento&display=swap">
+  <link rel="stylesheet" href="{% static 'myapp/style.css' %}">
+  <style>
+    *{
+      font-family: 'Montserrat';
+      font-display: swap;
+      src: url(https://fonts.gstatic.com/s/montserrat/v25/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCvr6Hw3aXpsog.woff2) format('woff2');
+    }
+    h1,h2,h3,h4,h5,h6,button{
+      font-weight: bolder !important;
+    }
+  </style>
+</head>
   <body class = "bannerWhiteGradient" style = "text-align: center;">
     <div id ="SignedInScreenInnerContainer" class = "container">
       {% if user.is_superuser %}
