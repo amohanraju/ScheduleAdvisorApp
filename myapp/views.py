@@ -91,18 +91,6 @@ class CalendarObj():
 def api_data(request):
     class_dept = request.GET.get("classes")
     query = request.GET.get("query")
-    """
-    if query:
-        url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
-            'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % query
-        if not requests.get(url).json():
-             url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
-            'IScript_ClassSearch?institution=UVA01&term=1232&catalog_nbr=%s&page=1' % query
-    else:
-        url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
-            'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % class_dept
-    """
-    
     if query:
         url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
             'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % query.split()[0]
