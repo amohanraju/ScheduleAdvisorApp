@@ -47,21 +47,17 @@ class CourseView(generic.ListView):
     def get_queryset(self):
         return
     
-def create_admin(request):
-    if request.method == 'POST':
+def createAdmin(request):
+    if request.method == "POST":
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            # Create a new user with admin privileges
             user = form.save(commit=False)
-            user.is_staff = True
             user.is_superuser = True
             user.save()
-
-            # Redirect to a success page
-            return redirect('admin_created')
+            return redirect('login/?')
     else:
         form = UserCreationForm()
-    return render(request, 'create_admin.html', {'form': form})
+    return render(request, "myapp/createAdmin.html", {'form': form})
 
 class CalendarObj():
     def __init__(self, course):
