@@ -90,9 +90,15 @@ class CalendarObj():
 
 def api_data(request):
     class_dept = request.GET.get("classes")
-    url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
+    query = request.GET.get("query")
+    if query:
+        url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
+            'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % query
+    else:
+        url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
             'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % class_dept
     classes = requests.get(url).json()
+    print(query)
     if request.method == 'GET':
         #return HttpResponse(url)
         #courses_in_calendar = Course.objects.filter(course_added_to_schedule = request.user)
@@ -144,6 +150,8 @@ def api_data(request):
                         specific_course.save()
                 class_objects.append(specific_course)
         #primary_keys = [instance.pk for instance in class_objects]
+        filtered_classes = [c for c in classes if query.lower() in c.get("descr").lower()]
+
         classes_json = json.dumps(classes)
         finalList = zip(class_objects, classes)
         tuples = []
