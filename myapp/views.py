@@ -91,14 +91,40 @@ class CalendarObj():
 def api_data(request):
     class_dept = request.GET.get("classes")
     query = request.GET.get("query")
+    """
     if query:
         url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
             'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % query
+        if not requests.get(url).json():
+             url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
+            'IScript_ClassSearch?institution=UVA01&term=1232&catalog_nbr=%s&page=1' % query
     else:
         url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
             'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % class_dept
-    classes = requests.get(url).json()
-    print(query)
+    """
+    
+    if query:
+        url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
+            'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % query.split()[0]
+        classes = requests.get(url).json()
+        if len(query.split()) == 2:
+            subject, catalog_nbr = query.split()
+            print(catalog_nbr)
+            temp = []
+            print(len(classes))
+            for c in classes:
+                if c.get('catalog_nbr') == catalog_nbr:
+                    temp.append(c)
+            classes = temp
+        
+    else:
+        url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
+            'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % class_dept
+        classes = requests.get(url).json()
+    
+    #if len(query.split()) == 2:
+           # subject, catalog_nbr = query.split()
+    #print(classes)
     if request.method == 'GET':
         #return HttpResponse(url)
         #courses_in_calendar = Course.objects.filter(course_added_to_schedule = request.user)
@@ -151,7 +177,7 @@ def api_data(request):
                 class_objects.append(specific_course)
         #primary_keys = [instance.pk for instance in class_objects]
         filtered_classes = [c for c in classes if query.lower() in c.get("descr").lower()]
-
+        print(filtered_classes)
         classes_json = json.dumps(classes)
         finalList = zip(class_objects, classes)
         tuples = []
