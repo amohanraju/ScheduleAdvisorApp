@@ -20,9 +20,6 @@
       font-weight: bolder !important;
       src: url(https://fonts.gstatic.com/s/montserrat/v25/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCvr6Hw3aXpsog.woff2) format('woff2');
     }
-    a{
-      font-weight: normal !important;
-    }
   </style>
 </head>
 <script>
@@ -56,7 +53,7 @@
   <div id ="SignedInScreenInnerContainer" class = "container">
     <center>
     <h1>Shopping Cart</h1>
-    {% if courses_in_calendar|length >= 1 and courses_in_cart|length != courses_in_calendar|length %}
+    {% if courses_in_calendar|length >= 1 and courses_in_cart|length != courses_in_calendar|length and courses_in_cart|length != 0 %}
     <form method="POST" action="{% url 'shoppingCart' %}">
       {% csrf_token %}
     <div class="form-check form-switch" style = "left: 50%; position: absolute;-ms-transform: translateX(-50%);
