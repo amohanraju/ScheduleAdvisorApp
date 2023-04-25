@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@900&family=Montserrat:wght@200&family=Roboto:ital,wght@1,300&family=Sacramento&display=swap" rel="stylesheet">
-<title>Home Page</title>
+<title>Advisor Home</title>
 <link rel="icon" href="{% static 'myapp/University_of_Virginia_Rotunda_logo.svg' %}">
 {# Load the tag library #}
 {% load bootstrap5 %}
@@ -32,9 +32,6 @@
           </div>
           <div class = "offcanvas-body"> 
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                  <a class="nav-link" aria-current="page" style = "font-family: Montserrat Black;font-size: 20px;" href="/accounts/profile">Home</a>
-              </li>
               <li class = "nav-item"> 
                 {% if user.is_authenticated %}
                 <form action="/accounts/logout">
@@ -93,7 +90,21 @@
 {# Display django.contrib.messages as Bootstrap alerts #}
 {% bootstrap_messages %}
 
-
+<head>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@900&family=Montserrat:wght@200&family=Roboto:ital,wght@1,300&family=Sacramento&display=swap">
+  <link rel="stylesheet" href="{% static 'myapp/style.css' %}">
+  <style>
+    *{
+      font-weight: bolder !important;
+      font-family: 'Montserrat';
+      font-display: swap;
+      src: url(https://fonts.gstatic.com/s/montserrat/v25/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCvr6Hw3aXpsog.woff2) format('woff2');
+    }
+    .alert-messages {
+      font-weight: bolder !important;
+    }
+  </style>
+</head>
   <body class = "bannerWhiteGradient" style = "text-align: center;">
     <div id ="SignedInScreenInnerContainer" class = "container">
         <h1>Schedule Requests:</h1>
