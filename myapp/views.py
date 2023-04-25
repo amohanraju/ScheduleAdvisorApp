@@ -103,6 +103,7 @@ def api_data(request):
                     start = course.get("meetings")[0]['start_time']
                     if (start != ""):
                         start = datetime.strptime(course.get("meetings")[0]['start_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p')
+                        print(start)
                     end = course.get("meetings")[0]['end_time']
                     if (end != ""):
                         end = datetime.strptime(course.get("meetings")[0]['end_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p')
