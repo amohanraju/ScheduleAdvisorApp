@@ -50,11 +50,11 @@
       {% if usersSchedule is None %}
       <h4 style="font-weight: bold;">Start working on your schedule today! <i class="fa-light fa-memo-circle-check" style="color: #07cf1f;"></i></h4>
       {% elif usersSchedule.isRejected%}
-        <h4 style="font-weight: bold;">Status: Rejected By Advisor <i class="fa-regular fa-circle-xmark" style="color: #ec1349;"></i></h4>
+        <h4 style="font-weight: bold;">Schedule Status: Rejected By Advisor <i class="fa-regular fa-circle-xmark" style="color: #ec1349;"></i></h4>
       {% elif usersSchedule.status %}
-        <h4 style="font-weight: bold;">Status: Approved By Advisor <i class="fa-solid fa-square-check" style="color: #46b458;"></i></h4>
-      {% else %}
-        <h4 style="font-weight: bold;">Status: Pending(Waiting On Advisor)<i class="fa-regular fa-hourglass" style="color: #e0d900;"></i></h4>
+        <h4 style="font-weight: bold;">Schedule Status: Approved By Advisor <i class="fa-solid fa-square-check" style="color: #46b458;"></i></h4>
+        {% else %}
+        <h4 style="font-weight: bold;">Schedule Status: Pending(Waiting On Advisor)<i class="fa-regular fa-hourglass" style="color: #e0d900;"></i></h4>
       {% endif %}
 
         <br>

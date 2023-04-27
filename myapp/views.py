@@ -33,7 +33,6 @@ def profile(request):
             usersSchedule = Schedule.objects.get(author = request.user)
             
         template = loader.get_template('myapp/profile.html')
-        #return render(request, 'myapp/profile.html.html', {'week' : week_dict, 'schedule' : week, 'courses_in_calendar': courses_in_calendar, 'usersSchedule' : usersSchedule, 'courseVar': courseVar})
 
         return HttpResponse(template.render({'usersSchedule' : usersSchedule}, request))
     else:
