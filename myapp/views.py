@@ -12,6 +12,8 @@ import requests
 from datetime import datetime
 import re
 import json
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm
 
 class IndexView(generic.ListView):
     template_name='myapp/index.html'
@@ -44,10 +46,17 @@ class CourseView(generic.ListView):
     def get_queryset(self):
         return
     
-# class SingleCourseView(generic.ListView):
-#     template_name='myapp/single_course.html'
-#     def get_queryset(self):
-#         return
+def createAdmin(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_superuser = True
+            user.save()
+            return redirect('login/?')
+    else:
+        form = UserCreationForm()
+    return render(request, "myapp/createAdmin.html", {'form': form})
 
 class CalendarObj():
     def __init__(self, course):

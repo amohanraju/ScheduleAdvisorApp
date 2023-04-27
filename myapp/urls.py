@@ -12,9 +12,9 @@ urlpatterns = [
     path('accounts/profile/calendar', views.calendar, name='calendar'),
     path('accounts/addToSchedule/<int:pk>/', views.addToSchedule, name = 'addToSchedule'),
     path('accounts/removeFromSchedule/<int:pk>/', views.removeFromSchedule, name = 'removeFromSchedule'),
-
+    path('accounts/createAdmin', views.createAdmin, name = 'createAdmin'),
     path('accounts/createSchedule/<int:pk>/', views.createSchedule, name = 'createSchedule'),
-     path('accounts/approveSchedule/', views.approveSchedule, name = 'approveSchedule'),
+    path('accounts/approveSchedule/', views.approveSchedule, name = 'approveSchedule'),
 
 
 ]
