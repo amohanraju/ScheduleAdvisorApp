@@ -11,6 +11,8 @@ class Course(models.Model):
 
     course_subject = models.CharField(max_length=255)
     course_mnemonic = models.CharField(max_length=255)
+    course_credits = models.CharField(max_length=255, default="")
+    course_type = models.CharField(max_length=255, default="")
 
     course_instructor = models.CharField(max_length=255)
     course_location = models.CharField(max_length=255)
@@ -36,4 +38,10 @@ class Schedule(models.Model):
     courses = models.ManyToManyField(Course)
     status = models.BooleanField(default=False)
     isRejected = models.BooleanField(default=False)
+
+class CourseList(models.Model):
+    subject = models.CharField(max_length=255)
+    department = models.CharField(max_length=255)
+    description = models.CharField(max_length=255)
+
 
