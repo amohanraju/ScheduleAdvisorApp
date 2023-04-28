@@ -35,11 +35,6 @@ def profile(request):
             usersSchedule = Schedule.objects.get(author = request.user)
             
         template = loader.get_template('myapp/profile.html')
-<<<<<<< HEAD
-
-=======
-        #return render(request, 'myapp/profile.html.html', {'week' : week_dict, 'schedule' : week, 'courses_in_calendar': courses_in_calendar, 'usersSchedule' : usersSchedule, 'courseVar': courseVar})
->>>>>>> 3e5f8d87fca3fc4c086d50c5b87c42fdd4d1cd81
         return HttpResponse(template.render({'usersSchedule' : usersSchedule}, request))
     else:
         response = redirect('/accounts/login')
