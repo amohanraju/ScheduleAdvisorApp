@@ -257,6 +257,7 @@
   {% endif %}
   <br>
   <hr>
+  <!--https://stackoverflow.com/questions/16849117/html-how-to-do-a-confirmation-popup-to-a-submit-button-and-then-send-the-reque -->
   <form method="POST" action="{% url 'createSchedule' user.pk %}" onsubmit="return confirm ('Are you sure?')">
     {% csrf_token %}
     <input type="hidden" name="pk" value="{{user.pk}}">
