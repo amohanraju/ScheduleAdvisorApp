@@ -109,9 +109,16 @@
                   <a class="button secondaryAction" href = {% url 'account_reset_password' %} > {% trans "Forgot Password?" %}</a>
                   <br>
                   <br>
-                  <button class="btn btn-dark btn-lg" type="submit" style = "text-decoration: none; color: inherit;color: white; font-weight: bold;">{% trans "Log In" %}</button>
+                  <button class="btn btn-dark btn-lg" id="fetch-api-data" type="submit" style = "text-decoration: none; color: inherit;color: white; font-weight: bold;">{% trans "Log In" %}</button>
                   
                 </form>
+                {% block scripts %}
+                <script>
+                  document.getElementById('fetch-api-data').addEventListener('click', () => {
+                    fetch('/fetch_api_data/')
+                  });
+                </script>
+                {% endblock %}
                 <br>
                 <h4 style = "font-family: Montserrat;font-size: 20px; font-weight: bold;"> Or, login with Google(Student)</h4>
                 <button class = "btn btn-dark btn-lg"> <a style = "text-decoration: none; color: inherit;color: white; font-weight: bold;" href="/accounts/google/login/?process=login">Google</a></button>

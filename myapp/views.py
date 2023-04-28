@@ -33,7 +33,7 @@ def profile(request):
         usersSchedule = None
         if(Schedule.objects.filter(author = request.user).exists()):
             usersSchedule = Schedule.objects.get(author = request.user)
-            
+        print(usersSchedule)  
         template = loader.get_template('myapp/profile.html')
         return HttpResponse(template.render({'usersSchedule' : usersSchedule}, request))
     else:
@@ -84,11 +84,21 @@ class CalendarObj():
         
         return start_tag, end_tag
 
+# def fetch_api_data(request):
+#     class_dept = request.GET.get("classes")
+#     url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
+#             'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % class_dept
+#     classes = requests.get(url).json()
+#     print(classes)
+#     context = {'classes': classes}
+#     return render(request, 'myapp/profile.html', context)
+
 def api_data(request):
     class_dept = request.GET.get("classes")
     url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
             'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % class_dept
     classes = requests.get(url).json()
+
     if request.method == 'GET':
         #return HttpResponse(url)
         #courses_in_calendar = Course.objects.filter(course_added_to_schedule = request.user)
