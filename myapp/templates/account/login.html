@@ -67,9 +67,9 @@
 </head>
 <body class="banner">
   <div id="splashPageText">
-    <div id="innerSplashPageBoxLogInScreen">
+    <div id="innerSplashPageBoxLogInScreen" style = "background-color: white;">
       
-        <div class = "title" style = "text-align: center;font-size: 35px;"> Login </div>
+        <div class = "title" style = "text-align: center;font-size: 35px; font-family: 'Montserrat';"> Login </div>
         <!-- <h1 class = "signInAndUpTextOnLoginAndSignUpPages">{% trans "Sign In" %}</h1> -->
         <br>
         {% get_providers as socialaccount_providers %}
@@ -79,21 +79,16 @@
           
           <div style = "border: 2px solid black; text-align: center;">
             <div style="margin: 15px 15px 15px 15px;">
-              <h2 style = "font-size: 25px;">Student Login</h2>
+              <h2 style = "font-family: 'Montserrat';font-size: 25px;">Login Setup</h2>
               <center>
-              <h4 style = "font-family: Montserrat; font-size: 20px; font-weight: bold;"> If you don't have an account</h4>
-              <button class = "btn btn-dark btn-lg"> <a style = "text-decoration: none; color: inherit;color: white; font-weight: bold;" href="{{ signup_url }}">Sign Up</a></button>
-              <br>
-              <br>
-              <h4 style = "font-family: Montserrat;font-size: 20px; font-weight: bold;"> Or, login with Google</h4>
-              <button class = "btn btn-dark btn-lg"> <a style = "text-decoration: none; color: inherit;color: white; font-weight: bold;" href="/accounts/google/login/?process=login">Google</a></button>
+              <h4 style = "font-family: 'Montserrat'; font-size: 20px; font-weight: bold;"> If you don't have an account</h4>
+              <button class = "btn btn-dark btn-lg"> <a style = "text-decoration: none; color: inherit; font-family: 'Montserrat';" href="{{ signup_url }}">Sign Up</a></button>
             </center>
             </div>
           </div>
-
           <div style = "border: 2px solid black; margin-top: 50px; text-align: center;">
             <div style="margin: 15px 15px 15px 15px;">
-              <h3 style = "font-weight: bolder; font-size: 25px;">Advisor Login</h3>
+              <h3 style = "font-family: 'Montserrat'; font-size: 25px;">Student/Advisor Login</h3>
               {%comment%}
               <h4 style = "font-family: Montserrat; font-size: 20px; font-weight: bold;"> If you don't have an account</h4>
               <button class = "btn btn-dark btn-lg"> <a style = "text-decoration: none; color: inherit;color: white; font-weight: bold;" href="/accounts/createAdmin">Sign Up</a></button>
@@ -101,7 +96,11 @@
               <br>
               <h4 style = "font-family: Montserrat;font-size: 20px; font-weight: bold;"> Or, login with Credentials</h4>
               {%endcomment%}
-                <form class="login" method="POST" style = "font-family: Montserrat; text-align: center; font-size: 20px;margin-top: 4px;"{% url 'account_login' %}>
+                <form class="login" method="POST" style = "width: 100%;
+                margin-bottom: 10px;
+                padding: 10px;
+                background: #ffffff;
+                outline: none;"{% url 'account_login' %}>
                   {% csrf_token %}
                   {{ form.as_p }}
                   {% if redirect_field_value %}
@@ -113,6 +112,9 @@
                   <button class="btn btn-dark btn-lg" type="submit" style = "text-decoration: none; color: inherit;color: white; font-weight: bold;">{% trans "Log In" %}</button>
                   
                 </form>
+                <br>
+                <h4 style = "font-family: Montserrat;font-size: 20px; font-weight: bold;"> Or, login with Google(Student)</h4>
+                <button class = "btn btn-dark btn-lg"> <a style = "text-decoration: none; color: inherit;color: white; font-weight: bold;" href="/accounts/google/login/?process=login">Google</a></button>
                 {% include "socialaccount/snippets/login_extra.html" %}
 
                 {% else %}
