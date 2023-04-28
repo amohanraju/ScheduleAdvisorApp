@@ -253,7 +253,7 @@
   {% endif %}
   <br>
   <hr>
-  <form method="POST" action="{% url 'createSchedule' user.pk %}">
+  <form method="POST" action="{% url 'createSchedule' user.pk %}" onsubmit="return confirm ('Are you sure?')">
     {% csrf_token %}
     <input type="hidden" name="pk" value="{{user.pk}}">
     <button type="submit" class = "btn btn-success buttonShoppingCartandBrowseCourses" style="font-weight: bold;">Submit Schedule to Advisor
@@ -267,3 +267,4 @@
 
   {% endblock %}
 </html>
+
