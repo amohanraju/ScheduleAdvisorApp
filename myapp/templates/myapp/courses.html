@@ -280,6 +280,12 @@
         </script> -->
     <button type="submit">Submit</button>
   </form>
+  <form action="{% url 'api_data' %}" method="get">
+    {%csrf_token%}
+    </select>
+    <input class="form-control form-control-sm" type="text" name ="query" id="query" placeholder="Search courses..."> <!-- Add the search input field -->
+    <button type="submit">Submit</button>
+  </form>
 </center>
   <br>
   <table style="width:100%">

@@ -253,6 +253,7 @@ def api_data(request):
     query = request.GET.get("query")
     courses = []
     if query:
+        print(query)
         searched = False
         mnemonics = Course.objects.values_list('course_mnemonic',flat=True).distinct()
         #Search by mnemonic and course number
@@ -261,6 +262,7 @@ def api_data(request):
             number = query.split()[1]
             courses = Course.objects.filter(course_mnemonic=mnemonic, course_catalog_nbr=number)
             searched = True
+        print(searched)
         #Search by mnemonic
         if query.split()[0].upper() in mnemonics and len(query.split()) == 1 and not searched:
             mnemonic = query.split()[0].upper()
@@ -274,8 +276,6 @@ def api_data(request):
             searched = True
         #Search by course id
         ids = Course.objects.values_list('course_id',flat=True).distinct()
-        for id in ids:
-            print(id)
         if query.split()[0] in ids and len(query.split()) == 1 and not searched:
             id = query.split()[0]
             courses = Course.objects.filter(course_id=str(id))
