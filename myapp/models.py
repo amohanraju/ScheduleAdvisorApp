@@ -39,9 +39,4 @@ class Schedule(models.Model):
     status = models.BooleanField(default=False)
     isRejected = models.BooleanField(default=False)
 
-class CourseList(models.Model):
-    subject = models.CharField(max_length=255)
-    department = models.CharField(max_length=255)
-    description = models.CharField(max_length=255)
-
 

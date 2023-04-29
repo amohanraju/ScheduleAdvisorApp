@@ -26,56 +26,60 @@ def download_classes():
         i += 1
         if subject in subjects:
             continue
-        class_url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
-        'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % subject
-        classes = requests.get(class_url).json()
-        for course in classes:
-            if len(course.get("meetings")) == 0:
+        for page_num in range(1,6):
+            class_url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
+            'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=%s' % (subject,str(page_num))
+            print(class_url)
+            classes = requests.get(class_url).json()
+            if len(classes) == 0:
                 continue
-            start = course.get("meetings")[0]['start_time']
-            if (start != ""):
-                start = datetime.strptime(course.get("meetings")[0]['start_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p')
-            end = course.get("meetings")[0]['end_time']
-            if (end != ""):
-                end = datetime.strptime(course.get("meetings")[0]['end_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p')
-            course_model_instance = Course(
-                course_id=course.get('crse_id'),
-                course_section=course.get('class_section'),
-                course_catalog_nbr=course.get('catalog_nbr'),
+            for course in classes:
+                if len(course.get("meetings")) == 0:
+                    continue
+                start = course.get("meetings")[0]['start_time']
+                if (start != ""):
+                    start = datetime.strptime(course.get("meetings")[0]['start_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p')
+                end = course.get("meetings")[0]['end_time']
+                if (end != ""):
+                    end = datetime.strptime(course.get("meetings")[0]['end_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p')
+                course_model_instance = Course(
+                    course_id=course.get('crse_id'),
+                    course_section=course.get('class_section'),
+                    course_catalog_nbr=course.get('catalog_nbr'),
 
-                course_subject=course.get('descr'),
-                course_mnemonic=course.get('subject'),
-                course_credits=course.get('units'),
-                course_type=course.get('section_type'),
+                    course_subject=course.get('descr'),
+                    course_mnemonic=course.get('subject'),
+                    course_credits=course.get('units'),
+                    course_type=course.get('section_type'),
 
-                course_instructor=course.get("instructors")[0]['name'],
-                course_location=course.get("meetings")[0]['facility_descr'],
+                    course_instructor=course.get("instructors")[0]['name'],
+                    course_location=course.get("meetings")[0]['facility_descr'],
 
-                course_size=course.get('class_capacity'),
-                course_enrollment_total=course.get('enrollment_total'),
-                course_waitlist_total=course.get('wait_tot'),
-                course_waitlist_cap=course.get('wait_cap'),
+                    course_size=course.get('class_capacity'),
+                    course_enrollment_total=course.get('enrollment_total'),
+                    course_enrollment_availability = course.get('enrollment_available'),
+                    course_waitlist_total=course.get('wait_tot'),
+                    course_waitlist_cap=course.get('wait_cap'),
 
-                course_days_of_week=course.get("meetings")[0]['days'],
-                course_start_time=start,
-                course_end_time=end,
-
-            )
-            course_model_instance.course_enrollment_availability = course.get('enrollment_available')
-            if (course_model_instance not in Course.objects.all()):
-                course_model_instance.save()
-                course_model_instance.course_added_to_cart.set([])
-                course_model_instance.save()
-    print()
-    url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassSearchOptions?institution=UVA01&term=1232'
-    categories = requests.get(url).json()
-    respons = categories.get("subjects")
-    i = 0
-    for info in respons:
-        subject = info['subject']
-        print(subject+" "+str(i))
-        i += 1
+                    course_days_of_week=course.get("meetings")[0]['days'],
+                    course_start_time=start,
+                    course_end_time=end,
+                )
+                if (course_model_instance not in Course.objects.all()):
+                    course_model_instance.save()
+                    course_model_instance.course_added_to_cart.set([])
+                    course_model_instance.save()
+    # print()
+    # url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassSearchOptions?institution=UVA01&term=1232'
+    # categories = requests.get(url).json()
+    # respons = categories.get("subjects")
+    # i = 0
+    # for info in respons:
+    #     subject = info['subject']
+    #     print(subject+" "+str(i))
+    #     i += 1# BE SURE TO CHECK THAT THE OTHER CLASSES DOWNLOADED PROPERLY
 class IndexView(generic.ListView):
+    #download_classes()
     template_name='myapp/index.html'
     def get_queryset(self):
         return
@@ -237,14 +241,43 @@ def api_data(request):
     query = request.GET.get("query")
     courses = []
     if query:
+        searched = False
         mnemonics = Course.objects.values_list('course_mnemonic',flat=True).distinct()
         #Search by mnemonic and course number
-        if query.split()[0].upper() in mnemonics:
+        if query.split()[0].upper() in mnemonics and len(query.split()) == 2 and not searched:
             mnemonic = query.split()[0].upper()
             number = query.split()[1]
             courses = Course.objects.filter(course_mnemonic=mnemonic, course_catalog_nbr=number)
+            searched = True
+        #Search by mnemonic
+        if query.split()[0].upper() in mnemonics and len(query.split()) == 1 and not searched:
+            mnemonic = query.split()[0].upper()
+            courses = Course.objects.filter(course_mnemonic=mnemonic)
+            searched = True
+        #Search by course number
+        nums = Course.objects.values_list('course_catalog_nbr',flat=True).distinct()
+        if query.split()[0] in nums and len(query.split()) == 1 and not searched:
+            number = query.split()[0]
+            courses = Course.objects.filter(course_catalog_nbr=number)
+            searched = True
+        #Search by course id
+        ids = Course.objects.values_list('course_id',flat=True).distinct()
+        for id in ids:
+            print(id)
+        if query.split()[0] in ids and len(query.split()) == 1 and not searched:
+            id = query.split()[0]
+            courses = Course.objects.filter(course_id=str(id))
+            searched = True
+        #Search by Professor
+        professors = Course.objects.values_list('course_instructor',flat=True).distinct()
+        professors_lower = {}
+        for professor in professors:
+            professors_lower[professor.lower()] = professor
+        if query.lower() in professors_lower and not searched:
+            courses = Course.objects.filter(course_instructor=professors_lower[query.lower()])
+            searched = True
         #Search by description
-        else:
+        if not searched:
             courses = Course.objects.filter(course_subject = query)
     else:
         url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
