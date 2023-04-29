@@ -42,10 +42,7 @@
           {% csrf_token %}
       <select name="classes" id="classes">
         <option value=""> Department </option>
-        {% for course in courseList %}
-          <option value="{{course.department}}">{{course.description}}</option>
-        {% endfor %}
-        <!-- <option value="AAS">African-American and African Studies</option>
+        <option value="AAS">African-American and African Studies</option>
         <option value="AIRS">Air Science</option>
         <option value="ASL">American Sign Language</option>
         <option value="AMST">American Studies</option>
@@ -127,7 +124,7 @@
         <option value="SPAN">Spanich, Italian &amp; Portuguese</option>
         <option value="STAT">Statistics</option>
         <option value="PLAN">Urban &amp; Environmental Planning</option>
-        <option value="SWAG">Women, Gender &amp; Sexuality</option> -->
+        <option value="SWAG">Women, Gender &amp; Sexuality</option>
           </select>
         <select id ="mnemonic">
           <option value=""> Subject </option>
@@ -135,7 +132,7 @@
         <select id="number">
           <option value="">Catalog Number</option>
         </select>
-        <!-- <select id="professor">
+        <select id="professor">
           <option value="">Professor</option>;
         </select>
         <select id="day">
@@ -233,10 +230,7 @@
         }
         });
       </script>
-        <script>
-        </select> -->
-        
-        <script>
+        <!-- <script>
           const classes = JSON.parse('{{ classes_json|safe }}');
           const startTimes = new Set();
           const endTimes = new Set();
@@ -283,26 +277,10 @@
           subjectSelect.addEventListener('change', () => {
             generateNumberOptions();
           });
-        </script>
-    <button type="submit">Submit</button>
-  </form>
-
-  <form action="{% url 'api_data' %}" method="get">
-    {%csrf_token%}
-    </select>
-    <input class="form-control form-control-sm" type="text" name ="query" id="query" placeholder="Search courses..."> <!-- Add the search input field -->
-    <button type="submit">Submit</button>
-  </form>
-
-  <form action="{% url 'api_data' %}" method="get">
-    {%csrf_token%}
-    </select>
-    <input class="form-control form-control-sm" type="text" name ="query" id="query" placeholder="Search courses..."> <!-- Add the search input field -->
+        </script> -->
     <button type="submit">Submit</button>
   </form>
 </center>
-
-
   <br>
   <table style="width:100%">
     <tr class = "title-row">
@@ -331,36 +309,36 @@
       </div>
     </tr>
     
-    {% for class in classes %}
+    {% for class_object, class in content %}
     <tr class = "main-rows">
         <div class = "row"> 
             <div class = "col col-lg-3 col-md-3 col-sm-3"> 
-              <td >{{class.course_mnemonic}} {{class.course_catalog_nbr}}</td>
+              <td >{{class.subject}} {{class.catalog_nbr}}</td>
             </div>
             <div class = "col col-lg-3 col-md-3 col-sm-3"> 
-              <td>{{class.course_subject}}</td>
+              <td>{{class.descr}}</td>
             </div>
             <div class = "col col-lg-3 col-md-3 col-sm-3"> 
-              <td>{{class.course_type}} ({{class.course_credits}})</td>
+              <td>{{class.section_type}} ({{class.units}})</td>
             </div>
             <div class = "col col-lg-3 col-md-3 col-sm-3">
-              {% if class.course_start_time != "" %}
-                <td>{{class.course_days_of_week}} {{class.course_start_time}} - {{class.course_end_time}}</td>
+              {% if class_object.course_start_time != "" %}
+                <td>{{class_object.course_days_of_week}} {{class_object.course_start_time}} - {{class_object.course_end_time}}</td>
               {% else %}
                 <td>TBA</td>
               {% endif %}
             </div>
             <div class = "col col-lg-3 col-md-3 col-sm-3"> 
-              <td>{{class.course_instructor}}</td>
+              <td>{{class.instructors.0.name}}</td>
             </div>
             <div class = "col col-lg-3 col-md-3 col-sm-3"> 
-              <td>{{class.course_enrollment_availability}}/{{class.course_size}}</td>
+              <td>{{class_object.course_enrollment_availability}}/{{class_object.course_size}}</td>
             </div>
         </div>
       <td>
-        <form method="POST" action="{% url 'addToCart' class.pk%}">
+        <form method="POST" action="{% url 'addToCart' class_object.pk%}">
           {% csrf_token %}
-          <input type="hidden" name="pk" value="{{ class.pk }}">
+          <input type="hidden" name="pk" value="{{ class_object.pk }}">
           <button type="submit" class = "btn btn-primary btn-sm buttonShoppingCartandBrowseCourses">Add to Cart
             <svg xmlns="https://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
               <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
