@@ -89,16 +89,17 @@ def courseforum_view(request):
 
 def profile(request):
     if request.user.is_authenticated:
-        usersSchedule = None
-        if(Schedule.objects.filter(author = request.user).exists()):
-            usersSchedule = Schedule.objects.get(author = request.user)
         if request.user.is_superuser:
             schedules = Schedule.objects.all().filter(isRejected=False, status = False)
             template = loader.get_template('myapp/adminHome.html')
-            return HttpResponse(template.render({'schedules':schedules, 'usersSchedule':usersSchedule}, request))
+            return HttpResponse(template.render({'schedules':schedules}, request))
         
+        usersSchedule = None
+        if(Schedule.objects.filter(author = request.user).exists()):
+            usersSchedule = Schedule.objects.get(author = request.user)
+        print(usersSchedule)  
         template = loader.get_template('myapp/profile.html')
-        return HttpResponse(template.render({}, request))
+        return HttpResponse(template.render({'usersSchedule' : usersSchedule}, request))
     else:
         response = redirect('/accounts/login')
         return response
@@ -107,6 +108,19 @@ class CourseView(generic.ListView):
     template_name='myapp/courses.html'
     def get_queryset(self):
         return
+
+    
+def createAdmin(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_superuser = True
+            user.save()
+            return redirect('login/?')
+    else:
+        form = UserCreationForm()
+    return render(request, "myapp/createAdmin.html", {'form': form})
 
 class CalendarObj():
     def __init__(self, course):
@@ -123,9 +137,7 @@ class CalendarObj():
         self.course_added_to_cart = course.course_added_to_cart
         self.coursenum = ""
         self.conflict = False
-        self.start_tag, self.end_tag = self.populate_tags()
-        self.short_class = self.populate_time()
-        self.in_calendar = False
+        self.start_tag, self.end_tag = self.populate_tags() 
     
     def populate_tags(self):
         start_tag = str(self.course_start_time)[0:2] + "_" + str(self.course_start_time)[3:5]
@@ -304,15 +316,14 @@ def shoppingCart(request):
         courses_in_calendar = Course.objects.filter(course_added_to_schedule = current_user)
         courseVar = 'course'
         for cart_course in courses_in_cart:
-            cart_course.course_enrollment_availability = re.sub("[^0-9]", "", cart_course.course_enrollment_availability)
             for cal_course in courses_in_calendar:
                 if (cart_course not in courses_in_calendar):
-                    cart_course.in_calendar = False
-                    if dtime_conflict(cart_course, cal_course) and (cart_course != cal_course):
+                    if time_conflict(cart_course, cal_course) and (cart_course != cal_course):
+                        #cart_course.color = "#ff7770"
                         cart_course.conflict = True
-                        print(cart_course.course_subject+" conflicts with "+cal_course.course_subject)
-                else:
-                    cart_course.in_calendar = True
+                    #else:
+                        #cart_course.conflict = False
+                        #cart_course.color = "#42d67b"
         return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart, 'courses_in_calendar': courses_in_calendar, 'courseVar': courseVar})
     else:
         response = redirect('/accounts/login')
@@ -344,9 +355,18 @@ def addToSchedule(request, pk):
         courses_in_calendar = Course.objects.filter(course_added_to_schedule = request.user)
         conflict = False
         conflict_course = course
+        # dummy = courses_in_calendar[2]
+        # print(course.course_days_of_week+' '+course.course_start_time+' - '+course.course_end_time)
+        # print(dummy.course_start_time+' - '+dummy.course_end_time)
+        # print(course.course_start_time <= dummy.course_end_time)
+        # print(dummy.course_start_time <= course.course_end_time)
+        # print(type(course.course_start_time))
+        # print(dtime_conflict(course,dummy))
         for cal_course in courses_in_calendar:
+            print(cal_course.course_subject)
             if dtime_conflict(course, cal_course):
                 conflict = True
+                print(cal_course.course_subject)
                 conflict_course = cal_course
                 break
         if not conflict:
@@ -444,6 +464,7 @@ def calendar(request):
                 calendar_course.coursenum = i
             calendar_courses.append(calendar_course)
         mon,tue,wed,thu,fri=[],[],[],[],[]
+        error_messages = set()
         for course in calendar_courses:
             if "Mo" in course.course_days_of_week:
                 if len(mon) != 0:
@@ -517,7 +538,7 @@ def calendar(request):
         week = [mon, tue, wed, thu, fri]
         for i in range(len(week)):
             week[i] = sorted(week[i], key=lambda obj: obj.start_tag)
-        week_dict = {"Monday" : week[0], "Tuesday" : week[1], "Wednesday" : week[2], "Thursday" : week[3], "Friday" : week[4]} 
+        week_dict = {"MON" : week[0], "TUE" : week[1], "WED" : week[2], "THU" : week[3], "FRI" : week[4]} 
         #Logic for passing the schedule object thorugh
         usersSchedule = None
         if(Schedule.objects.filter(author = request.user).exists()):
@@ -551,8 +572,8 @@ def time_conflict(course1, course2):
         return False
 
 def dtime_conflict(course1, course2):
-    week = ["Mo", "Tu", "We", "Th", "Fr"]
-    for day in week:
+    days = ["Mo", "Tu", "We", "Th", "Fr"]
+    for day in days:
         if day in course1.course_days_of_week and day in course2.course_days_of_week and time_conflict(course1, course2):
             return True
     return False

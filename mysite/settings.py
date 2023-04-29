@@ -66,7 +66,7 @@ MIDDLEWARE = [
 #For serving static files in Heroku
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-CSRF_COOKIE_SECURE = True
+#CSRF_COOKIE_SECURE = True
 
 ROOT_URLCONF = 'mysite.urls'
 

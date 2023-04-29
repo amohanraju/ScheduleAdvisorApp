@@ -21,7 +21,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@900&family=Montserrat:wght@200&family=Roboto:ital,wght@1,300&family=Sacramento&display=swap">
   <link rel="stylesheet" href="{% static 'myapp/style.css' %}">
   <style>
-    h1,h2,h3,h4,h5,h6,button,select,option,table,th,td{
+    h1,h2,h3,h4,h5,h6,button,select,option,table,th,td,a{
       font-weight: bolder !important;
       font-family: 'Montserrat';
       font-display: swap;
@@ -132,7 +132,6 @@
         <select id ="mnemonic">
           <option value=""> Subject </option>
         </select>
-        {% with classes=classes_json|safe %}
         <select id="number">
           <option value="">Catalog Number</option>
         </select>
@@ -144,6 +143,97 @@
         </select>
         <select id = "time-range">
           <option value="">Time</option>
+        </select>
+      <script>
+          const classes = JSON.parse('{{ classes_json|safe }}');
+          const catalogSelect = document.getElementById('number');
+          const professorSelect = document.getElementById('professor')
+          const daySelect = document.getElementById('day');
+          const timeSelect = document.getElementById('time-range');
+  
+        // Add an event listener for when the subject is changed
+        subjectSelect.addEventListener('change', () => {
+          // Clear the catalog, day, and time options
+        catalogSelect.innerHTML = '';
+        professorSelect.innerHTML
+        daySelect.innerHTML = '';
+        timeSelect.innerHTML = '';
+  
+        // Get the selected subject
+        const selectedSubject = subjectSelect.value;
+      
+        // Populate the catalog select options
+        const catalogs = [...new Set(classes.filter(c => c.course === selectedSubject).map(c => c.catalog_nbr))];
+        for (const catalog of catalogs) {
+          const option = document.createElement('option');
+          option.value = catalog;
+          option.text = catalog;
+          catalogSelect.add(option);
+        }
+      });
+      
+      // Add an event listener for when the catalog is changed
+      catalogSelect.addEventListener('change', () => {
+        // Clear the day and time options
+        professorSelect.innerHTML = '';
+        daySelect.innerHTML = '';
+        timeSelect.innerHTML = '';
+      
+        // Get the selected subject and catalog
+        const selectedSubject = subjectSelect.value;
+        const selectedCatalog = catalogSelect.value;
+      
+        const matchingProfessors = classes.filter(c => c.subject === selectedSubject && c.catalog_nbr === selectedCatalog)
+        const professors = [...new Set(matchingProfessors.map(c => c.instructors[0].name))]
+        for (const professor of professors) {
+          const option = document.createElement('option');
+          option.value = professor;
+          option.text = professor;
+          professorSelect.add(option);
+        }
+      });
+      professorSelect.addEventListener('change', () => {
+        daySelect.innerHTML = '';
+        timeSelect.innerHTML = '';
+
+        const selectedSubject = subjectSelect.value;
+        const selectedCatalog = catalogSelect.value;
+        const selectedProfessor = professorSelect.value;
+        const matchingDays = classes.filter(c => c.subject === selectedSubject && c.catalog_nbr === selectedCatalog && c.instructors[0].name === selectedProfessor);
+        // Populate the day select options
+        const days = [...new Set(matchingClasses.map(c => c.meetings[0].days))];
+        for (const day of days) {
+          const option = document.createElement('option');
+          option.value = day;
+          option.text = day;
+          daySelect.add(option);
+        }
+      });
+      
+      // Add an event listener for when the day is changed
+      daySelect.addEventListener('change', () => {
+        // Clear the time options
+        timeSelect.innerHTML = '';
+      
+        // Get the selected subject, catalog, and day
+        const selectedSubject = subjectSelect.value;
+        const selectedCatalog = catalogSelect.value;
+        const selectedProfessor = professorSelect.value;
+        const selectedDay = daySelect.value;
+      
+        // Get the classes that match the selected subject, catalog, and day
+        const matchingClasses = classes.filter(c => c.subject === selectedSubject && c.catalog_nbr === selectedCatalog && c.instructors[0].name === selectedProfessor && c.meetings[0].name === selectedDay);
+      
+        // Populate the time select options
+        for (const cls of matchingClasses) {
+          const option = document.createElement('option');
+          option.value = `${cls.meetings[1].start_time} - ${cls.meetings[1].end_time}`;
+          option.text = `${cls.meetings[1].start_time} - ${cls.meetings[1].end_time}`;
+          timeSelect.add(option);
+        }
+        });
+      </script>
+        <script>
         </select> -->
         
         <script>
@@ -194,7 +284,13 @@
             generateNumberOptions();
           });
         </script>
-    {% endwith %}
+    <button type="submit">Submit</button>
+  </form>
+
+  <form action="{% url 'api_data' %}" method="get">
+    {%csrf_token%}
+    </select>
+    <input class="form-control form-control-sm" type="text" name ="query" id="query" placeholder="Search courses..."> <!-- Add the search input field -->
     <button type="submit">Submit</button>
   </form>
 

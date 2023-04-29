@@ -67,20 +67,17 @@
 
 <body class="banner">
     <div id="splashPageText">
-       <div id="innerSplashPageBoxLogInScreen">
-          <h1 class="signInAndUpTextOnLoginAndSignUpPages">{% trans "Sign Up" %}</h1>
-
-        <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
-
-        <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
-          {% csrf_token %}
-          {{ form.as_p }}
-          {% if redirect_field_value %}
-          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-          {% endif %}
-          <button type="submit" class = "btn btn-dark btn-lg">{% trans "Sign Up" %} &raquo;</button>
-        </form>
-      </div>
+        <div id="innerSplashPageBoxLogInScreen">
+            <h1 class="signInAndUpTextOnLoginAndSignUpPages">Sign Up</h1>
+            <p>{% blocktrans %}Already have an account? Then please <a href="/accounts/login/?/">sign in</a>.{% endblocktrans %}</p>
+           
+            <form class="site-form" method="post" action="/accounts/createAdmin">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class = "btn btn-dark btn-lg">{% trans "Sign Up" %} &raquo;</button>
+            </form>
+        
+        </div>
     </div>
 </body>
 
