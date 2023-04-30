@@ -52,6 +52,7 @@
         <h4 style="font-weight: bold;">Schedule Status: Rejected By Advisor <i class="fa-regular fa-circle-xmark" style="color: #ec1349;"></i></h4>
       {% elif usersSchedule.status %}
         <h4 style="font-weight: bold;">Schedule Status: Approved By Advisor <i class="fa-solid fa-square-check" style="color: #46b458;"></i></h4>
+      
         <br>
         <p style = "color: gray; font-size: 12px;">Your Approved Schedule:</p>
 
@@ -71,18 +72,16 @@
           
 
         </table>
-        <!--
-        {% for course in usersSchedule.courses.all %}
-          <li>{{course.course_subject}}{{course.course_days_of_week}}</li>
-         {% endfor %} 
         <br>
         {% else %}
         <h4 style="font-weight: bold;">Schedule Status: Pending(Waiting On Advisor)<i class="fa-regular fa-hourglass" style="color: #e0d900;"></i></h4>
       {% endif %}
-        -->
+        
         <br>
         <div class = "container"> 
           <hr style="color: #1e6db3;">
+          <br>
+          <br>
           <div>
             <h6 style = "font-size:22.5px;margin-top: 15px;"> Want to Browse Courses? Click below to add to your
             schedule today!</h6>
@@ -94,8 +93,9 @@
           </div>
           <br>
           <br>
-          <br>
           <hr style="color: #1e6db3;">
+          <br>
+          <br>
           <div>
             <h6 style = "font-size:22.5px; margin-top: 15px"> Want to Check Shopping Cart? Click below to see a 
             list of all courses you have added so far!</h6>
@@ -106,8 +106,9 @@
           </div>
           <br>
           <br>
-          <br>
           <hr style="color: #1e6db3;">
+          <br>
+          <br>
           <div>
             <h6 style = "font-size:22.5px;margin-top: 15px;"> Want to Check Your Calendar? Click below to see 
             your schedule with added courses. If you think your schedule is ready, you can also send your schedule to
@@ -117,6 +118,7 @@
               <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
             </svg></button></a>
           </div>
+          <br>
           <br>
         </div>
       </div>
