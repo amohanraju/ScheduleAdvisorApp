@@ -36,6 +36,7 @@
     <center>
     <h1 id="">Browse Courses</h1>
     <hr>
+    {%comment%}
       <form action="{% url 'api_data' %}" method="get">
           {% csrf_token %}
       <select name="classes" id="classes">
@@ -321,91 +322,6 @@
           timeSelect.add(option);
         }
         });
-        const submitBtn = document.getElementById("submit-btn");
-        submitBtn.addEventListener("click", handleFilter);
-        function handleFilter(event) {
-          event.preventDefault(); // prevent the default form submission behavior
-
-          // get the selected options from the select elements
-          const subjectSelect = document.getElementById('mnemonic')
-          const catalogSelect = document.getElementById('number');
-          const professorSelect = document.getElementById('professor')
-          const daySelect = document.getElementById('day');
-          const timeSelect = document.getElementById('time-range');
-
-          const selectedSubject = subjectSelect.value;
-          const selectedCatalog = catalogSelect.value;
-          const selectedProfessor = professorSelect.value;
-          const selectedDay = daySelect.value;
-          const selectedTime = timeSelect.value;
-
-          // filter the classes based on the selected options
-          const filteredClasses = classes.filter((classObj) => {
-            let start_time = generateStartTime(classObj);
-            let end_time = generateEndTime(classObj);
-            if (
-              (selectedCatalog === "Catalog Number" ||  selectedCatalog === classObj.catalog_nbr) && (selectedProfessor === "" || selectedProfessor 
-              === "Professors" || selectedProfessor === classObj.instructors[0].name) &&
-              (selectedDay === "" || selectedDay === "Days" || selectedDay === classObj.meetings[0].days) &&
-              (selectedTime === "" || selectedTime === "Times" ||
-                (selectedTime === `${start_time} - ${end_time}`))
-            ) {
-              return true;
-            }
-            return false;
-          });
-
-          // update the displayed classes with the filtered classes
-          const classTable = document.getElementById("class-table");
-          classTable.innerHTML = ""; // clear the current table
-
-          // Create table header row
-          const headerRow = document.createElement("tr");
-          headerRow.classList.add('title-row');
-          const headerCourseCell = document.createElement("th");
-          headerCourseCell.textContent = "Course";
-          const headerCatalogNumberCell = document.createElement("th");
-          headerCatalogNumberCell.textContent = "Catalog Number";
-          const headerProfessorCell = document.createElement("th");
-          headerProfessorCell.textContent = "Professor";
-          const headerDaysCell = document.createElement("th");
-          headerDaysCell.textContent = "Days";
-          const headerTimeCell = document.createElement("th");
-          headerTimeCell.textContent = "Time";
-          const headerAddCartCell = document.createElement("th");
-          headerAddCartCell.textContent = "Add Cart"
-          headerRow.appendChild(headerCourseCell);
-          headerRow.appendChild(headerCatalogNumberCell);
-          headerRow.appendChild(headerProfessorCell);
-          headerRow.appendChild(headerDaysCell);
-          headerRow.appendChild(headerTimeCell);
-          classTable.appendChild(headerRow);
-
-          // Create table row for each class object
-          filteredClasses.forEach((classObj) => {
-            const classRow = document.createElement("tr");
-            classRow.classList.add('main-rows');
-            const courseCell = document.createElement("td");
-            courseCell.textContent = classObj.subject;
-            const catalogNumberCell = document.createElement("td");
-            catalogNumberCell.textContent = classObj.catalog_nbr;
-            const professorCell = document.createElement("td");
-            professorCell.textContent = classObj.instructors[0].name;
-            const daysCell = document.createElement("td");
-            daysCell.textContent = classObj.meetings[0].days;
-            const timeCell = document.createElement("td");
-            const startTime = generateStartTime(classObj);
-            const endTime = generateEndTime(classObj);
-            timeCell.textContent = `${startTime}-${endTime}`;
-            const buttonCell = document.createElement("td");
-            classRow.appendChild(courseCell);
-            classRow.appendChild(catalogNumberCell);
-            classRow.appendChild(professorCell);
-            classRow.appendChild(daysCell);
-            classRow.appendChild(timeCell);
-            classTable.appendChild(classRow);
-          });
-        }
       </script>
         <!-- <script>
           const classes = JSON.parse('{{ classes_json|safe }}');
@@ -455,6 +371,7 @@
             generateNumberOptions();
           });
         </script> -->
+    <button type="submit">Submit</button>
   </form>
 </center>
   <br>
@@ -484,37 +401,37 @@
         </div>
       </div>
     </tr>
-    
-    {% for class_object, class in content %}
+      
+    {% for course in courses %}
     <tr class = "main-rows">
         <div class = "row"> 
             <div class = "col col-lg-3 col-md-3 col-sm-3"> 
-              <td >{{class.subject}} {{class.catalog_nbr}}</td>
+              <td >{{course.course_mnemonic}} {{course.course_catalog_nbr}}</td>
             </div>
             <div class = "col col-lg-3 col-md-3 col-sm-3"> 
-              <td>{{class.descr}}</td>
+              <td>{{course.course_subject}}</td>
             </div>
             <div class = "col col-lg-3 col-md-3 col-sm-3"> 
-              <td>{{class.section_type}} ({{class.units}})</td>
+              <td>{{course.course_type}} ({{course.course_credits}})</td>
             </div>
             <div class = "col col-lg-3 col-md-3 col-sm-3">
-              {% if class_object.course_start_time != "" %}
-                <td>{{class_object.course_days_of_week}} {{class_object.course_start_time}} - {{class_object.course_end_time}}</td>
+              {% if course.course_start_time != "" %}
+                <td>{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}}</td>
               {% else %}
                 <td>TBA</td>
               {% endif %}
             </div>
             <div class = "col col-lg-3 col-md-3 col-sm-3"> 
-              <td>{{class.instructors.0.name}}</td>
+              <td>{{course.course_instructor}}</td>
             </div>
             <div class = "col col-lg-3 col-md-3 col-sm-3"> 
-              <td>{{class_object.course_enrollment_availability}}/{{class_object.course_size}}</td>
+              <td>{{course.course_enrollment_availability}}/{{course.course_size}}</td>
             </div>
         </div>
       <td>
-        <form method="POST" action="{% url 'addToCart' class_object.pk%}">
+        <form method="POST" action="{% url 'addToCart' course.pk%}">
           {% csrf_token %}
-          <input type="hidden" name="pk" value="{{ class_object.pk }}">
+          <input type="hidden" name="pk" value="{{ course.pk }}">
           <button type="submit" class = "btn btn-primary btn-sm buttonShoppingCartandBrowseCourses">Add to Cart
             <svg xmlns="https://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
               <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
@@ -528,6 +445,6 @@
 </body>
 
  
-  <p class = "footer"></p>
-  {% endblock %}
-  </html>
+<p class = "footer"></p>
+{% endblock %}
+</html>
