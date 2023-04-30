@@ -307,7 +307,9 @@ def api_data(request):
         #         print(course.course_subject)
         for course in courses:
             course.course_enrollment_availability = re.sub("[^0-9]", "", course.course_enrollment_availability)
-        context = {'classes': courses}
+        # courses = courses.order_by('course_catalog_nbr')
+        courses = sorted(courses, key=lambda obj: obj.course_catalog_nbr)
+        context = {'courses': courses}
         return render(request, 'myapp/courses.html', context)
     else:
         classes_json = json.dumps(classes)
