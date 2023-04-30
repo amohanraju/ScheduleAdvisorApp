@@ -52,10 +52,34 @@
         <h4 style="font-weight: bold;">Schedule Status: Rejected By Advisor <i class="fa-regular fa-circle-xmark" style="color: #ec1349;"></i></h4>
       {% elif usersSchedule.status %}
         <h4 style="font-weight: bold;">Schedule Status: Approved By Advisor <i class="fa-solid fa-square-check" style="color: #46b458;"></i></h4>
+        <br>
+        <p style = "color: gray; font-size: 12px;">Your Approved Schedule:</p>
+
+        <table class = "table">
+          <tr>
+            <th>Course</th>
+            <th>Days</th>
+            <th>Time</th>
+          </tr>
+          {% for course in usersSchedule.courses.all %}
+            <tr>
+              <td>{{course.course_subject}}</td>
+              <td>{{course.course_days_of_week}}</td>
+              <td>{{course.course_start_time}} - {{course.course_end_time}}</td>
+            </tr>
+          {% endfor %} 
+          
+
+        </table>
+        <!--
+        {% for course in usersSchedule.courses.all %}
+          <li>{{course.course_subject}}{{course.course_days_of_week}}</li>
+         {% endfor %} 
+        <br>
         {% else %}
         <h4 style="font-weight: bold;">Schedule Status: Pending(Waiting On Advisor)<i class="fa-regular fa-hourglass" style="color: #e0d900;"></i></h4>
       {% endif %}
-
+        -->
         <br>
         <div class = "container"> 
           <div style = "border: 2px solid black;">
