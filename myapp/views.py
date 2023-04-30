@@ -262,24 +262,29 @@ def api_data(request):
             number = query.split()[1]
             courses = Course.objects.filter(course_mnemonic=mnemonic, course_catalog_nbr=number)
             searched = True
-        print(searched)
+            print("Mnemonic and Course Number")
         #Search by mnemonic
         if query.split()[0].upper() in mnemonics and len(query.split()) == 1 and not searched:
             mnemonic = query.split()[0].upper()
             courses = Course.objects.filter(course_mnemonic=mnemonic)
+            # for course in courses:
+            #     print(course.course_subject)
             searched = True
+            print("Mnemonic")
         #Search by course number
         nums = Course.objects.values_list('course_catalog_nbr',flat=True).distinct()
         if query.split()[0] in nums and len(query.split()) == 1 and not searched:
             number = query.split()[0]
             courses = Course.objects.filter(course_catalog_nbr=number)
             searched = True
+            print("Course Number")
         #Search by course id
         ids = Course.objects.values_list('course_id',flat=True).distinct()
         if query.split()[0] in ids and len(query.split()) == 1 and not searched:
             id = query.split()[0]
             courses = Course.objects.filter(course_id=str(id))
             searched = True
+            print("Course ID")
         #Search by Professor
         professors = Course.objects.values_list('course_instructor',flat=True).distinct()
         professors_lower = {}
@@ -288,14 +293,18 @@ def api_data(request):
         if query.lower() in professors_lower and not searched:
             courses = Course.objects.filter(course_instructor=professors_lower[query.lower()])
             searched = True
+            print("Professor")
         #Search by description
         if not searched:
             courses = Course.objects.filter(course_subject = query)
+            print("Description")
     else:
         url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
             'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % class_dept
         classes = requests.get(url).json()
     if request.method == 'GET':
+        # for course in courses:
+        #         print(course.course_subject)
         for course in courses:
             course.course_enrollment_availability = re.sub("[^0-9]", "", course.course_enrollment_availability)
         context = {'classes': courses}

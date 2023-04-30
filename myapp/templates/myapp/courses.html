@@ -141,7 +141,7 @@
         <select id = "time-range">
           <option value="">Time</option>
         </select>
-      <script>
+      <!-- <script>
           const classes = JSON.parse('{{ classes_json|safe }}');
           const catalogSelect = document.getElementById('number');
           const professorSelect = document.getElementById('professor')
@@ -229,7 +229,7 @@
           timeSelect.add(option);
         }
         });
-      </script>
+      </script> -->
         <!-- <script>
           const classes = JSON.parse('{{ classes_json|safe }}');
           const startTimes = new Set();
@@ -315,30 +315,30 @@
       </div>
     </tr>
     
-    {% for class_object, class in content %}
+    {% for class in classes %}
     <tr class = "main-rows">
         <div class = "row"> 
             <div class = "col col-lg-3 col-md-3 col-sm-3"> 
-              <td >{{class.subject}} {{class.catalog_nbr}}</td>
+              <td >{{class.course_mnemonic}} {{class.course_catalog_nbr}}</td>
             </div>
             <div class = "col col-lg-3 col-md-3 col-sm-3"> 
-              <td>{{class.descr}}</td>
+              <td>{{class.course_subject}}</td>
             </div>
             <div class = "col col-lg-3 col-md-3 col-sm-3"> 
-              <td>{{class.section_type}} ({{class.units}})</td>
+              <td>{{class.course_type}} ({{class.course_credits}})</td>
             </div>
             <div class = "col col-lg-3 col-md-3 col-sm-3">
-              {% if class_object.course_start_time != "" %}
-                <td>{{class_object.course_days_of_week}} {{class_object.course_start_time}} - {{class_object.course_end_time}}</td>
+              {% if class.course_start_time != "" %}
+                <td>{{class.course_days_of_week}} {{class.course_start_time}} - {{class.course_end_time}}</td>
               {% else %}
                 <td>TBA</td>
               {% endif %}
             </div>
             <div class = "col col-lg-3 col-md-3 col-sm-3"> 
-              <td>{{class.instructors.0.name}}</td>
+              <td>{{class.course_instructor}}</td>
             </div>
             <div class = "col col-lg-3 col-md-3 col-sm-3"> 
-              <td>{{class_object.course_enrollment_availability}}/{{class_object.course_size}}</td>
+              <td>{{class.course_enrollment_availability}}/{{class.course_size}}</td>
             </div>
         </div>
       <td>
@@ -358,6 +358,6 @@
 </body>
 
  
-  <p class = "footer"></p>
-  {% endblock %}
-  </html>
+<p class = "footer"></p>
+{% endblock %}
+</html>
