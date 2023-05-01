@@ -214,9 +214,19 @@
             </script>
           </td>
           <td>{{course.course_subject}}</td>
-          <td>{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td>
+          {% if course.course_start_time != "" %}
+            <td>{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}}</td>
+          {% else %}
+            <td>TBA</td>
+          {% endif %}
+          {%comment%}<td>{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td>{%endcomment%}
           <td>{{course.course_instructor}}</td>
-          <td>{{course.course_location}}</td>
+          {% if course.course_start_time != "" %}
+            <td>{{course.course_location}}</td>
+          {% else %}
+            <td>TBA</td>
+          {% endif %}
+          {%comment%}<td>{{course.course_location}}</td>{%endcomment%}
           <td>
               <form method="POST" action="{% url 'removeFromSchedule' course.pk%}">
                 {% csrf_token %}
