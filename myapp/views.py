@@ -138,6 +138,7 @@ class CalendarObj():
         self.coursenum = ""
         self.conflict = False
         self.start_tag, self.end_tag = self.populate_tags() 
+        self.short_class = self.populate_time()
     
     def populate_tags(self):
         start_tag = str(self.course_start_time)[0:2] + "_" + str(self.course_start_time)[3:5]
@@ -150,6 +151,8 @@ class CalendarObj():
         return start_tag, end_tag
     
     def populate_time(self):
+        if self.course_start_time == "":
+            return True
         start = datetime.strptime(self.course_start_time, "%I:%M %p")
         end = datetime.strptime(self.course_end_time, "%I:%M %p")
         diff = end-start
