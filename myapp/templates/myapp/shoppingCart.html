@@ -125,7 +125,11 @@
             <td>{{course.course_subject}}</td>
             {% if course.course_start_time != "" %}
               <!-- <td bgcolor="{{course.color}}">{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td> -->
-              <td id="time_box" class="times" title = "{{course.conflict}}" name = "{{course.in_calendar}}">{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td>
+              {% if course in courses_in_calendar%}
+                <td id="time_box" class="times" title = "{{course.conflict}}" name = "True">{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td>
+              {% else %}
+              <td id="time_box" class="times" title = "{{course.conflict}}" name = "False">{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td>
+              {% endif %}
             {% else %}
               <td>TBA</td>
             {% endif %}
