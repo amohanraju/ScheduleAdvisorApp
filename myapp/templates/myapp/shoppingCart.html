@@ -130,7 +130,7 @@
               <td>TBA</td>
             {% endif %}
             <td>{{course.course_instructor}}</td>
-            <td>{{course.course_enrollment_availability}}/{{course.course_size}}</td>
+            <td>{{course.course_enrollment_total}}/{{course.course_size}}</td>
             <td>
                 <form method="POST" action="{% url 'removeFromCart' course.pk%}">
                   {% csrf_token %}

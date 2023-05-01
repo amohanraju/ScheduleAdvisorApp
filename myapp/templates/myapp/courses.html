@@ -139,8 +139,8 @@
         <select id = "time-range">
           <option value="">Time</option>
         </select>
-        <button type="submit">Submit</button>
-        <button type = "submit" id = "submit-btn"> Handle Filters </button>
+        <button type = "submit" id = "submit-btn-1"> Submit Initial Department</button>
+        <button type = "submit" id = "submit-btn"> Handle Filters For Specified Department</button>
       <script>
           function generateStartTime(cls){
             let start_time = '';
@@ -423,7 +423,6 @@
           classes.forEach((item) => endTimes.add(item.meetings[2].end_time));
           classes.forEach((item) => professors.add(item.instructors[0].name));
           classes.forEach((item) => days.add(item.meetings[0].days));
-
           // Define a function to generate options for the number select tag
           function generateOptions() {
             // Get the selected subject
@@ -449,7 +448,6 @@
           
           // Call the generateNumberOptions function initially
           generateNumberOptions();
-
           // Add an event listener to the subject select tag
           subjectSelect.addEventListener('change', () => {
             generateNumberOptions();
@@ -514,19 +512,27 @@
             <div class = "col col-lg-3 col-md-3 col-sm-3"> 
               <td>{{class.instructors.0.name}}</td>
             </div>
+            <div class = "col col-lg-3 col-md-3 col-sm-3">
+              {% if class.enrollment_total >= class.class_capacity %}
+                 <td> Class is Full</td>
+               {% else %}
+                 <td> {{class.enrollment_total}}/{{class.class_capacity}}</td>
+               {% endif %}
+           </div>
         </div>
-      <td>
-        <form method="POST" action="{% url 'addToCart' class_object.pk%}">
-          {% csrf_token %}
-          <input type="hidden" name="pk" value="{{ class_object.pk }}">
-          <button type="submit" class = "btn btn-primary btn-sm buttonShoppingCartandBrowseCourses">Add to Cart
-            <svg xmlns="https://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
-              <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-            </svg>
-          </button>
-        </form>
-       
-      </td>
+        {% if class.enrollment_total >= class.class_capacity %}
+        <td> Cannot Add Course To Cart</td>
+      {% else %}
+        <td> <form method="POST" action="{% url 'addToCart' class_object.pk%}">
+        {% csrf_token %}
+        <input type="hidden" name="pk" value="{{ class_object.pk }}">
+        <button type="submit" class = "btn btn-primary btn-sm buttonShoppingCartandBrowseCourses">Add to Cart
+          <svg xmlns="https://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
+            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+          </svg>
+        </button>
+      </form> </td>
+      {% endif %}
     </tr>
     {% endfor %}
     {% for course in courses %}
