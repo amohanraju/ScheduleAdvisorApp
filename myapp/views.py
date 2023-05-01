@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.contrib import messages
 import requests
 from datetime import datetime
+from django.core import serializers
 import re
 import json
 
@@ -232,6 +233,9 @@ def api_data(request):
 def api_data_search(request):
     print("api_data_search was called")
     class_dept = request.GET.get("classes")
+    url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
+            'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % class_dept
+    classes = requests.get(url).json()
     query = request.GET.get("query")
     courses = []
     if query:
@@ -286,14 +290,16 @@ def api_data_search(request):
     if request.method == 'GET':
         enrollment_dict = {}
         courses = sorted(courses, key=lambda obj: obj.course_catalog_nbr)
+        courses_json = serializers.serialize('json', courses)
+        print(courses_json)
         for course in courses:
             enrollment_dict[course] = int(re.sub("[^0-9]", "", course.course_enrollment_availability))
-        context = {'courses': courses, 'dict' : enrollment_dict}
+        context = {'courses': courses, 'dict' : enrollment_dict, 'courses_json': courses_json}
         return render(request, 'myapp/courses.html', context)
     else:
         classes_json = json.dumps(classes)
         context = {'classes_json': classes_json}
-        # print(classes_json)
+        print(classes_json)
         return render(request, 'myapp/courses.html', context)
     
 
