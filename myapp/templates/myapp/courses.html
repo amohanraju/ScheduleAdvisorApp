@@ -139,8 +139,8 @@
         <select id = "time-range">
           <option value="">Time</option>
         </select>
-        <button type = "submit" id = "submit-btn-1"> Submit Initial Department</button>
-        <button type = "submit" id = "submit-btn"> Handle Filters For Specified Department</button>
+        <button type = "submit" id = "submit-btn-1" > Submit Initial Department</button>
+        <button type = "submit" id = "submit-btn" > Handle Filters For Department Submitted</button>
       <script>
           function generateStartTime(cls){
             let start_time = '';
@@ -185,6 +185,7 @@
           const daySelect = document.getElementById('day');
           const timeSelect = document.getElementById('time-range');
         
+
         // Add an event listener for when the name of class is changed
         nameSelect.addEventListener('change', () =>{
           subjectSelect.innerHTML = 'Subject';
