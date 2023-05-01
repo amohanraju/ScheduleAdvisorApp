@@ -161,8 +161,75 @@ class CalendarObj():
         else:
             return False
 
-
 def api_data(request):
+    class_dept = request.GET.get("classes")
+    url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
+            'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % class_dept
+    classes = requests.get(url).json()
+    if request.method == 'GET':
+        #return HttpResponse(url)
+        #courses_in_calendar = Course.objects.filter(course_added_to_schedule = request.user)
+        class_objects = []
+        if(len(classes) > 0):
+            for course in classes:
+                if(not Course.objects.filter(course_id= course.get("crse_id"), course_section= course.get("class_section"), course_catalog_nbr=course.get("catalog_nbr"), course_instructor = course.get("instructors")[0]['name']).exists()):
+                    start = course.get("meetings")[0]['start_time']
+                    if (start != ""):
+                        start = datetime.datetime.strptime(course.get("meetings")[0]['start_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p')
+                    end = course.get("meetings")[0]['end_time']
+                    if (end != ""):
+                        end = datetime.datetime.strptime(course.get("meetings")[0]['end_time'], '%H.%M.%S.%f%z').strftime('%I:%M %p')
+                    course_model_instance = Course(
+                        course_id = course.get('crse_id'),
+                        course_section = course.get('class_section'),
+                        course_catalog_nbr = course.get('catalog_nbr'),
+
+                        course_subject = course.get('descr'),
+                        course_mnemonic = course.get('subject'),
+
+                        course_instructor = course.get("instructors")[0]['name'],
+                        course_location = course.get("meetings")[0]['facility_descr'],
+
+                        course_size = course.get('class_capacity'),
+                        course_enrollment_total = course.get('enrollment_total'),
+                        course_enrollment_availability = course.get('enrollment_available'),
+                        course_waitlist_total = course.get('wait_tot'),
+                        course_waitlist_cap = course.get('wait_cap'),
+
+                        course_days_of_week = course.get("meetings")[0]['days'],
+                        course_start_time = start,
+                        course_end_time = end,
+
+                    )
+                    course_model_instance.save()
+                    course_model_instance.course_added_to_cart.set([])
+                    course_model_instance.save()
+                #For updating info if users join / get off waitlist and as enrollment size changes
+                specific_course = Course.objects.get(course_id= course.get("crse_id"), course_section= course.get("class_section"), course_catalog_nbr=course.get("catalog_nbr"), course_instructor = course.get("instructors")[0]['name'])    
+                if(specific_course.course_enrollment_total != course.get('enrollment_total') or 
+                   specific_course.course_enrollment_availability != course.get('enrollment_available') or
+                   specific_course.course_waitlist_total != course.get('wait_tot') or 
+                   specific_course.course_waitlist_cap != course.get('wait_cap')):
+                        specific_course.course_enrollment_total = course.get('enrollment_total'),
+                        specific_course.course_enrollment_availability = course.get('enrollment_available') ,
+                        specific_course.course_waitlist_total = course.get('wait_tot'),
+                        specific_course.course_waitlist_cap = course.get('wait_cap'),
+                        specific_course.save()
+                class_objects.append(specific_course)
+        #primary_keys = [instance.pk for instance in class_objects]
+        classes_json = json.dumps(classes)
+        print(classes)
+        finalList = zip(class_objects, classes)
+        context = {'content': finalList, 'classes_json': classes_json}
+        return render(request, 'myapp/courses.html', context)
+        #return render(request, 'myapp/courses.html', {'classes' : classes, 'primary_keys' : primary_keys})
+    else:
+        classes_json = json.dumps(classes)
+        context = {'classes_json': classes_json}
+        print(classes_json)
+        return render(request, 'myapp/courses.html', context)
+
+def api_data_search(request):
     class_dept = request.GET.get("classes")
     query = request.GET.get("query")
     courses = []
@@ -243,8 +310,9 @@ def shoppingCart(request):
             for cal_course in courses_in_calendar:
                 if (cart_course not in courses_in_calendar):
                     if time_conflict(cart_course, cal_course) and (cart_course != cal_course):
+                        if(dtime_conflict(cart_course, cal_course)):
+                            cart_course.conflict = True
                         #cart_course.color = "#ff7770"
-                        cart_course.conflict = True
                     #else:
                         #cart_course.conflict = False
                         #cart_course.color = "#42d67b"

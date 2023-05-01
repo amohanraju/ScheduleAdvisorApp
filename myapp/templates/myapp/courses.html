@@ -5,8 +5,6 @@
 <!DOCTYPE html>
 <html>
 <link rel="stylesheet" href="{% static 'myapp/style.css' %}">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src = "{% static 'myapp/courses.js' %}"> </script>
 <link rel="icon" href="{% static 'myapp/University_of_Virginia_Rotunda_logo.svg' %}">
 {# Load the tag library #}
 {% load bootstrap5 %}
@@ -38,7 +36,6 @@
     <center>
     <h1 id="">Browse Courses</h1>
     <hr>
-    {%comment%}
       <form action="{% url 'api_data' %}" method="get">
           {% csrf_token %}
       <select name="classes" id="classes">
@@ -142,41 +139,118 @@
         <select id = "time-range">
           <option value="">Time</option>
         </select>
-        
-      <!-- <script>
+        <button type="submit">Submit</button>
+        <button type = "submit" id = "submit-btn"> Handle Filters </button>
+      <script>
+          function generateStartTime(cls){
+            let start_time = '';
+            let end_time = '';
+            let startHour = parseInt(cls.meetings[0].start_time.substring(0, 2));
+            console.log(startHour);
+            let startMinute = cls.meetings[0].start_time.substring(3, 5);
+            console.log(startMinute);
+            // modify start_time to display in desired format
+            if (startHour == 12) {
+              start_time = startHour + ":" + startMinute + " pm";
+            } else if (startHour > 12) {
+              startHour -= 12;
+              start_time = startHour + ":" + startMinute + " pm";
+            } else {
+              start_time = startHour + ":" + startMinute + " am";
+            }
+            return start_time;
+          }
+          function generateEndTime(cls){
+            // extract hour and minute values for end_time
+            let endHour = parseInt(cls.meetings[0].end_time.substring(0, 2));
+            let endMinute = cls.meetings[0].end_time.substring(3, 5);
+
+            // modify end_time to display in desired format
+            if (endHour == 12) {
+              end_time = endHour + ":" + endMinute + " pm";
+            } else if (endHour > 12) {
+              endHour -= 12;
+              end_time = endHour + ":" + endMinute + " pm";
+            } else {
+              end_time = endHour + ":" + endMinute + " am";
+            }
+            return end_time;
+          }
           const classes = JSON.parse('{{ classes_json|safe }}');
+          console.log(classes);
+          const nameSelect = document.getElementById('classes');
+          const subjectSelect = document.getElementById('mnemonic')
           const catalogSelect = document.getElementById('number');
           const professorSelect = document.getElementById('professor')
           const daySelect = document.getElementById('day');
           const timeSelect = document.getElementById('time-range');
-  
+        
+        // Add an event listener for when the name of class is changed
+        nameSelect.addEventListener('change', () =>{
+          subjectSelect.innerHTML = 'Subject';
+          catalogSelect.innerHTML = 'Catalog';
+          professorSelect.innerHTML = 'Professor';
+          daySelect.innerHTML = 'Days';
+          timeSelect.innerHTML = 'Times';
+
+          const option = document.createElement('option');
+          option.value = 'Subject';
+          option.text = 'Subject';
+          subjectSelect.add(option); 
+          
+          const option2 = document.createElement('option');
+          option2.value = nameSelect.value;
+          option2.text = nameSelect.value;
+          subjectSelect.add(option2);
+        // Get the selected subject
+        // const selectedClass = nameSelect.text;
+        // console.log(selectedClass);
+        //  Populate the catalog select options
+        // const subjects = [...new Set(classes.filter(c => c.subject_descr === selectedClass).map(c => c.subject))];
+        // console.log(subjects);
+        // const option = document.createElement('option');
+        // option.value = 'Subject';
+        // option.text = 'Subject';
+        // subjectSelect.add(option);
+        // for (const subject of subjects) {
+        //   const option = document.createElement('option');
+        //   option.value = subject;
+        //   option.text = subject;
+        //   subjectSelect.add(option);
+        // }
+      });
+
         // Add an event listener for when the subject is changed
         subjectSelect.addEventListener('change', () => {
           // Clear the catalog, day, and time options
-        catalogSelect.innerHTML = '';
-        professorSelect.innerHTML
-        daySelect.innerHTML = '';
-        timeSelect.innerHTML = '';
+          catalogSelect.innerHTML = 'Catalog Number';
+          professorSelect.innerHTML = 'Professor';
+          daySelect.innerHTML = 'Days';
+          timeSelect.innerHTML = 'Times';
   
         // Get the selected subject
-        const selectedSubject = subjectSelect.value;
-      
+          const selectedSubject = subjectSelect.value;
+          console.log(selectedSubject);
         // Populate the catalog select options
-        const catalogs = [...new Set(classes.filter(c => c.course === selectedSubject).map(c => c.catalog_nbr))];
-        for (const catalog of catalogs) {
+          const catalogs = [...new Set(classes.filter(c => c.subject === selectedSubject).map(c => c.catalog_nbr))];
           const option = document.createElement('option');
-          option.value = catalog;
-          option.text = catalog;
+          option.value = 'Catalog Number';
+          option.text = 'Catalog Number';
           catalogSelect.add(option);
-        }
+          for (const catalog of catalogs) {
+            const option = document.createElement('option');
+            option.value = catalog;
+            option.text = catalog;
+            catalogSelect.add(option);
+          }
       });
       
       // Add an event listener for when the catalog is changed
       catalogSelect.addEventListener('change', () => {
         // Clear the day and time options
-        professorSelect.innerHTML = '';
-        daySelect.innerHTML = '';
-        timeSelect.innerHTML = '';
+        professorSelect.innerHTML = 'Professor';
+        daySelect.innerHTML = 'Days';
+        timeSelect.innerHTML = 'Times';
       
         // Get the selected subject and catalog
         const selectedSubject = subjectSelect.value;
@@ -184,6 +258,10 @@
       
         const matchingProfessors = classes.filter(c => c.subject === selectedSubject && c.catalog_nbr === selectedCatalog)
         const professors = [...new Set(matchingProfessors.map(c => c.instructors[0].name))]
+        const option = document.createElement('option');
+        option.value = 'Professors';
+        option.text = 'Professors';
+        professorSelect.add(option);
         for (const professor of professors) {
           const option = document.createElement('option');
           option.value = professor;
@@ -192,15 +270,20 @@
         }
       });
       professorSelect.addEventListener('change', () => {
-        daySelect.innerHTML = '';
-        timeSelect.innerHTML = '';
-
+        daySelect.innerHTML = 'Days';
+        timeSelect.innerHTML = 'Times';
+        
+        const selectedClass = nameSelect.value;
         const selectedSubject = subjectSelect.value;
         const selectedCatalog = catalogSelect.value;
         const selectedProfessor = professorSelect.value;
         const matchingDays = classes.filter(c => c.subject === selectedSubject && c.catalog_nbr === selectedCatalog && c.instructors[0].name === selectedProfessor);
         // Populate the day select options
-        const days = [...new Set(matchingClasses.map(c => c.meetings[0].days))];
+        const days = [...new Set(matchingDays.map(c => c.meetings[0].days))];
+        const option = document.createElement('option');
+        option.value = 'Days';
+        option.text = 'Days';
+        daySelect.add(option);
         for (const day of days) {
           const option = document.createElement('option');
           option.value = day;
@@ -212,26 +295,118 @@
       // Add an event listener for when the day is changed
       daySelect.addEventListener('change', () => {
         // Clear the time options
-        timeSelect.innerHTML = '';
+        timeSelect.innerHTML = 'Times';
       
-        // Get the selected subject, catalog, and day
+        // Get the selected subject, catalog, professor, and day
+        const selectedClass = nameSelect.value;
         const selectedSubject = subjectSelect.value;
         const selectedCatalog = catalogSelect.value;
         const selectedProfessor = professorSelect.value;
         const selectedDay = daySelect.value;
       
-        // Get the classes that match the selected subject, catalog, and day
-        const matchingClasses = classes.filter(c => c.subject === selectedSubject && c.catalog_nbr === selectedCatalog && c.instructors[0].name === selectedProfessor && c.meetings[0].name === selectedDay);
-      
+        // Get the classes that match the selected subject, catalog, professor, and day
+        const matchingClasses = classes.filter(c => c.subject === selectedSubject && c.catalog_nbr === selectedCatalog && c.instructors[0].name === selectedProfessor && c.meetings[0].days === selectedDay);
+        console.log(matchingClasses);
+        const option = document.createElement('option');
+        option.value = 'Times';
+        option.text = 'Times';
+        timeSelect.add(option);
         // Populate the time select options
         for (const cls of matchingClasses) {
           const option = document.createElement('option');
-          option.value = `${cls.meetings[1].start_time} - ${cls.meetings[1].end_time}`;
-          option.text = `${cls.meetings[1].start_time} - ${cls.meetings[1].end_time}`;
+          let start_time = generateStartTime(cls);
+          let end_time = generateEndTime(cls);
+          option.value = `${start_time} - ${end_time}`;
+          option.text = `${start_time} - ${end_time}`;
           timeSelect.add(option);
         }
+        const submitBtn = document.getElementById("submit-btn");
+        submitBtn.addEventListener("click", handleFilter);
+        function handleFilter(event) {
+          event.preventDefault(); // prevent the default form submission behavior
+
+          // get the selected options from the select elements
+          const subjectSelect = document.getElementById('mnemonic')
+          const catalogSelect = document.getElementById('number');
+          const professorSelect = document.getElementById('professor')
+          const daySelect = document.getElementById('day');
+          const timeSelect = document.getElementById('time-range');
+
+          const selectedSubject = subjectSelect.value;
+          const selectedCatalog = catalogSelect.value;
+          const selectedProfessor = professorSelect.value;
+          const selectedDay = daySelect.value;
+          const selectedTime = timeSelect.value;
+
+          // filter the classes based on the selected options
+          const filteredClasses = classes.filter((classObj) => {
+            let start_time = generateStartTime(classObj);
+            let end_time = generateEndTime(classObj);
+            if (
+              (selectedCatalog === "Catalog Number" ||  selectedCatalog === classObj.catalog_nbr) && (selectedProfessor === "" || selectedProfessor 
+              === "Professors" || selectedProfessor === classObj.instructors[0].name) &&
+              (selectedDay === "" || selectedDay === "Days" || selectedDay === classObj.meetings[0].days) &&
+              (selectedTime === "" || selectedTime === "Times" ||
+                (selectedTime === `${start_time} - ${end_time}`))
+            ) {
+              return true;
+            }
+            return false;
+          });
+
+          // update the displayed classes with the filtered classes
+          const classTable = document.getElementById("class-table");
+          classTable.innerHTML = ""; // clear the current table
+
+          // Create table header row
+          const headerRow = document.createElement("tr");
+          headerRow.classList.add('title-row');
+          const headerCourseCell = document.createElement("th");
+          headerCourseCell.textContent = "Course";
+          const headerCatalogNumberCell = document.createElement("th");
+          headerCatalogNumberCell.textContent = "Catalog Number";
+          const headerProfessorCell = document.createElement("th");
+          headerProfessorCell.textContent = "Professor";
+          const headerDaysCell = document.createElement("th");
+          headerDaysCell.textContent = "Days";
+          const headerTimeCell = document.createElement("th");
+          headerTimeCell.textContent = "Time";
+          const headerAddCartCell = document.createElement("th");
+          headerAddCartCell.textContent = "Add Cart"
+          headerRow.appendChild(headerCourseCell);
+          headerRow.appendChild(headerCatalogNumberCell);
+          headerRow.appendChild(headerProfessorCell);
+          headerRow.appendChild(headerDaysCell);
+          headerRow.appendChild(headerTimeCell);
+          classTable.appendChild(headerRow);
+
+          // Create table row for each class object
+          filteredClasses.forEach((classObj) => {
+            const classRow = document.createElement("tr");
+            classRow.classList.add('main-rows');
+            const courseCell = document.createElement("td");
+            courseCell.textContent = classObj.subject;
+            const catalogNumberCell = document.createElement("td");
+            catalogNumberCell.textContent = classObj.catalog_nbr;
+            const professorCell = document.createElement("td");
+            professorCell.textContent = classObj.instructors[0].name;
+            const daysCell = document.createElement("td");
+            daysCell.textContent = classObj.meetings[0].days;
+            const timeCell = document.createElement("td");
+            const startTime = generateStartTime(classObj);
+            const endTime = generateEndTime(classObj);
+            timeCell.textContent = `${startTime}-${endTime}`;
+            const buttonCell = document.createElement("td");
+            classRow.appendChild(courseCell);
+            classRow.appendChild(catalogNumberCell);
+            classRow.appendChild(professorCell);
+            classRow.appendChild(daysCell);
+            classRow.appendChild(timeCell);
+            classTable.appendChild(classRow);
+          });
+        }
         });
-      </script> -->
+      </script>
         <!-- <script>
           const classes = JSON.parse('{{ classes_json|safe }}');
           const startTimes = new Set();
@@ -280,19 +455,18 @@
             generateNumberOptions();
           });
         </script> -->
-        
-    <button type="submit">Submit</button>
   </form>
-  {%endcomment%}
-  <form action="{% url 'api_data' %}" method="get">
+  <br>
+  <br>
+  <form action="{% url 'api_data_search' %}" method="get">
     {%csrf_token%}
     </select>
     <input class="form-control form-control-sm" type="text" name ="query" id="query" placeholder="Search courses..."> <!-- Add the search input field -->
     <button type="submit">Submit</button>
-  </form>
+  </form> 
 </center>
   <br>
-  <table style="width:100%">
+  <table id = "class-table" style="width:100%">
     <tr class = "title-row">
       <div class = "row"> 
         <div class = "col col-lg-3 col-md-3 col-sm-3"> 
