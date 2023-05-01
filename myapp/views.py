@@ -318,7 +318,10 @@ def shoppingCart(request):
                     #else:
                         #cart_course.conflict = False
                         #cart_course.color = "#42d67b"
-        return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart, 'courses_in_calendar': courses_in_calendar, 'courseVar': courseVar})
+        enrollment_dict = {}
+        for course in courses_in_cart:
+            enrollment_dict[course] = int(re.sub("[^0-9]", "", course.course_enrollment_availability))
+        return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart, 'courses_in_calendar': courses_in_calendar, 'courseVar': courseVar, 'dict': enrollment_dict})
     else:
         response = redirect('/accounts/login')
         return response

@@ -109,7 +109,7 @@
         </tr>
       </thead>
         <hr>
-    {% for course in courses_in_cart %}
+    {% for course, enrollment in dict.items %}
         <tbody>
         <tr class = "main-rows" style = "border-bottom: 1px solid #dddddd;background-color: light gray;">
             <td>{{course.course_mnemonic}} {{course.course_catalog_nbr}}
@@ -130,7 +130,7 @@
               <td>TBA</td>
             {% endif %}
             <td>{{course.course_instructor}}</td>
-            <td>{{course.course_enrollment_total}}/{{course.course_size}}</td>
+            <td>{{enrollment}}/{{course.course_size}}</td>
             <td>
                 <form method="POST" action="{% url 'removeFromCart' course.pk%}">
                   {% csrf_token %}
