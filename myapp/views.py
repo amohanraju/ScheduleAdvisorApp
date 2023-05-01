@@ -299,7 +299,10 @@ def api_data_search(request):
             if(course.course_enrollment_availability == ''):
                 enrollment_dict[course] = 0
             else:
-                enrollment_dict[course] = int(re.sub("[^0-9]", "", course.course_enrollment_availability))
+                if(re.sub("[^0-9]", "", course.course_enrollment_availability) == ''):
+                    enrollment_dict[course] = 0
+                else:
+                    enrollment_dict[course] = int(re.sub("[^0-9]", "", course.course_enrollment_availability))
         context = {'courses': courses, 'dict' : enrollment_dict, 'courses_json': courses_json}
         return render(request, 'myapp/courses.html', context)
     else:
