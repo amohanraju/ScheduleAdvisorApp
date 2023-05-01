@@ -97,7 +97,7 @@ def profile(request):
         usersSchedule = None
         if(Schedule.objects.filter(author = request.user).exists()):
             usersSchedule = Schedule.objects.get(author = request.user)
-        print(usersSchedule)  
+        # print(usersSchedule)  
         template = loader.get_template('myapp/profile.html')
         return HttpResponse(template.render({'usersSchedule' : usersSchedule}, request))
     else:
@@ -218,7 +218,7 @@ def api_data(request):
                 class_objects.append(specific_course)
         #primary_keys = [instance.pk for instance in class_objects]
         classes_json = json.dumps(classes)
-        print(classes)
+        # print(classes)
         finalList = zip(class_objects, classes)
         context = {'content': finalList, 'classes_json': classes_json}
         return render(request, 'myapp/courses.html', context)
@@ -226,15 +226,15 @@ def api_data(request):
     else:
         classes_json = json.dumps(classes)
         context = {'classes_json': classes_json}
-        print(classes_json)
+        # print(classes_json)
         return render(request, 'myapp/courses.html', context)
 
 def api_data_search(request):
+    print("api_data_search was called")
     class_dept = request.GET.get("classes")
     query = request.GET.get("query")
     courses = []
     if query:
-        print(query)
         searched = False
         mnemonics = Course.objects.values_list('course_mnemonic',flat=True).distinct()
         #Search by mnemonic and course number
@@ -285,16 +285,15 @@ def api_data_search(request):
         classes = requests.get(url).json()
     if request.method == 'GET':
         enrollment_dict = {}
-        for course in courses:
-            enrollment_dict[course] = re.sub("[^0-9]", "", course.course_enrollment_availability)
-        print(enrollment_dict)
         courses = sorted(courses, key=lambda obj: obj.course_catalog_nbr)
+        for course in courses:
+            enrollment_dict[course] = int(re.sub("[^0-9]", "", course.course_enrollment_availability))
         context = {'courses': courses, 'dict' : enrollment_dict}
         return render(request, 'myapp/courses.html', context)
     else:
         classes_json = json.dumps(classes)
         context = {'classes_json': classes_json}
-        print(classes_json)
+        # print(classes_json)
         return render(request, 'myapp/courses.html', context)
     
 
@@ -356,10 +355,10 @@ def addToSchedule(request, pk):
         # print(type(course.course_start_time))
         # print(dtime_conflict(course,dummy))
         for cal_course in courses_in_calendar:
-            print(cal_course.course_subject)
+            # print(cal_course.course_subject)
             if dtime_conflict(course, cal_course):
                 conflict = True
-                print(cal_course.course_subject)
+                # print(cal_course.course_subject)
                 conflict_course = cal_course
                 break
         if not conflict:
