@@ -109,7 +109,7 @@
         </tr>
       </thead>
         <hr>
-    {% for course in courses_in_cart %}
+    {% for course, enrollment in dict.items %}
         <tbody>
         <tr class = "main-rows" style = "border-bottom: 1px solid #dddddd;background-color: light gray;">
             <td>{{course.course_mnemonic}} {{course.course_catalog_nbr}}
@@ -125,12 +125,16 @@
             <td>{{course.course_subject}}</td>
             {% if course.course_start_time != "" %}
               <!-- <td bgcolor="{{course.color}}">{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td> -->
-              <td id="time_box" class="times" title = "{{course.conflict}}" name = "{{course.in_calendar}}">{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td>
+              {% if course in courses_in_calendar%}
+                <td id="time_box" class="times" title = "{{course.conflict}}" name = "True">{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td>
+              {% else %}
+              <td id="time_box" class="times" title = "{{course.conflict}}" name = "False">{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td>
+              {% endif %}
             {% else %}
               <td>TBA</td>
             {% endif %}
             <td>{{course.course_instructor}}</td>
-            <td>{{course.course_enrollment_total}}/{{course.course_size}}</td>
+            <td>{{enrollment}}/{{course.course_size}}</td>
             <td>
                 <form method="POST" action="{% url 'removeFromCart' course.pk%}">
                   {% csrf_token %}

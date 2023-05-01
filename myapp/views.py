@@ -78,7 +78,7 @@ def download_classes():
     # for info in respons:
     #     subject = info['subject']
     #     print(subject+" "+str(i))
-    #     i += 1# BE SURE TO CHECK THAT THE OTHER CLASSES DOWNLOADED PROPERLY
+    #     i += 1
 class IndexView(generic.ListView):
     #download_classes()
     template_name='myapp/index.html'
@@ -139,6 +139,7 @@ class CalendarObj():
         self.coursenum = ""
         self.conflict = False
         self.start_tag, self.end_tag = self.populate_tags() 
+        self.short_class = self.populate_time()
     
     def populate_tags(self):
         start_tag = str(self.course_start_time)[0:2] + "_" + str(self.course_start_time)[3:5]
@@ -151,6 +152,8 @@ class CalendarObj():
         return start_tag, end_tag
     
     def populate_time(self):
+        if self.course_start_time == "":
+            return True
         start = datetime.strptime(self.course_start_time, "%I:%M %p")
         end = datetime.strptime(self.course_end_time, "%I:%M %p")
         diff = end-start
@@ -231,7 +234,7 @@ def api_data(request):
         return render(request, 'myapp/courses.html', context)
 
 def api_data_search(request):
-    print("api_data_search was called")
+    # print("api_data_search was called")
     class_dept = request.GET.get("classes")
     url = 'https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.' \
             'IScript_ClassSearch?institution=UVA01&term=1232&subject=%s&page=1' % class_dept
@@ -314,13 +317,17 @@ def shoppingCart(request):
         for cart_course in courses_in_cart:
             for cal_course in courses_in_calendar:
                 if (cart_course not in courses_in_calendar):
-                    if time_conflict(cart_course, cal_course) and (cart_course != cal_course):
+                    if dtime_conflict(cart_course, cal_course) and (cart_course != cal_course):
                         #cart_course.color = "#ff7770"
+                        print(cart_course.course_subject+" "+cal_course.course_subject)
                         cart_course.conflict = True
                     #else:
                         #cart_course.conflict = False
                         #cart_course.color = "#42d67b"
-        return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart, 'courses_in_calendar': courses_in_calendar, 'courseVar': courseVar})
+        enrollment_dict = {}
+        for course in courses_in_cart:
+            enrollment_dict[course] = int(re.sub("[^0-9]", "", course.course_enrollment_availability))
+        return render(request, 'myapp/shoppingCart.html', {'courses_in_cart': courses_in_cart, 'courses_in_calendar': courses_in_calendar, 'courseVar': courseVar, 'dict': enrollment_dict})
     else:
         response = redirect('/accounts/login')
         return response
@@ -555,7 +562,7 @@ def time_conflict(course1, course2):
         #     return False
         # else:
         #     return True
-        if (course1.course_start_time == '' or course1.course_end_time == '' or course2.course_start_time == '' or course2.course_end_time == ''):
+        if (course1.course_start_time == "" or course1.course_end_time == "" or course2.course_start_time == "" or course2.course_end_time == ""):
             return False
         c1_start = datetime.strptime(course1.course_start_time, "%I:%M %p")
         c1_end = datetime.strptime(course1.course_end_time, "%I:%M %p")
@@ -571,6 +578,7 @@ def time_conflict(course1, course2):
 
 def dtime_conflict(course1, course2):
     days = ["Mo", "Tu", "We", "Th", "Fr"]
+    print(course1)
     for day in days:
         if day in course1.course_days_of_week and day in course2.course_days_of_week and time_conflict(course1, course2):
             return True
