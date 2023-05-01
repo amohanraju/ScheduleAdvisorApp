@@ -159,7 +159,6 @@ class CalendarObj():
         mins = int(diff.total_seconds()/ 60)
         # print(self.course_subject)
         # print(mins)
-        print(mins)
         if mins <= 50:
             return True
         else:
@@ -234,7 +233,7 @@ def api_data(request):
         return render(request, 'myapp/courses.html', context)
 
 def api_data_search(request):
-    print("api_data_search was called")
+    # print("api_data_search was called")
     class_dept = request.GET.get("classes")
     query = request.GET.get("query")
     courses = []
@@ -312,8 +311,9 @@ def shoppingCart(request):
         for cart_course in courses_in_cart:
             for cal_course in courses_in_calendar:
                 if (cart_course not in courses_in_calendar):
-                    if time_conflict(cart_course, cal_course) and (cart_course != cal_course):
+                    if dtime_conflict(cart_course, cal_course) and (cart_course != cal_course):
                         #cart_course.color = "#ff7770"
+                        print(cart_course.course_subject+" "+cal_course.course_subject)
                         cart_course.conflict = True
                     #else:
                         #cart_course.conflict = False
@@ -556,7 +556,7 @@ def time_conflict(course1, course2):
         #     return False
         # else:
         #     return True
-        if (course1.course_start_time == '' or course1.course_end_time == '' or course2.course_start_time == '' or course2.course_end_time == ''):
+        if (course1.course_start_time == "" or course1.course_end_time == "" or course2.course_start_time == "" or course2.course_end_time == ""):
             return False
         c1_start = datetime.strptime(course1.course_start_time, "%I:%M %p")
         c1_end = datetime.strptime(course1.course_end_time, "%I:%M %p")
@@ -572,6 +572,7 @@ def time_conflict(course1, course2):
 
 def dtime_conflict(course1, course2):
     days = ["Mo", "Tu", "We", "Th", "Fr"]
+    print(course1)
     for day in days:
         if day in course1.course_days_of_week and day in course2.course_days_of_week and time_conflict(course1, course2):
             return True
