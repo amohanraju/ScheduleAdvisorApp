@@ -311,8 +311,9 @@ def shoppingCart(request):
             for cal_course in courses_in_calendar:
                 if (cart_course not in courses_in_calendar):
                     if time_conflict(cart_course, cal_course) and (cart_course != cal_course):
+                        if(dtime_conflict(cart_course, cal_course)):
+                            cart_course.conflict = True
                         #cart_course.color = "#ff7770"
-                        cart_course.conflict = True
                     #else:
                         #cart_course.conflict = False
                         #cart_course.color = "#42d67b"
