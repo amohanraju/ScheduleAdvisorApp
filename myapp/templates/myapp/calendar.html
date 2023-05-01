@@ -220,7 +220,12 @@
             <td>TBA</td>
           {% endif %}
           {%comment%}<td>{{course.course_days_of_week}} {{course.course_start_time}} - {{course.course_end_time}} </td>{%endcomment%}
-          <td>{{course.course_instructor}}</td>
+          {% if course.course_instructor != "" %}
+            <td>{{course.course_instructor}}</td>
+          {% else %}
+            <td>TBA</td>
+          {% endif %}
+          {%comment%}<td>{{course.course_instructor}}</td>{%endcomment%}
           {% if course.course_start_time != "" %}
             <td>{{course.course_location}}</td>
           {% else %}

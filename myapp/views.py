@@ -77,7 +77,7 @@ def download_classes():
     # for info in respons:
     #     subject = info['subject']
     #     print(subject+" "+str(i))
-    #     i += 1# BE SURE TO CHECK THAT THE OTHER CLASSES DOWNLOADED PROPERLY
+    #     i += 1
 class IndexView(generic.ListView):
     #download_classes()
     template_name='myapp/index.html'
@@ -156,6 +156,7 @@ class CalendarObj():
         mins = int(diff.total_seconds()/ 60)
         # print(self.course_subject)
         # print(mins)
+        print(mins)
         if mins <= 50:
             return True
         else:
