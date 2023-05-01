@@ -319,7 +319,7 @@
       </div>
     </tr>
       
-    {% for course in courses %}
+    {% for course, time in dict.items %}
     <tr class = "main-rows">
         <div class = "row"> 
             <div class = "col col-lg-3 col-md-3 col-sm-3"> 
@@ -342,7 +342,7 @@
               <td>{{course.course_instructor}}</td>
             </div>
             <div class = "col col-lg-3 col-md-3 col-sm-3"> 
-              <td>{{course.course_enrollment_availability}}/{{course.course_size}}</td>
+              <td>{{time}}/{{course.course_size}}</td>
             </div>
         </div>
       <td>
