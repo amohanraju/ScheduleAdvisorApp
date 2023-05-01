@@ -310,9 +310,8 @@ def shoppingCart(request):
             for cal_course in courses_in_calendar:
                 if (cart_course not in courses_in_calendar):
                     if time_conflict(cart_course, cal_course) and (cart_course != cal_course):
-                        if(dtime_conflict(cart_course, cal_course)):
-                            cart_course.conflict = True
                         #cart_course.color = "#ff7770"
+                        cart_course.conflict = True
                     #else:
                         #cart_course.conflict = False
                         #cart_course.color = "#42d67b"
@@ -326,6 +325,7 @@ def addToCart(request, pk):
         #https://www.youtube.com/watch?v=PXqRPqDjDgc
         course = get_object_or_404(Course, pk = pk)
         course.course_added_to_cart.add(request.user)
+        # course.course_enrollment_total += 1
         course.save()
         messages.success(request,"Successfully added "+course.course_mnemonic+" "+course.course_catalog_nbr+" to your cart!")
         return shoppingCart(request)
@@ -337,6 +337,7 @@ def removeFromCart(request, pk):
     #Get user from route and then remove the associated course and save
     course = get_object_or_404(Course, pk = pk)
     course.course_added_to_cart.remove(request.user)
+    # course.course_enrollment_total -= 1
     course.save()
     messages.success(request,"Successfully removed "+course.course_mnemonic+" "+course.course_catalog_nbr+" from your cart!")
     return shoppingCart(request)
