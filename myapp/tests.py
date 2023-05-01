@@ -29,7 +29,7 @@ class Test200Response(TestCase):
     def setup(self):
         self.client = Client()
     def test200(self):
-        url = reverse('api_data')
+        url = reverse('api_data_search')
         response = self.client.get(url)
         self.assertEqual(response.status_code,200)
             
