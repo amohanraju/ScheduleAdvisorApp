@@ -166,6 +166,7 @@
     <br>
   <center>
     <h1 style="font-weight: bolder;">Courses in Calendar:</h1>
+    <p style = "color: gray; font-size: 12px;">Note: These classes are not necessarily the same as your <a href="/accounts/profile">submitted schedule.</a></p>
   </center>
   {% if courses_in_calendar|length == 0 %}
     <br>
@@ -259,17 +260,17 @@
   <br>
   {% if usersSchedule is None %}
     <h4 style="font-weight: bold;">Status: Schedule Not Submitted <i class="fa-light fa-memo-circle-check" style="color: #07cf1f;"></i></h4>
-    <p style = "color: gray; font-size: 10px;">Note: You can always overwrite a submission by resubmitting the form</p>
+    <p style = "color: gray; font-size: 12px;">Note: You can always overwrite a submission by resubmitting the form</p>
   {% elif usersSchedule.isRejected%}
     <h4 style="font-weight: bold;">Status: Rejected By Advisor <i class="fa-regular fa-circle-xmark" style="color: #ec1349;"></i></h4>
-    <p style = "color: gray; font-size: 10px;">Note: You must submit a new Schedule!</p>
+    <p style = "color: gray; font-size: 12px;">Note: You must submit a new Schedule!</p>
   {% elif usersSchedule.status %}
     <h4 style="font-weight: bold;">Status: Approved By Advisor <i class="fa-solid fa-square-check" style="color: #46b458;"></i></h4>
-    <p style = "color: gray; font-size: 10px;">Note: Your Schedule has been approved, do not resubmit unless you need to make changes</p>
-    <p style = "color: gray; font-size: 10px;">You may view your finalized schedule on the <a href="/accounts/profile">Home Page</a></p>
+    <p style = "color: gray; font-size: 12px;">Note: Your Schedule has been approved, do not resubmit unless you need to make changes</p>
+    <p style = "color: gray; font-size: 12px;">You may view your finalized schedule on the <a href="/accounts/profile">Home Page</a></p>
   {% else %}
     <h4 style="font-weight: bold;">Status: Pending(Waiting On Advisor)<i class="fa-regular fa-hourglass" style="color: #e0d900;"></i></h4>
-    <p style = "color: gray; font-size: 10px;">Note: Submitting multiple schedules will overwrite the original submission</p>
+    <p style = "color: gray; font-size: 12px;">Note: Submitting multiple schedules will overwrite the original submission</p>
   {% endif %}
   <br>
   <!-- <hr> -->
