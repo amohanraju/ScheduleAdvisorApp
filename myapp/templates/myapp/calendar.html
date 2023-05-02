@@ -272,9 +272,9 @@
     <p style = "color: gray; font-size: 10px;">Note: Submitting multiple schedules will overwrite the original submission</p>
   {% endif %}
   <br>
-  <hr>
+  <!-- <hr> -->
   <!--https://stackoverflow.com/questions/16849117/html-how-to-do-a-confirmation-popup-to-a-submit-button-and-then-send-the-reque -->
-  <form method="POST" action="{% url 'createSchedule' user.pk %}" onsubmit="return confirm ('Are you sure?')">
+  <form method="POST" action="{% url 'createSchedule' user.pk %}" onsubmit="return confirm ('Are you sure you want to submit this schedule?')">
     {% csrf_token %}
     <input type="hidden" name="pk" value="{{user.pk}}">
     <button type="submit" class = "btn btn-success buttonShoppingCartandBrowseCourses" style="font-weight: bold;">Submit Schedule to Advisor
@@ -283,6 +283,7 @@
         </svg>
     </button>
   </form>
+<hr>
 </center>
   </body>
 

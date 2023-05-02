@@ -48,6 +48,7 @@
       <br>
 
       {% if usersSchedule is None %}
+        <h4 style="font-weight: bold;">Status: Schedule Not Submitted <i class="fa-light fa-memo-circle-check" style="color: #07cf1f;"></i></h4>
       {% elif usersSchedule.isRejected%}
         <h4 style="font-weight: bold;">Schedule Status: Rejected By Advisor <i class="fa-regular fa-circle-xmark" style="color: #ec1349;"></i></h4>
       {% elif usersSchedule.status %}
@@ -55,13 +56,29 @@
       
         <br>
         <p style = "color: gray; font-size: 12px;">Your Approved Schedule:</p>
-
-        <table class = "table">
-          <tr>
-            <th>Course</th>
-            <th>Days</th>
-            <th>Time</th>
-          </tr>
+        <thead>
+          <table class = "table" style="border-collapse: collapse;
+          margin: 25px 0;
+          font-size: 0.9em;
+          font-family: sans-serif;
+          min-width: 400px;
+          box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);">
+            <tr class = "title-row" style = "background-color: rgb(79, 78, 78);
+            color: #ffffff;
+            text-align: center;">
+            <div class = "row">
+              <div class = "col col-lg-2 col-md-2 col-sm-2"> 
+                <th>Course</th>
+              </div>
+              <div class = "col col-lg-2 col-md-2 col-sm-2"> 
+                <th>Days</th>
+              </div>
+              <div class = "col col-lg-2 col-md-2 col-sm-2"> 
+              <th>Time</th>
+              </div>
+            </div>
+            </tr>
+          </thead>
           {% for course in usersSchedule.courses.all %}
             <tr>
               <td>{{course.course_subject}}</td>

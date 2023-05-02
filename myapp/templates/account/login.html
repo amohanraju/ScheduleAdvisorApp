@@ -88,7 +88,7 @@
           </div>
           <div style = "border: 2px solid black; margin-top: 50px; text-align: center;">
             <div style="margin: 15px 15px 15px 15px;">
-              <h3 style = "font-family: 'Montserrat'; font-size: 25px;">Student/Advisor Login</h3>
+              <h3 style = "font-family: 'Montserrat'; font-size: 29px; margin-bottom: 15px;">Student/Advisor Login</h3>
               {%comment%}
               <h4 style = "font-family: Montserrat; font-size: 20px; font-weight: bold;"> If you don't have an account</h4>
               <button class = "btn btn-dark btn-lg"> <a style = "text-decoration: none; color: inherit;color: white; font-weight: bold;" href="/accounts/createAdmin">Sign Up</a></button>
@@ -96,6 +96,7 @@
               <br>
               <h4 style = "font-family: Montserrat;font-size: 20px; font-weight: bold;"> Or, login with Credentials</h4>
               {%endcomment%}
+              <h4 style = "font-family: Montserrat;font-size: 20px; font-weight: bold;"> Login with Credentials (Advisor)</h4>
                 <form class="login" method="POST" style = "width: 100%;
                 margin-bottom: 10px;
                 padding: 10px;
@@ -120,7 +121,7 @@
                 </script>
                 {% endblock %}
                 <br>
-                <h4 style = "font-family: Montserrat;font-size: 20px; font-weight: bold;"> Or, login with Google(Student)</h4>
+                <h4 style = "font-family: Montserrat;font-size: 20px; font-weight: bold;"> Login with Google (Student)</h4>
                 <button class = "btn btn-dark btn-lg"> <a style = "text-decoration: none; color: inherit;color: white; font-weight: bold;" href="/accounts/google/login/?process=login">Google</a></button>
                 {% include "socialaccount/snippets/login_extra.html" %}
 
