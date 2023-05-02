@@ -116,7 +116,6 @@
             <br>
             <div>
                 <h3>{{schedule.author}}</h3>
-                <p>{{ schedule.submitted_time }}</p>
                 <!--https://docs.djangoproject.com/en/4.1/ref/templates/language/ -->
                 {% for course in schedule.courses.all %}
                     <p>{{course.course_subject}}</p>
