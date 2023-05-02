@@ -109,6 +109,9 @@
     <div id ="SignedInScreenInnerContainer" class = "container">
         <h1>Schedule Requests:</h1>
         <hr>
+        {% if schedules|length == 0 %}
+          <h4 style="font-weight: bold;">There are no pending schedules</h4>
+        {% else %}
         {% for schedule in schedules %}
             <br>
             <div>
@@ -136,6 +139,7 @@
             <hr>
             <br>
         {% endfor%}
+        {% endif %}
     </div>
   </body>
 
