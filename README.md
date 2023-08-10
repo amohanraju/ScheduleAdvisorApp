@@ -1,4 +1,4 @@
-# Django Project Group B-13
+# UVA Schedule Advisor App
 
 __Names:__ Adarsh Mohanraju, Spencer Hernandez, Cameron Greene, Joel Valliath, Ethan Ogilvie
 
